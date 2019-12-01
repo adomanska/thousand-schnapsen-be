@@ -3,6 +3,7 @@ namespace ThousandSchnapsen.Common
     public class Card
     {
         const int CARDS_IN_COLOR = 6;
+        const int MAX_CARD_VALUE = 11;
         public Card(int cardId)
         {
             CardId = cardId;
@@ -19,14 +20,29 @@ namespace ThousandSchnapsen.Common
 
         public bool IsPartOfMarriage => Rank == Rank.Queen || Rank == Rank.King;
 
-        public Card? SecondMarriagePart => null;
+        #nullable enable
+        public Card? SecondMarriagePart
+        {
+            get 
+            {
+                switch(Rank)
+                {
+                    case Rank.Queen:
+                        return new Card(Rank.King, Color);
+                    case Rank.King:
+                        return new Card(Rank.Queen, Color);
+                    default:
+                        return null;
+                }
+            }
+        }
 
         public int Evaluate(Color firstColor, Color? trump)
         {
             if (trump.HasValue && trump.Value == Color)
-                return 24 + Rank.GetPoints();
+                return 2 * (MAX_CARD_VALUE + 1) + Rank.GetPoints();
             else if (firstColor == Color)
-                return 12 + Rank.GetPoints();
+                return (MAX_CARD_VALUE + 1) + Rank.GetPoints();
             else
                 return Rank.GetPoints();
         }
