@@ -7,13 +7,8 @@ namespace ThousandSchnapsen.Common
     public class GameState : PublicState
     {
         const int PLAYERS_COUNT = 4;
-        public GameState(int[] stock, CardsSet[] playersUsedCards, int[] playersPoints, Color[] trumpsHistory,
-                         int nextPlayerId, int dealerId, CardsSet[] playersCards) :
-                         base(stock, playersUsedCards, playersPoints, trumpsHistory, nextPlayerId, dealerId)
-        {
-            PlayersCards = playersCards;
-        }
-        public CardsSet[] PlayersCards { get; }
+
+        public CardsSet[] PlayersCards { get; set; }
 
         public PlayerState GetPlayerState(int playerId)
         {
@@ -23,7 +18,15 @@ namespace ThousandSchnapsen.Common
             var trumpsHistory = (Color[])(this.TrumpsHistory.Clone());
             var cards = PlayersCards[playerId].Clone();
 
-            return new PlayerState(stock, playersUsedCards, playersPoints, trumpsHistory, this.NextPlayerId, cards, playerId, DealerId);
+            return new PlayerState()
+            {
+                Stock = stock,
+                PlayersUsedCards = playersUsedCards,
+                PlayersPoints = playersPoints,
+                TrumpsHistory = trumpsHistory,
+                Cards = cards,
+                PlayerId = playerId
+            };
         }
 
         public GameState PerformAction(Action action)
@@ -55,7 +58,16 @@ namespace ThousandSchnapsen.Common
                 (playersPoints, nextPlayerId) = EvaluateTurn(stock);
             }
 
-            return new GameState(stock, playersUsedCards, playersPoints, trumpsHistory, nextPlayerId, DealerId, playersCards);
+            return new GameState()
+            {
+                Stock = stock,
+                PlayersCards = playersCards,
+                PlayersUsedCards = playersUsedCards,
+                TrumpsHistory = trumpsHistory,
+                PlayersPoints = playersPoints,
+                NextPlayerId = nextPlayerId,
+                DealerId = DealerId
+            };
         }
 
         private (CardsSet[], CardsSet[], int[]) MoveCard(int cardId)
