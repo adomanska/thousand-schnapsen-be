@@ -9,6 +9,8 @@ namespace ThousandSchnapsen.Common
 
         public int Code => code;
 
+        public bool IsEmpty => code == 0;
+
         public CardsSet(int _code)
         {
             code = _code;
