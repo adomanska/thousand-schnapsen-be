@@ -6,11 +6,6 @@ namespace ThousandSchnapsen.Common
     public class CardsSet
     {
         private int code;
-
-        public int Code => code;
-
-        public bool IsEmpty => code == 0;
-
         public CardsSet(int _code)
         {
             code = _code;
@@ -20,6 +15,10 @@ namespace ThousandSchnapsen.Common
         {
             code = cardsIds.Sum(id => (int)Math.Pow(2, id));
         }
+
+        public int Code => code;
+
+        public bool IsEmpty => Code == 0;
 
         public static CardsSet operator +(CardsSet A, CardsSet B)
         {
@@ -43,6 +42,21 @@ namespace ThousandSchnapsen.Common
             if (cardId < 0 || cardId > 23)
                 throw new InvalidOperationException("Invalid Card ID. Card ID should be in range [0, 23].");
             code &= ~(1 << cardId);
+        }
+
+        public bool Contains(int cardId)
+        {
+            return (code & (int)Math.Pow(2, cardId)) != 0;
+        }
+
+        public bool Contains(Card card)
+        {
+            return this.Contains(card.CardId);
+        }
+
+        public CardsSet Clone()
+        {
+            return new CardsSet(Code);
         }
     }
 }
