@@ -4,7 +4,7 @@ namespace ThousandSchnapsen.Common
 {
     public class PublicState
     {
-        public int[] Stock { get; set; }
+        public (int PlayerId, Card Card)[] Stock { get; set; }
         public CardsSet[] PlayersUsedCards { get; set; }
         public int[] PlayersPoints { get; set; }
         public Color[] TrumpsHistory { get; set; }
