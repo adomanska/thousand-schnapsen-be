@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace ThousandSchnapsen.Common
 {
     public class CardsSet
     {
+        const int CARDS_IN_SET_COUNT = 24;
         private int code;
         public CardsSet(int _code)
         {
@@ -20,7 +22,7 @@ namespace ThousandSchnapsen.Common
 
         public bool IsEmpty => Code == 0;
 
-        public static CardsSet operator +(CardsSet A, CardsSet B)
+        public static CardsSet operator |(CardsSet A, CardsSet B)
         {
             return new CardsSet(A.Code | B.Code);
         }
@@ -28,6 +30,11 @@ namespace ThousandSchnapsen.Common
         public static CardsSet operator -(CardsSet A, CardsSet B)
         {
             return new CardsSet(A.Code & ~B.Code);
+        }
+
+        public static CardsSet operator &(CardsSet A, CardsSet B)
+        {
+            return new CardsSet(A.Code & B.Code);
         }
 
         public void AddCard(int cardId)
@@ -57,6 +64,16 @@ namespace ThousandSchnapsen.Common
         public CardsSet Clone()
         {
             return new CardsSet(Code);
+        }
+
+        public int[] GetCardsIds()
+        {
+            List<int> cardsList = new List<int>();
+            for (int cardId = 0; cardId < CARDS_IN_SET_COUNT; cardId++)
+                if (Contains(cardId))
+                    cardsList.Add(cardId);
+            
+            return cardsList.ToArray();
         }
     }
 }

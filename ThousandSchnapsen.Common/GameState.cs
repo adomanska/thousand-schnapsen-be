@@ -7,6 +7,8 @@ namespace ThousandSchnapsen.Common
     public class GameState : PublicState
     {
         const int PLAYERS_COUNT = 4;
+        const int CARDS_IN_COLOR_COUNT = 6;
+        const int COLORS_COUNT = 4;
 
         public CardsSet[] PlayersCards { get; set; }
         public bool GameFinished => PlayersCards.All(playerCards => playerCards.IsEmpty);
@@ -47,6 +49,30 @@ namespace ThousandSchnapsen.Common
                 NextPlayerId = GetNextPlayerId(NextPlayerId);
             else
                 EvaluateTurn();
+        }
+
+        public Action[] GetAvailableActions()
+        {
+            CardsSet availableCards;
+            CardsSet playerCards = PlayersCards[NextPlayerId];
+            if (Stock.Length == 0)
+            {
+                availableCards = playerCards;
+            }
+            else
+            {
+                Color stockColor = Stock[0].Card.Color;
+                int baseMask = (int)Math.Pow(2, CARDS_IN_COLOR_COUNT) - 1;
+                int colorMask = baseMask << (CARDS_IN_COLOR_COUNT * (int)stockColor);
+                availableCards = playerCards & new CardsSet(colorMask);
+                if (availableCards.IsEmpty)
+                    availableCards = playerCards;
+            }
+            return availableCards.GetCardsIds().Select(cardId => new Action
+                {
+                    CardId = cardId,
+                    PlayerId = NextPlayerId
+                }).ToArray();
         }
 
         private void MoveCard(int cardId)
