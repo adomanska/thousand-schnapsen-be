@@ -32,5 +32,26 @@ namespace ThousandSchnapsen.Common
 
             return -1;
         }
+
+        public static string ToSymbol(this Rank rank)
+        {
+            switch(rank)
+            {
+                case Rank.Nine:
+                    return " 9";
+                case Rank.Ten:
+                    return "10";
+                case Rank.Jack:
+                    return " J";
+                case Rank.Queen:
+                    return " Q";
+                case Rank.King:
+                    return " K";
+                case Rank.Ace:
+                    return " A";
+                default:
+                    return "--";
+            }
+        }
     }
 }

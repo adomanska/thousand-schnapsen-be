@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThousandSchnapsen.Common", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThousandSchnapsen.Common.Tests", "ThousandSchnapsen.Common.Tests\ThousandSchnapsen.Common.Tests.csproj", "{45F1CE4A-D043-4FFE-BFB2-B7B5120BC988}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThousandSchnapsen.GameMaster", "ThousandSchnapsen.GameMaster\ThousandSchnapsen.GameMaster.csproj", "{BF95558D-F03B-4657-917F-4D7DF58AA442}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -56,5 +58,17 @@ Global
 		{45F1CE4A-D043-4FFE-BFB2-B7B5120BC988}.Release|x64.Build.0 = Release|Any CPU
 		{45F1CE4A-D043-4FFE-BFB2-B7B5120BC988}.Release|x86.ActiveCfg = Release|Any CPU
 		{45F1CE4A-D043-4FFE-BFB2-B7B5120BC988}.Release|x86.Build.0 = Release|Any CPU
+		{BF95558D-F03B-4657-917F-4D7DF58AA442}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BF95558D-F03B-4657-917F-4D7DF58AA442}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BF95558D-F03B-4657-917F-4D7DF58AA442}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{BF95558D-F03B-4657-917F-4D7DF58AA442}.Debug|x64.Build.0 = Debug|Any CPU
+		{BF95558D-F03B-4657-917F-4D7DF58AA442}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{BF95558D-F03B-4657-917F-4D7DF58AA442}.Debug|x86.Build.0 = Debug|Any CPU
+		{BF95558D-F03B-4657-917F-4D7DF58AA442}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BF95558D-F03B-4657-917F-4D7DF58AA442}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BF95558D-F03B-4657-917F-4D7DF58AA442}.Release|x64.ActiveCfg = Release|Any CPU
+		{BF95558D-F03B-4657-917F-4D7DF58AA442}.Release|x64.Build.0 = Release|Any CPU
+		{BF95558D-F03B-4657-917F-4D7DF58AA442}.Release|x86.ActiveCfg = Release|Any CPU
+		{BF95558D-F03B-4657-917F-4D7DF58AA442}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

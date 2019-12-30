@@ -8,6 +8,11 @@ namespace ThousandSchnapsen.Common
     {
         const int CARDS_IN_SET_COUNT = 24;
         private int code;
+
+        public CardsSet()
+        {
+            code = 0;
+        }
         public CardsSet(int _code)
         {
             code = _code;
@@ -74,6 +79,11 @@ namespace ThousandSchnapsen.Common
                     cardsList.Add(cardId);
             
             return cardsList.ToArray();
+        }
+
+        public override string ToString() 
+        {
+            return String.Join("  ", GetCardsIds().Select(cardId => new Card(cardId).ToString()));
         }
     }
 }

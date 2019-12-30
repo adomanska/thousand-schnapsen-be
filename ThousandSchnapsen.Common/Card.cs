@@ -51,5 +51,10 @@ namespace ThousandSchnapsen.Common
         {
             return new Card(CardId);
         }
+
+        public override string ToString()
+        {
+            return $"{Color.ToSymbol()}{Rank.ToSymbol()}";
+        }
     }
 }

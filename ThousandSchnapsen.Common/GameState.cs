@@ -1,5 +1,6 @@
 using System.Linq;
 using System;
+using System.Text;
 using MoreLinq;
 
 namespace ThousandSchnapsen.Common
@@ -9,9 +10,51 @@ namespace ThousandSchnapsen.Common
         const int PLAYERS_COUNT = 4;
         const int CARDS_IN_COLOR_COUNT = 6;
         const int COLORS_COUNT = 4;
+        const int CARDS_PER_PLAYER_COUNT = 7;
+        const int REST_CARDS_COUNT = 3;
 
         public CardsSet[] PlayersCards { get; set; }
         public bool GameFinished => PlayersCards.All(playerCards => playerCards.IsEmpty);
+
+        public static GameState RandomState(int dealerId)
+        {
+            var random = new Random();
+            Color[] colors = new Color[]{
+                Color.Spades,
+                Color.Clubs,
+                Color.Diamonds,
+                Color.Hearts
+            };
+            Rank[] ranks = new Rank[]{
+                Rank.Nine,
+                Rank.Ten,
+                Rank.Jack,
+                Rank.Queen,
+                Rank.King,
+                Rank.Ace
+            };
+            var deck = colors.SelectMany(color => ranks.Select(rank => new Card(rank, color)));
+            var shuffledDeck = deck.OrderBy(Card => random.Next()).Select(card => card.CardId).ToArray();
+            CardsSet[] playersCards = new CardsSet[PLAYERS_COUNT];
+            int start = 0;
+            for (int playerId = 0; playerId < PLAYERS_COUNT; playerId++)
+                if (playerId != dealerId)
+                {
+                    playersCards[playerId] = new CardsSet(shuffledDeck.Slice(start, CARDS_PER_PLAYER_COUNT).ToArray());
+                    start += CARDS_PER_PLAYER_COUNT;
+                }          
+            playersCards[dealerId] = new CardsSet(shuffledDeck.Slice(start, REST_CARDS_COUNT).ToArray());
+
+            return new GameState(){
+                Stock = new (int PlayerId, Card Card)[]{},
+                PlayersUsedCards = new CardsSet[PLAYERS_COUNT],
+                PlayersPoints = new int[PLAYERS_COUNT],
+                TrumpsHistory = new Color[]{},
+                DealerId = dealerId,
+                NextPlayerId = (dealerId + 1) % PLAYERS_COUNT,
+                PlayersCards = playersCards
+            };
+        }
 
         public PlayerState GetPlayerState(int playerId)
         {
@@ -75,6 +118,18 @@ namespace ThousandSchnapsen.Common
                 }).ToArray();
         }
 
+        public override string ToString()
+        {
+            const int lineWidth = 30;
+            var sb = new StringBuilder();
+            sb.AppendLine(Utils.CreateTitle("GAME STATE", lineWidth));
+            sb.AppendLine(base.ToString());
+            sb.AppendLine("PLAYERS CARDS:");
+            for (int playerId = 0; playerId < PLAYERS_COUNT; playerId++)
+                sb.AppendLine($"{playerId + 1}:  {PlayersCards[playerId]}");
+            return sb.ToString();
+        }
+
         private void MoveCard(int cardId)
         {
             PlayersCards[NextPlayerId].RemoveCard(cardId);
@@ -99,6 +154,7 @@ namespace ThousandSchnapsen.Common
             int points = Stock.Sum(stockItem => stockItem.Card.Rank.GetPoints());
             (NextPlayerId, _) = Stock.MaxBy(stockItem => stockItem.Card.GetValue(firstColor, Trump)).First();
             PlayersPoints[NextPlayerId] += points;
+            Stock = new (int PlayerId, Card Card)[]{};
         }
 
         private int GetNextPlayerId(int playerId)
