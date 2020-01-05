@@ -100,9 +100,7 @@ namespace ThousandSchnapsen.Common
             CardsSet availableCards;
             CardsSet playerCards = PlayersCards[NextPlayerId];
             if (Stock.Length == 0)
-            {
                 availableCards = playerCards;
-            }
             else
             {
                 Color stockColor = Stock[0].Card.Color;
