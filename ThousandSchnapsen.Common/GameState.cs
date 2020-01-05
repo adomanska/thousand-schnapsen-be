@@ -14,7 +14,8 @@ namespace ThousandSchnapsen.Common
         const int REST_CARDS_COUNT = 3;
 
         public CardsSet[] PlayersCards { get; set; }
-        public bool GameFinished => PlayersCards.All(playerCards => playerCards.IsEmpty);
+        public bool GameFinished => PlayersCards.Select((playerCards, index) => index == DealerId || playerCards.IsEmpty)
+            .All(finished => finished);
 
         public static GameState RandomState(int dealerId)
         {
@@ -47,7 +48,7 @@ namespace ThousandSchnapsen.Common
 
             return new GameState(){
                 Stock = new (int PlayerId, Card Card)[]{},
-                PlayersUsedCards = new CardsSet[PLAYERS_COUNT],
+                PlayersUsedCards = Enumerable.Range(0, PLAYERS_COUNT).Select(playerId => new CardsSet()).ToArray(),
                 PlayersPoints = new int[PLAYERS_COUNT],
                 TrumpsHistory = new Color[]{},
                 DealerId = dealerId,
@@ -120,18 +121,21 @@ namespace ThousandSchnapsen.Common
 
         public override string ToString()
         {
-            const int lineWidth = 30;
+            const int lineWidth = 42;
             var sb = new StringBuilder();
             sb.AppendLine(Utils.CreateTitle("GAME STATE", lineWidth));
             sb.AppendLine(base.ToString());
             sb.AppendLine("PLAYERS CARDS:");
+            Func<int, string> playerSymbol = playerId => playerId == DealerId ? "(D)" : (playerId == NextPlayerId ? " ->" : "   ");
             for (int playerId = 0; playerId < PLAYERS_COUNT; playerId++)
-                sb.AppendLine($"{playerId + 1}:  {PlayersCards[playerId]}");
+                sb.AppendLine($"{playerSymbol(playerId)} {playerId + 1}:  {PlayersCards[playerId]}");
             return sb.ToString();
         }
 
         private void MoveCard(int cardId)
         {
+            if (Stock.Length == PLAYERS_COUNT - 1)
+                Stock = new (int PlayerId, Card Card)[]{};
             PlayersCards[NextPlayerId].RemoveCard(cardId);
             PlayersUsedCards[NextPlayerId].AddCard(cardId);
             Stock = Stock.Concat(new (int PlayerId, Card Card)[] { (PlayerId: NextPlayerId, Card: new Card(cardId)) }).ToArray();
@@ -154,7 +158,6 @@ namespace ThousandSchnapsen.Common
             int points = Stock.Sum(stockItem => stockItem.Card.Rank.GetPoints());
             (NextPlayerId, _) = Stock.MaxBy(stockItem => stockItem.Card.GetValue(firstColor, Trump)).First();
             PlayersPoints[NextPlayerId] += points;
-            Stock = new (int PlayerId, Card Card)[]{};
         }
 
         private int GetNextPlayerId(int playerId)

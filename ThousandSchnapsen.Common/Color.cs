@@ -22,9 +22,9 @@ namespace ThousandSchnapsen.Common
             switch(color)
             {
                 case Color.Clubs:
-                    return '\u2663';
+                    return '\u2667';
                 case Color.Spades:
-                    return '\u2660';
+                    return '\u2664';
                 case Color.Diamonds:
                     return '\u2666';
                 case Color.Hearts:
