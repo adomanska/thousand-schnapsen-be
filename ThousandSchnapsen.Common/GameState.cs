@@ -15,92 +15,68 @@ namespace ThousandSchnapsen.Common
         public Color? Trump => TrumpsHistory.Count > 0 ? TrumpsHistory.Last() : (Color?)null;
         public int NextPlayerId { get; set; }
         public int DealerId { get; set; }
-
         public CardsSet[] PlayersCards { get; set; }
-        public bool GameFinished => PlayersCards.Select((playerCards, index) => index == DealerId || playerCards.IsEmpty)
+        public bool GameFinished => PlayersCards
+            .Select((playerCards, index) => index == DealerId || playerCards.IsEmpty)
             .All(finished => finished);
 
-        public static GameState RandomState(int dealerId)
+        public GameState(int dealerId)
         {
-            var random = new Random();
-            var shuffledDeck = Constants.Deck.OrderBy(Card => random.Next()).Select(card => card.CardId).ToArray();
-            CardsSet[] playersCards = new CardsSet[Constants.PLAYERS_COUNT];
-            int start = 0;
-            for (int playerId = 0; playerId < Constants.PLAYERS_COUNT; playerId++)
-                if (playerId != dealerId)
-                {
-                    playersCards[playerId] = new CardsSet(shuffledDeck.Slice(start, Constants.CARDS_PER_PLAYER_COUNT).ToArray());
-                    start += Constants.CARDS_PER_PLAYER_COUNT;
-                }          
-            playersCards[dealerId] = new CardsSet(shuffledDeck.Slice(start, Constants.REST_CARDS_COUNT).ToArray());
-
-            return new GameState(){
-                Stock = new Stack<(int PlayerId, Card Card)>(),
-                PlayersUsedCards = Enumerable.Range(0, Constants.PLAYERS_COUNT).Select(playerId => new CardsSet()).ToArray(),
-                PlayersPoints = new int[Constants.PLAYERS_COUNT],
-                TrumpsHistory = new List<Color>(),
-                DealerId = dealerId,
-                NextPlayerId = (dealerId + 1) % Constants.PLAYERS_COUNT,
-                PlayersCards = playersCards
-            };
+            Stock = new Stack<(int PlayerId, Card Card)>();
+            PlayersUsedCards = Enumerable.Range(0, Constants.PLAYERS_COUNT).Select(playerId => new CardsSet()).ToArray();
+            PlayersPoints = new int[Constants.PLAYERS_COUNT];
+            TrumpsHistory = new List<Color>();
+            DealerId = dealerId;
+            NextPlayerId = (dealerId + 1) % Constants.PLAYERS_COUNT;
+            PlayersCards = Constants.Deck
+                .Shuffle()
+                .Batch(Constants.CARDS_PER_PLAYER_COUNT)
+                .Select(cards => new CardsSet(cards))
+                .ToArray();
         }
 
         public PlayerState GetPlayerState(int playerId)
         {
-            var stock = Stock.ToArray();
-            var playersUsedCards = PlayersUsedCards.Select(cs => cs.Clone()).ToArray();
-            var playersPoints = (int[])PlayersPoints.Clone();
-            var trumpsHistory = TrumpsHistory.ToArray();
-            var cards = PlayersCards[playerId].Clone();
-
             return new PlayerState()
             {
-                Stock = stock,
-                PlayersUsedCards = playersUsedCards,
-                PlayersPoints = playersPoints,
-                TrumpsHistory = trumpsHistory,
-                Cards = cards,
+                Stock = Stock.ToArray(),
+                PlayersUsedCards = PlayersUsedCards.Select(cs => cs.Clone()).ToArray(),
+                PlayersPoints = (int[])PlayersPoints.Clone(),
+                TrumpsHistory = TrumpsHistory.ToArray(),
+                Cards = PlayersCards[playerId].Clone(),
                 PlayerId = playerId
             };
         }
 
         public void PerformAction(Action action)
         {
-            var (playerId, cardId) = action;
+            var (playerId, card) = action;
 
             if (playerId != NextPlayerId)
                 throw new InvalidOperationException();
 
-            MoveCard(cardId);
+            MoveCard(playerId, card);
             if (Stock.Count == 1)
             {
-                UpdateTrumpsAndPoints(cardId);
-                NextPlayerId = GetNextPlayerId(NextPlayerId);
+                CheckTrump(playerId, card);
+                NextPlayerId = GetNextPlayerId(playerId);
             }
             else if (Stock.Count == 2)
-                NextPlayerId = GetNextPlayerId(NextPlayerId);
+                NextPlayerId = GetNextPlayerId(playerId);
             else
                 EvaluateTurn();
         }
 
         public Action[] GetAvailableActions()
         {
-            CardsSet availableCards;
-            CardsSet playerCards = PlayersCards[NextPlayerId];
-            if (Stock.Count == 0)
-                availableCards = playerCards;
-            else
-            {
-                Color stockColor = Stock.First().Card.Color;
-                int baseMask = (int)Math.Pow(2, Constants.CARDS_IN_COLOR_COUNT) - 1;
-                int colorMask = baseMask << (Constants.CARDS_IN_COLOR_COUNT * (int)stockColor);
-                availableCards = playerCards & new CardsSet(colorMask);
-                if (availableCards.IsEmpty)
-                    availableCards = playerCards;
-            }
+            CardsSet availableCards = PlayersCards[NextPlayerId];
+            CardsSet stockColorCards = CardsSet.Color(Stock.First().Card.Color);
+            if (Stock.Count > 0 && !(availableCards & stockColorCards).IsEmpty)
+                availableCards &= stockColorCards;
+
             return availableCards.GetCardsIds().Select(cardId => new Action
                 {
-                    CardId = cardId,
+                    Card = new Card(cardId),
                     PlayerId = NextPlayerId
                 }).ToArray();
         }
@@ -123,20 +99,18 @@ namespace ThousandSchnapsen.Common
             return sb.ToString();
         }
 
-        private void MoveCard(int cardId)
+        private void MoveCard(int playerId, Card card)
         {
             if (Stock.Count == Constants.PLAYERS_COUNT - 1)
                 Stock.Clear();
-            PlayersCards[NextPlayerId].RemoveCard(cardId);
-            PlayersUsedCards[NextPlayerId].AddCard(cardId);
-            Stock.Push((PlayerId: NextPlayerId, Card: new Card(cardId)));
+            PlayersCards[playerId].RemoveCard(card);
+            PlayersUsedCards[playerId].AddCard(card);
+            Stock.Push((PlayerId: playerId, Card: card));
         }
 
-        private void UpdateTrumpsAndPoints(int cardId)
+        private void CheckTrump(int playerId, Card card)
         {
-            Card card = new Card(cardId);
-
-            if (card.IsPartOfMarriage && PlayersCards[NextPlayerId].Contains(card.SecondMarriagePart))
+            if (card.IsPartOfMarriage && PlayersCards[playerId].Contains(card.SecondMarriagePart))
             {
                 TrumpsHistory.Add(card.Color);
                 PlayersPoints[NextPlayerId] += card.Color.GetPoints();
@@ -155,9 +129,7 @@ namespace ThousandSchnapsen.Common
         {
             int nextPlayerId = (playerId + 1) % Constants.PLAYERS_COUNT;
             if (nextPlayerId == DealerId)
-            {
                 nextPlayerId = (nextPlayerId + 1) % Constants.PLAYERS_COUNT;
-            }
             return nextPlayerId;
         }
     }

@@ -5,6 +5,7 @@ namespace ThousandSchnapsen.Common
     public class Constants
     {
         public const int PLAYERS_COUNT = 4;
+        public const int CARDS_COUNT = 24;
         public const int CARDS_IN_COLOR_COUNT = 6;
         public const int COLORS_COUNT = 4;
         public const int CARDS_PER_PLAYER_COUNT = 7;

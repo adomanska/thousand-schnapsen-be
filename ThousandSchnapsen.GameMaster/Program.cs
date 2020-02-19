@@ -7,7 +7,7 @@ namespace ThousandSchnapsen.GameMaster
     {
         static void Main(string[] args)
         {
-            GameState gameState = GameState.RandomState(0);
+            GameState gameState = new GameState(0);
             Console.OutputEncoding = System.Text.Encoding.UTF8;
             Console.WriteLine(gameState);
             while(!gameState.GameFinished)

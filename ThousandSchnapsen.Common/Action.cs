@@ -3,12 +3,12 @@ namespace ThousandSchnapsen.Common
     public class Action
     {
         public int PlayerId { get; set; }
-        public int CardId { get;  set; }
+        public Card Card { get;  set; }
 
-        public void Deconstruct(out int playerId, out int cardId)
+        public void Deconstruct(out int playerId, out Card card)
         {
             playerId = PlayerId;
-            cardId = CardId;
+            card = Card;
         }
     }
 }
