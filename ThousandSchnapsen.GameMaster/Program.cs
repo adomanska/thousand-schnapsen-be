@@ -1,5 +1,4 @@
-﻿using System;
-using ThousandSchnapsen.Common;
+﻿using ThousandSchnapsen.Common;
 
 namespace ThousandSchnapsen.GameMaster
 {
@@ -7,14 +6,15 @@ namespace ThousandSchnapsen.GameMaster
     {
         static void Main(string[] args)
         {
-            GameState gameState = new GameState(0);
-            Console.OutputEncoding = System.Text.Encoding.UTF8;
-            Console.WriteLine(gameState);
+            ILogger logger = new Logger();
+            IGameState gameState = new GameState(3);
+
+            logger.Log(gameState);
             while(!gameState.GameFinished)
             {
                 var action = gameState.GetAvailableActions()[0];
                 gameState.PerformAction(action);
-                Console.WriteLine(gameState);
+                logger.Log(gameState);
             }
         }
     }

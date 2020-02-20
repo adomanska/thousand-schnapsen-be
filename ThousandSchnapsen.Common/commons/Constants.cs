@@ -10,6 +10,7 @@ namespace ThousandSchnapsen.Common
         public const int COLORS_COUNT = 4;
         public const int CARDS_PER_PLAYER_COUNT = 7;
         public const int REST_CARDS_COUNT = 3;
+        public const int MAX_CARD_VALUE = 11;
         public static Color[] Colors = new Color[]{
             Color.Spades,
             Color.Clubs,
