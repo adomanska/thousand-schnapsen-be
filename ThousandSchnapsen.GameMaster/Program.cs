@@ -1,4 +1,5 @@
 ﻿using ThousandSchnapsen.Common;
+using System.Threading;
 
 namespace ThousandSchnapsen.GameMaster
 {
@@ -7,11 +8,12 @@ namespace ThousandSchnapsen.GameMaster
         static void Main(string[] args)
         {
             ILogger logger = new Logger();
-            IGameState gameState = new GameState(3);
+            IGameState gameState = new GameState(1);
 
             logger.Log(gameState);
             while(!gameState.GameFinished)
             {
+                Thread.Sleep(500);
                 var action = gameState.GetAvailableActions()[0];
                 gameState.PerformAction(action);
                 logger.Log(gameState);

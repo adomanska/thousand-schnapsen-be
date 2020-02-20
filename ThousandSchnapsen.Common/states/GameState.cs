@@ -1,5 +1,5 @@
-using System.Linq;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using MoreLinq;
 
@@ -23,7 +23,10 @@ namespace ThousandSchnapsen.Common
                 .Shuffle()
                 .Batch(Constants.CARDS_PER_PLAYER_COUNT)
                 .Select(cards => new CardsSet(cards))
-                .ToArray();
+                .ToArrayByIndex(Utils.GetCardsSetsIndexer(DealerId));
+            playersPoints[DealerId] = playersCards[DealerId]
+                .GetCards()
+                .Sum(card => card.Rank.GetPoints());
         }
 
         public (int PlayerId, Card Card)[] Stock => stock.ToArray();

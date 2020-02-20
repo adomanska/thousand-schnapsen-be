@@ -24,6 +24,7 @@ namespace ThousandSchnapsen.Common
                 .Select(stockItem => $"{stockItem.PlayerId + 1}: {stockItem.Card}")
                 .ToList()
                 .ForEach(stockItemString => Console.WriteLine(stockItemString));
+            Console.WriteLine();
         }
 
         private void LogResults(IGameState gameState)
@@ -40,11 +41,13 @@ namespace ThousandSchnapsen.Common
                     .Select(id => String.Format("{0,4}", id))
                 )
             );
+            Console.WriteLine();
         }
 
         private void LogTrump(IGameState gameState)
         {
             Console.WriteLine($"TRUMP: {gameState.Trump}");
+            Console.WriteLine();
         }
 
         private void LogPlayersCards(IGameState gameState)
@@ -58,6 +61,7 @@ namespace ThousandSchnapsen.Common
                 .Select(playerId => $"{playerSymbol(playerId)} {playerId + 1}:  {gameState.PlayersCards[playerId]}")
                 .ToList()
                 .ForEach(playerCardsString => Console.WriteLine(playerCardsString));
+            Console.WriteLine();
         }
     }
 }

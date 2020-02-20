@@ -69,6 +69,9 @@ namespace ThousandSchnapsen.Common
             return cardsList.ToArray();
         }
 
+        public Card[] GetCards() =>
+            GetCardsIds().Select(cardId => new Card(cardId)).ToArray();
+
         public static CardsSet Deck() =>
             new CardsSet((int)Math.Pow(2, Constants.CARDS_COUNT) - 1);
 
