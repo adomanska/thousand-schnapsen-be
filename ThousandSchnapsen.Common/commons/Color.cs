@@ -10,12 +10,8 @@ namespace ThousandSchnapsen.Common
 
     public static class ColorMethods
     {
-        const int MIN_COLOR_VALUE = 40;
-        const int COLOR_VALUE_STEP = 20;
-        public static int GetPoints(this Color color)
-        {
-            return MIN_COLOR_VALUE + ((int)color) * COLOR_VALUE_STEP;
-        }
+        public static int GetPoints(this Color color) =>
+            Constants.ColorValues[color];
 
         public static char ToSymbol(this Color color)
         {

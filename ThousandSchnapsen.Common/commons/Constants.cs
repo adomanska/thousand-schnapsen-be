@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Collections.Generic;
 
 namespace ThousandSchnapsen.Common
 {
@@ -27,5 +28,19 @@ namespace ThousandSchnapsen.Common
         };
         public static Card[] Deck => 
             Colors.SelectMany(color => Ranks.Select(rank => new Card(rank, color))).ToArray();
+        public static Dictionary<Rank, int> RankValues = new Dictionary<Rank, int>() {
+            {Rank.Nine, 0},
+            {Rank.Jack, 2},
+            {Rank.Queen, 3},
+            {Rank.King, 4},
+            {Rank.Ten, 10},
+            {Rank.Ace, 11}
+        };
+        public static Dictionary<Color, int> ColorValues = new Dictionary<Color, int>() {
+            {Color.Spades, 40},
+            {Color.Clubs, 60},
+            {Color.Diamonds, 80},
+            {Color.Hearts, 100},
+        };
     }
 }
