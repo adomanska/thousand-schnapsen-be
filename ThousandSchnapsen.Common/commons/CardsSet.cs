@@ -76,7 +76,7 @@ namespace ThousandSchnapsen.Common
             new CardsSet((int)Math.Pow(2, Constants.CARDS_COUNT) - 1);
 
         public static CardsSet Color(Color color) =>
-            new CardsSet((1 << (Constants.CARDS_IN_COLOR_COUNT * (int)color)) - 1);
+            new CardsSet(((int)Math.Pow(2, Constants.CARDS_IN_COLOR_COUNT) - 1) << (Constants.CARDS_IN_COLOR_COUNT * (int)color));
 
         public override string ToString() =>
             String.Join("  ", GetCardsIds().Select(cardId => new Card(cardId).ToString()));
