@@ -1,5 +1,7 @@
-﻿using ThousandSchnapsen.Common;
-using System.Threading;
+﻿using System.Threading;
+using ThousandSchnapsen.Common.Interfaces;
+using ThousandSchnapsen.Common.Loggers;
+using ThousandSchnapsen.Common.States;
 
 namespace ThousandSchnapsen.GameMaster
 {
@@ -11,7 +13,7 @@ namespace ThousandSchnapsen.GameMaster
             IGameState gameState = new GameState(1);
 
             logger.Log(gameState);
-            while(!gameState.GameFinished)
+            while (!gameState.GameFinished)
             {
                 Thread.Sleep(500);
                 var action = gameState.GetAvailableActions()[0];

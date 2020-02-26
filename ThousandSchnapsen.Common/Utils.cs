@@ -1,25 +1,27 @@
 using System;
 using System.Linq;
+using ThousandSchnapsen.Common.Commons;
 
 namespace ThousandSchnapsen.Common
 {
-    static class Utils
+    internal static class Utils
     {
         public static string CreateTitle(string title, int lineWidth)
         {
-            double dashesCount = (lineWidth - title.Length) / 2;
-            string startDashes = new String('-', (int)Math.Floor(dashesCount));
-            string endDashes = new String('-', (int)Math.Ceiling(dashesCount));
+            var dashesCount = (lineWidth - title.Length) / 2.0;
+            var startDashes = new string('-', (int) Math.Floor(dashesCount));
+            var endDashes = new string('-', (int) Math.Ceiling(dashesCount));
             return $"{startDashes}{title}{endDashes}";
         }
 
         public static Func<CardsSet, int> GetCardsSetsIndexer(int dealerId)
         {
-            var indicesEnumerator = Enumerable.Range(0, Constants.PLAYERS_COUNT)
+            var indicesEnumerator = Enumerable.Range(0, Constants.PlayersCount)
                 .Where(id => id != dealerId)
                 .Append(dealerId)
                 .GetEnumerator();
-            return (cardsSet) => {;
+            return (cardsSet) =>
+            {
                 indicesEnumerator.MoveNext();
                 return indicesEnumerator.Current;
             };
