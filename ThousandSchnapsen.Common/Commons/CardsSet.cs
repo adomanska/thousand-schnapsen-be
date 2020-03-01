@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
+using MoreLinq;
 
 namespace ThousandSchnapsen.Common.Commons
 {
     public class CardsSet
     {
-        public int Code { get; private set; }
+        private int _code;
 
         public CardsSet() =>
             Code = 0;
@@ -23,6 +24,18 @@ namespace ThousandSchnapsen.Common.Commons
             this(cards.Select(card => card.CardId))
         {
         }
+
+        public int Code
+        {
+            get => _code;
+            private set
+            {
+                _code = value;
+                Count = CountSetBits(value);
+            }
+        }
+
+        public int Count { get; private set; }
 
         public bool IsEmpty => Code == 0;
 
@@ -79,9 +92,25 @@ namespace ThousandSchnapsen.Common.Commons
         public static CardsSet Deck() =>
             new CardsSet((int) Math.Pow(2, Constants.CardsCount) - 1);
 
-        public static CardsSet Color(Color color) =>
-            new CardsSet(((int) Math.Pow(2, Constants.CardsInColorCount) - 1) <<
-                         (Constants.CardsInColorCount * (int) color));
+        public static CardsSet Color(Color? color) =>
+            color.HasValue
+                ? new CardsSet(((int) Math.Pow(2, Constants.CardsInColorCount) - 1) <<
+                               (Constants.CardsInColorCount * (int) color.Value))
+                : new CardsSet();
+
+        public static CardsSet Trump(Color color) =>
+            new CardsSet(new[] {new Card(Rank.Queen, color), new Card(Rank.King, color)});
+
+        public IEnumerable<Color> GetTrumps() =>
+            Constants.Colors.Where(color => (this & Trump(color)).Count == 2);
+
+        public Card? GetHighestInColor(Color color)
+        {
+            var colorCards = (this & Color(color)).GetCards();
+            return colorCards.Any()
+                ? colorCards.MaxBy(card => card.Rank).First()
+                : (Card?) null;
+        }
 
         public override string ToString() =>
             string.Join("  ", GetCardsIds().Select(cardId => new Card(cardId).ToString()));
@@ -94,5 +123,17 @@ namespace ThousandSchnapsen.Common.Commons
 
         private bool Equals(CardsSet other) =>
             Code == other.Code;
+
+        private static int CountSetBits(int code)
+        {
+            var count = 0;
+            while (code != 0)
+            {
+                code &= (code - 1);
+                count++;
+            }
+
+            return count;
+        }
     }
 }

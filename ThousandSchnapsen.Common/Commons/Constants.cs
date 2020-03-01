@@ -11,7 +11,7 @@ namespace ThousandSchnapsen.Common.Commons
         public const int CardsPerPlayerCount = 7;
         public const int MaxCardValue = 11;
 
-        private static readonly Color[] Colors =
+        public static readonly Color[] Colors =
         {
             Color.Spades,
             Color.Clubs,

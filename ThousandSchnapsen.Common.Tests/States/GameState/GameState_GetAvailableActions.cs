@@ -13,7 +13,8 @@ namespace ThousandSchnapsen.Common.Tests.States
         private static readonly CardsSet PlayerCards = new CardsSet(new[]
         {
             new Card(Rank.Jack, Color.Clubs),
-            new Card(Rank.Ace, Color.Diamonds)
+            new Card(Rank.Ace, Color.Diamonds),
+            new Card(Rank.Nine, Color.Hearts)
         });
 
         private readonly CardsSet[] _playersCards =
@@ -40,8 +41,12 @@ namespace ThousandSchnapsen.Common.Tests.States
         public void GetAvailableActions_NonEmptyStock_ReturnSuitableActions()
         {
             var state = new GameState(DealerId, NextPlayerId, _playersCards,
-                new[] {(PlayerId: 1, Card: new Card(Rank.King, Color.Clubs))}, new Color[] { });
-            var expected = new[] {new Action(NextPlayerId, new Card(Rank.Jack, Color.Clubs))};
+                new[] {(PlayerId: 1, Card: new Card(Rank.King, Color.Clubs))}, new[] {Color.Hearts});
+            var expected = new[]
+            {
+                new Action(NextPlayerId, new Card(Rank.Jack, Color.Clubs)),
+                new Action(NextPlayerId, new Card(Rank.Nine, Color.Hearts)),
+            };
 
             var result = state.GetAvailableActions();
 
@@ -52,7 +57,7 @@ namespace ThousandSchnapsen.Common.Tests.States
         public void GetAvailableActions_NonEmptyStockAndNoSuitableActions_ReturnAllActions()
         {
             var state = new GameState(DealerId, NextPlayerId, _playersCards,
-                new[] {(PlayerId: 1, Card: new Card(Rank.King, Color.Hearts))}, new Color[] { });
+                new[] {(PlayerId: 1, Card: new Card(Rank.King, Color.Spades))}, new Color[] { });
             var expected = PlayerCards.GetCards().Select(card => new Action(NextPlayerId, card)).ToArray();
 
             var result = state.GetAvailableActions();

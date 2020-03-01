@@ -75,8 +75,9 @@ namespace ThousandSchnapsen.Common.States
                 return availableCards.GetCardsIds().Select(cardId => new Action(NextPlayerId, new Card(cardId)))
                     .ToArray();
             var stockColorCards = CardsSet.Color(Stock.First().Card.Color);
+            var trumpColorCards = CardsSet.Color(Trump);
             if (!(availableCards & stockColorCards).IsEmpty)
-                availableCards &= stockColorCards;
+                availableCards &= (stockColorCards | trumpColorCards);
             return availableCards.GetCardsIds().Select(cardId => new Action(NextPlayerId, new Card(cardId))).ToArray();
         }
 
