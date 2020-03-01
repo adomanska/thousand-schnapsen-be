@@ -1,5 +1,3 @@
-using System;
-
 namespace ThousandSchnapsen.Common.Commons
 {
     public struct Card
@@ -25,7 +23,7 @@ namespace ThousandSchnapsen.Common.Commons
                 {
                     Rank.Queen => new Card(Rank.King, Color),
                     Rank.King => new Card(Rank.Queen, Color),
-                    _ => default
+                    _ => (Card?) null
                 };
             }
         }

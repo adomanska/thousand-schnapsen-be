@@ -26,14 +26,14 @@ namespace ThousandSchnapsen.Common.Commons
 
         public bool IsEmpty => Code == 0;
 
-        public static CardsSet operator |(CardsSet A, CardsSet B) =>
-            new CardsSet(A.Code | B.Code);
+        public static CardsSet operator |(CardsSet cardSetA, CardsSet cardSetB) =>
+            new CardsSet(cardSetA.Code | cardSetB.Code);
 
-        public static CardsSet operator -(CardsSet A, CardsSet B) =>
-            new CardsSet(A.Code & ~B.Code);
+        public static CardsSet operator -(CardsSet cardSetA, CardsSet cardSetB) =>
+            new CardsSet(cardSetA.Code & ~cardSetB.Code);
 
-        public static CardsSet operator &(CardsSet A, CardsSet B) =>
-            new CardsSet(A.Code & B.Code);
+        public static CardsSet operator &(CardsSet cardSetA, CardsSet cardSetB) =>
+            new CardsSet(cardSetA.Code & cardSetB.Code);
 
         public void AddCard(int cardId)
         {

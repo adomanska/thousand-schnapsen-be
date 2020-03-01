@@ -16,7 +16,7 @@ namespace ThousandSchnapsen.Common.Tests.Commons
         [Fact]
         public void IsEmpty_NonEmptySet_ReturnFalse()
         {
-            var cardsSetA = new CardsSet(new int[] {2, 8, 16});
+            var cardsSetA = new CardsSet(new[] {2, 8, 16});
 
             Assert.False(cardsSetA.IsEmpty);
         }

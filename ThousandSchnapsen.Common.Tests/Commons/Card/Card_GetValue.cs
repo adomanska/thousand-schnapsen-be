@@ -9,7 +9,7 @@ namespace ThousandSchnapsen.Common.Tests.Commons
         public void GetValue_ColorOfGivenTrump_ReturnValidValue()
         {
             const Color trump = Color.Clubs;
-            var card = new Common.Commons.Card(Rank.Queen, Color.Clubs);
+            var card = new Card(Rank.Queen, Color.Clubs);
             const int expected = 27;
 
             var result = card.GetValue(Color.Diamonds, trump);
@@ -21,7 +21,7 @@ namespace ThousandSchnapsen.Common.Tests.Commons
         public void GetValue_ColorOfFirstCard_ReturnValidValue()
         {
             const Color firstCardColor = Color.Clubs;
-            var card = new Common.Commons.Card(Rank.Queen, Color.Clubs);
+            var card = new Card(Rank.Queen, Color.Clubs);
             const int expected = 15;
 
             var actual = card.GetValue(firstCardColor, null);
@@ -34,7 +34,7 @@ namespace ThousandSchnapsen.Common.Tests.Commons
         {
             const Color firstCardColor = Color.Clubs;
             const Color trump = Color.Hearts;
-            var card = new Common.Commons.Card(Rank.Queen, Color.Spades);
+            var card = new Card(Rank.Queen, Color.Spades);
             const int expected = 3;
 
             var actual = card.GetValue(firstCardColor, trump);
