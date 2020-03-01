@@ -68,7 +68,22 @@ namespace ThousandSchnapsen.Common.Agents
 
         private Card SelectNextCard(IPlayerState playerState)
         {
-            throw new System.NotImplementedException();
+            var stockColor = playerState.Stock.First().Card.Color;
+            var stockColorCards = CardsSet.Color(stockColor);
+            var trumpColorCards = CardsSet.Color(playerState.Trump);
+            var availableCards = playerState.Cards;
+            if (!(availableCards & stockColorCards).IsEmpty)
+            {
+                availableCards &= (stockColorCards | trumpColorCards);
+                var maxInStock = playerState.Stock
+                    .Select(item => item.Card.GetValue(stockColor, playerState.Trump))
+                    .Max();
+                var greaterCards = availableCards.GetCards()
+                    .Where(card => card.GetValue(stockColor, playerState.Trump) > maxInStock);
+                if (greaterCards.Any()) 
+                    return greaterCards.MinBy(card => card.GetValue(stockColor, playerState.Trump)).First();
+            }
+            return availableCards.GetCards().MinBy(card => card.GetValue(stockColor, playerState.Trump)).First();
         }
     }
 }
