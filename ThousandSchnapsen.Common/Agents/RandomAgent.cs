@@ -16,10 +16,13 @@ namespace ThousandSchnapsen.Common.Agents
         public Action GetAction(IPlayerState playerState)
         {
             var availableCards = playerState.Cards;
-            var stockColorCards = CardsSet.Color(playerState.Stock.First().Card.Color);
-            var trumpColorCards = CardsSet.Color(playerState.Trump);
-            if (!(availableCards & stockColorCards).IsEmpty)
-                availableCards &= (stockColorCards | trumpColorCards);
+            if (playerState.Stock.Length > 0)
+            {
+                var stockColorCards = CardsSet.Color(playerState.Stock.First().Card.Color);
+                var trumpColorCards = CardsSet.Color(playerState.Trump);
+                if (!(availableCards & stockColorCards).IsEmpty)
+                    availableCards &= (stockColorCards | trumpColorCards);   
+            }
             var random = new Random();
             return new Action(_id, availableCards.GetCards().ElementAt(random.Next(availableCards.Count)));
         }

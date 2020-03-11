@@ -21,7 +21,7 @@ namespace ThousandSchnapsen.Common.Agents
 
         private Card SelectCard(IPlayerState playerState)
         {
-            if (playerState.Stock.Length == 0)
+            if (playerState.Stock.Length == 0 || playerState.Stock.Length == 3)
                 return SelectFirstCard(playerState);
             else
                 return SelectNextCard(playerState);
