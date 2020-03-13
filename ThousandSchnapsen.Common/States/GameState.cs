@@ -28,13 +28,15 @@ namespace ThousandSchnapsen.Common.States
         }
 
         public GameState(int dealerId, int nextPlayerId, CardsSet[] playersCards,
-            IEnumerable<(int PlayerId, Card card)> stock, IEnumerable<Color> trumpsHistory)
+            IEnumerable<(int PlayerId, Card card)> stock, IEnumerable<Color> trumpsHistory, int[] playersPoints = null)
         {
             DealerId = dealerId;
             NextPlayerId = nextPlayerId;
             PlayersCards = playersCards;
             _stock = new Stack<(int PlayerId, Card Card)>(stock);
             _trumpsHistory = new List<Color>(trumpsHistory);
+            if (playersPoints != null)
+                PlayersPoints = playersPoints;
         }
 
         public (int PlayerId, Card Card)[] Stock => _stock.Reverse().ToArray();
@@ -81,7 +83,7 @@ namespace ThousandSchnapsen.Common.States
             return availableCards.GetCardsIds().Select(cardId => new Action(NextPlayerId, new Card(cardId))).ToArray();
         }
 
-        public void PerformAction(Action action)
+        public IGameState PerformAction(Action action)
         {
             var (playerId, card) = action;
 
@@ -102,6 +104,8 @@ namespace ThousandSchnapsen.Common.States
                     EvaluateTurn();
                     break;
             }
+
+            return new GameState(DealerId, NextPlayerId, (CardsSet[])PlayersCards.Clone(), Stock, TrumpsHistory, (int[])PlayersPoints.Clone());
         }
 
         private void MoveCard(int playerId, Card card)

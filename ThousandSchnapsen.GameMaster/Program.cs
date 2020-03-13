@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading;
 using ThousandSchnapsen.Common.Agents;
+using ThousandSchnapsen.Common.GameTree;
 using ThousandSchnapsen.Common.Interfaces;
 using ThousandSchnapsen.Common.Loggers;
 using ThousandSchnapsen.Common.States;
@@ -40,14 +41,16 @@ namespace ThousandSchnapsen.GameMaster
         {
             ILogger logger = new Logger();
             IGameState gameState = new GameState(dealerId);
-            logger.Log(gameState);
-            while (!gameState.GameFinished)
-            {
-                Thread.Sleep(500);
-                var action = agents[gameState.NextPlayerId].GetAction(gameState.GetPlayerState(gameState.NextPlayerId));
-                gameState.PerformAction(action);
-                logger.Log(gameState);
-            }
+            var gameTree = new Node(gameState);
+            gameTree.Expand();
+            // logger.Log(gameState);
+            // while (!gameState.GameFinished)
+            // {
+            //     Thread.Sleep(500);
+            //     var action = agents[gameState.NextPlayerId].GetAction(gameState.GetPlayerState(gameState.NextPlayerId));
+            //     gameState.PerformAction(action);
+            //     logger.Log(gameState);
+            // }
         }
 
         private static void PerformTest(IAgent[] agents, int dealerId, int examinatedPlayerId = 2)

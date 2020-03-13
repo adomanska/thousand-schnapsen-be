@@ -7,7 +7,7 @@ namespace ThousandSchnapsen.Common.Interfaces
     {
         CardsSet[] PlayersCards { get; }
         PlayerState GetPlayerState(int playerId);
-        void PerformAction(Action action);
+        IGameState PerformAction(Action action);
         Action[] GetAvailableActions();
     }
 }

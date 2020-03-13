@@ -80,9 +80,10 @@ namespace ThousandSchnapsen.Common.Agents
                     .Max();
                 var greaterCards = availableCards.GetCards()
                     .Where(card => card.GetValue(stockColor, playerState.Trump) > maxInStock);
-                if (greaterCards.Any()) 
+                if (greaterCards.Any())
                     return greaterCards.MinBy(card => card.GetValue(stockColor, playerState.Trump)).First();
             }
+
             return availableCards.GetCards().MinBy(card => card.GetValue(stockColor, playerState.Trump)).First();
         }
     }
