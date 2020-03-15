@@ -25,28 +25,36 @@ namespace ThousandSchnapsen.Common.Tests.States
             new CardsSet()
         };
 
+        private readonly CardsSet[] _playersUsedCards =
+        {
+            new CardsSet(),
+            new CardsSet(),
+            new CardsSet(),
+            new CardsSet()
+        };
+
         [Fact]
         public void PerformAction_EmptyStockAndPlayerChecks_MoveCardAndAddNewTrump()
         {
-            var state = new GameState(DealerId, NextPlayerId, _playersCards, new (int PlayerId, Card Card)[] { },
+            var state = new GameState(DealerId, NextPlayerId, _playersCards, _playersUsedCards, new (int PlayerId, Card Card)[] { },
                 new Color[] { });
             var card = new Card(Rank.Queen, Color.Clubs);
             var action = new Action(NextPlayerId, card);
             var expectedStock = new[] {(PlayerId: NextPlayerId, Card: card)};
             var expectedPlayerCards = new CardsSet(new[] {new Card(Rank.King, Color.Clubs)});
 
-            state.PerformAction(action);
+            var resultState = state.PerformAction(action);
 
-            Assert.Equal(expectedStock, state.Stock);
-            Assert.Equal(Color.Clubs, state.Trump);
-            Assert.Equal(expectedPlayerCards, state.PlayersCards[NextPlayerId]);
-            Assert.Equal(60, state.PlayersPoints[NextPlayerId]);
+            Assert.Equal(expectedStock, resultState.Stock);
+            Assert.Equal(Color.Clubs, resultState.Trump);
+            Assert.Equal(expectedPlayerCards, resultState.PlayersCards[NextPlayerId]);
+            Assert.Equal(60, resultState.PlayersPoints[NextPlayerId]);
         }
 
         [Fact]
         public void PerformAction_OneCardOnStock_MoveCard()
         {
-            var state = new GameState(DealerId, NextPlayerId, _playersCards,
+            var state = new GameState(DealerId, NextPlayerId, _playersCards, _playersUsedCards,
                 new[] {(PlayerId: NextPlayerId - 1, Card: new Card(Rank.Jack, Color.Clubs))},
                 new Color[] { });
             var card = new Card(Rank.Queen, Color.Clubs);
@@ -58,10 +66,10 @@ namespace ThousandSchnapsen.Common.Tests.States
             };
             var expectedPlayerCards = new CardsSet(new[] {new Card(Rank.King, Color.Clubs)});
 
-            state.PerformAction(action);
+            var resultState = state.PerformAction(action);
 
-            Assert.Equal(expectedStock, state.Stock);
-            Assert.Equal(expectedPlayerCards, state.PlayersCards[NextPlayerId]);
+            Assert.Equal(expectedStock, resultState.Stock);
+            Assert.Equal(expectedPlayerCards, resultState.PlayersCards[NextPlayerId]);
         }
 
         [Fact]
@@ -72,7 +80,7 @@ namespace ThousandSchnapsen.Common.Tests.States
                 (PlayerId: 3, Card: new Card(Rank.Jack, Color.Clubs)),
                 (PlayerId: 0, Card: new Card(Rank.Ace, Color.Hearts))
             };
-            var state = new GameState(DealerId, NextPlayerId, _playersCards, stock,
+            var state = new GameState(DealerId, NextPlayerId, _playersCards, _playersUsedCards, stock,
                 new Color[] { });
             var card = new Card(Rank.Queen, Color.Clubs);
             var action = new Action(NextPlayerId, card);
@@ -84,11 +92,11 @@ namespace ThousandSchnapsen.Common.Tests.States
             };
             var expectedPlayerCards = new CardsSet(new[] {new Card(Rank.King, Color.Clubs)});
 
-            state.PerformAction(action);
+            var resultState = state.PerformAction(action);
 
-            Assert.Equal(expectedStock, state.Stock);
-            Assert.Equal(expectedPlayerCards, state.PlayersCards[NextPlayerId]);
-            Assert.Equal(new[] {0, 16, 0, 0}, state.PlayersPoints);
+            Assert.Equal(expectedStock, resultState.Stock);
+            Assert.Equal(expectedPlayerCards, resultState.PlayersCards[NextPlayerId]);
+            Assert.Equal(new[] {0, 16, 0, 0}, resultState.PlayersPoints);
         }
 
         [Fact]
@@ -99,7 +107,7 @@ namespace ThousandSchnapsen.Common.Tests.States
                 (PlayerId: 3, Card: new Card(Rank.Jack, Color.Clubs)),
                 (PlayerId: 0, Card: new Card(Rank.Ace, Color.Hearts))
             };
-            var state = new GameState(DealerId, NextPlayerId, _playersCards, stock,
+            var state = new GameState(DealerId, NextPlayerId, _playersCards, _playersUsedCards, stock,
                 new[] {Color.Hearts});
             var card = new Card(Rank.Queen, Color.Clubs);
             var action = new Action(NextPlayerId, card);
@@ -111,17 +119,17 @@ namespace ThousandSchnapsen.Common.Tests.States
             };
             var expectedPlayerCards = new CardsSet(new[] {new Card(Rank.King, Color.Clubs)});
 
-            state.PerformAction(action);
+            var resultState = state.PerformAction(action);
 
-            Assert.Equal(expectedStock, state.Stock);
-            Assert.Equal(expectedPlayerCards, state.PlayersCards[NextPlayerId]);
-            Assert.Equal(new[] {16, 0, 0, 0}, state.PlayersPoints);
+            Assert.Equal(expectedStock, resultState.Stock);
+            Assert.Equal(expectedPlayerCards, resultState.PlayersCards[NextPlayerId]);
+            Assert.Equal(new[] {16, 0, 0, 0}, resultState.PlayersPoints);
         }
 
         [Fact]
         public void PerformAction_InvalidPlayerId_ThrowException()
         {
-            var state = new GameState(DealerId, NextPlayerId, _playersCards, new (int PlayerId, Card Card)[] { },
+            var state = new GameState(DealerId, NextPlayerId, _playersCards, _playersUsedCards, new (int PlayerId, Card Card)[] { },
                 new Color[] { });
             var card = new Card(Rank.Queen, Color.Clubs);
             var action = new Action(DealerId, card);

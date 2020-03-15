@@ -42,15 +42,15 @@ namespace ThousandSchnapsen.GameMaster
             ILogger logger = new Logger();
             IGameState gameState = new GameState(dealerId);
             var gameTree = new Node(gameState);
-            gameTree.Expand();
-            // logger.Log(gameState);
-            // while (!gameState.GameFinished)
-            // {
-            //     Thread.Sleep(500);
-            //     var action = agents[gameState.NextPlayerId].GetAction(gameState.GetPlayerState(gameState.NextPlayerId));
-            //     gameState.PerformAction(action);
-            //     logger.Log(gameState);
-            // }
+            //gameTree.Expand();
+            logger.Log(gameState);
+            while (!gameState.GameFinished)
+            {
+                Thread.Sleep(500);
+                var action = agents[gameState.NextPlayerId].GetAction(gameState.GetPlayerState(gameState.NextPlayerId));
+                gameState = gameState.PerformAction(action);
+                logger.Log(gameState);
+            }
         }
 
         private static void PerformTest(IAgent[] agents, int dealerId, int examinatedPlayerId = 2)
