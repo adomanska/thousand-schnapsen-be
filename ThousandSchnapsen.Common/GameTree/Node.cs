@@ -13,7 +13,7 @@ namespace ThousandSchnapsen.Common.GameTree
         public Node(IGameState gameState) =>
             _gameState = gameState;
 
-            public int[] Expand()
+        public int[] Expand()
         {
             var availableActions = _gameState.GetAvailableActions();
             if (availableActions.Length == 0 || _gameState.GameFinished)

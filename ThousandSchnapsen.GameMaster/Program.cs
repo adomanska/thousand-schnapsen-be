@@ -42,7 +42,11 @@ namespace ThousandSchnapsen.GameMaster
             ILogger logger = new Logger();
             IGameState gameState = new GameState(dealerId);
             var gameTree = new Node(gameState);
-            //gameTree.Expand();
+            var watch = System.Diagnostics.Stopwatch.StartNew();
+            gameTree.Expand();
+            watch.Stop();
+            var elapsedMs = watch.ElapsedMilliseconds;
+            Console.WriteLine($"Elapsed time: {elapsedMs}");
             logger.Log(gameState);
             while (!gameState.GameFinished)
             {

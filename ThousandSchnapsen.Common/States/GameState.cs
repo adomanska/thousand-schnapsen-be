@@ -38,8 +38,10 @@ namespace ThousandSchnapsen.Common.States
 
         public (int PlayerId, Card Card)[] Stock { get; } = { };
         public CardsSet[] PlayersCards { get; }
+
         public CardsSet[] PlayersUsedCards { get; } =
             new CardsSet[Constants.PlayersCount].Select(item => new CardsSet()).ToArray();
+
         public int[] PlayersPoints { get; } = new int[Constants.PlayersCount];
         public Color[] TrumpsHistory { get; } = { };
         public Color? Trump => TrumpsHistory.Length > 0 ? TrumpsHistory.Last() : (Color?) null;
@@ -59,7 +61,7 @@ namespace ThousandSchnapsen.Common.States
                 Stock = Stock,
                 PlayersUsedCards = PlayersUsedCards.Select(cs => cs.Clone()).ToArray(),
                 PlayersPoints = (int[]) PlayersPoints.Clone(),
-                TrumpsHistory = TrumpsHistory,
+                TrumpsHistory = (Color[]) TrumpsHistory.Clone(),
                 Cards = PlayersCards[playerId].Clone(),
                 PlayerId = playerId
             };
@@ -89,7 +91,7 @@ namespace ThousandSchnapsen.Common.States
             var playersPoints = (int[]) PlayersPoints.Clone();
             int nextPlayerId;
             Color[] trumpsHistory;
-            
+
             switch (stock.Length)
             {
                 case 1:
@@ -106,7 +108,8 @@ namespace ThousandSchnapsen.Common.States
                     break;
             }
 
-            return new GameState(DealerId, nextPlayerId, playersCards, playersUsedCards, stock, trumpsHistory, playersPoints);
+            return new GameState(DealerId, nextPlayerId, playersCards, playersUsedCards, stock, trumpsHistory,
+                playersPoints);
         }
 
         private ((int PlayerId, Card Card)[], CardsSet[], CardsSet[]) MoveCard(int playerId, Card card)
@@ -137,7 +140,7 @@ namespace ThousandSchnapsen.Common.States
         private Color[] CheckTrump(int playerId, Card card, int[] playersPoints)
         {
             if (!card.IsPartOfMarriage || card.SecondMarriagePart.HasValue &&
-                !PlayersCards[playerId].Contains(card.SecondMarriagePart.Value)) 
+                !PlayersCards[playerId].Contains(card.SecondMarriagePart.Value))
                 return (Color[]) TrumpsHistory.Clone();
             playersPoints[NextPlayerId] += card.Color.GetPoints();
             var trumpsHistory = new Color[TrumpsHistory.Length + 1];
