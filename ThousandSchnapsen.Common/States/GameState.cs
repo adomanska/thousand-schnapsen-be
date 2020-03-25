@@ -67,6 +67,9 @@ namespace ThousandSchnapsen.Common.States
             };
         }
 
+        public PlayerState GetNextPlayerState() =>
+            GetPlayerState(NextPlayerId);
+
         public Action[] GetAvailableActions()
         {
             var availableCards = PlayersCards[NextPlayerId];
