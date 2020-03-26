@@ -27,14 +27,13 @@ namespace ThousandSchnapsen.GameMaster
                 new RandomAgent(2),
                 new RandomAgent(3)
             };
-            
+
             PerformSimulation(agentsWithFixed, 1);
-            
+
             // PerformTest(agentsWithFixed, 1);
             // PerformTest(agentsWithFixed, 0);
             // PerformTest(randomAgents, 1);
             // PerformTest(randomAgents, 0);
-
         }
 
         private static void PerformSimulation(IAgent[] agents, int dealerId)
@@ -66,14 +65,15 @@ namespace ThousandSchnapsen.GameMaster
                 IGameState gameState = new GameState(dealerId);
                 while (!gameState.GameFinished)
                 {
-                    var action = agents[gameState.NextPlayerId].GetAction(gameState.GetPlayerState(gameState.NextPlayerId));
+                    var action = agents[gameState.NextPlayerId]
+                        .GetAction(gameState.GetPlayerState(gameState.NextPlayerId));
                     gameState.PerformAction(action);
                 }
 
                 if (gameState.PlayersPoints[examinatedPlayerId] == gameState.PlayersPoints.Max())
                     wins += 1;
             }
-            
+
             Console.WriteLine($"Result: {wins}/{n}");
         }
     }

@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace ThousandSchnapsen.Common.Commons
 {
     public struct Card
@@ -11,10 +13,11 @@ namespace ThousandSchnapsen.Common.Commons
         }
 
         public int CardId { get; }
-        public Color Color => (Color) (CardId / Constants.CardsInColorCount);
-        public Rank Rank => (Rank) (CardId % Constants.CardsInColorCount);
-        public bool IsPartOfMarriage => Rank == Rank.Queen || Rank == Rank.King;
+        [JsonIgnore] public Color Color => (Color) (CardId / Constants.CardsInColorCount);
+        [JsonIgnore] public Rank Rank => (Rank) (CardId % Constants.CardsInColorCount);
+        [JsonIgnore] public bool IsPartOfMarriage => Rank == Rank.Queen || Rank == Rank.King;
 
+        [JsonIgnore]
         public Card? SecondMarriagePart
         {
             get

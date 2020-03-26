@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using ThousandSchnapsen.Common.Commons;
 
 namespace ThousandSchnapsen.Common.Interfaces

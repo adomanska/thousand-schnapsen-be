@@ -36,11 +36,11 @@ namespace ThousandSchnapsen.Common.Tests.States
         [Fact]
         public void PerformAction_EmptyStockAndPlayerChecks_MoveCardAndAddNewTrump()
         {
-            var state = new GameState(DealerId, NextPlayerId, _playersCards, _playersUsedCards, new (int PlayerId, Card Card)[] { },
+            var state = new GameState(DealerId, NextPlayerId, _playersCards, _playersUsedCards, new StockItem[] { },
                 new Color[] { });
             var card = new Card(Rank.Queen, Color.Clubs);
             var action = new Action(NextPlayerId, card);
-            var expectedStock = new[] {(PlayerId: NextPlayerId, Card: card)};
+            var expectedStock = new[] {new StockItem(NextPlayerId, card)};
             var expectedPlayerCards = new CardsSet(new[] {new Card(Rank.King, Color.Clubs)});
 
             var resultState = state.PerformAction(action);
@@ -55,14 +55,14 @@ namespace ThousandSchnapsen.Common.Tests.States
         public void PerformAction_OneCardOnStock_MoveCard()
         {
             var state = new GameState(DealerId, NextPlayerId, _playersCards, _playersUsedCards,
-                new[] {(PlayerId: NextPlayerId - 1, Card: new Card(Rank.Jack, Color.Clubs))},
+                new[] {new StockItem(NextPlayerId - 1, new Card(Rank.Jack, Color.Clubs))},
                 new Color[] { });
             var card = new Card(Rank.Queen, Color.Clubs);
             var action = new Action(NextPlayerId, card);
             var expectedStock = new[]
             {
-                (PlayerId: NextPlayerId - 1, Card: new Card(Rank.Jack, Color.Clubs)),
-                (PlayerId: NextPlayerId, Card: card)
+                new StockItem(NextPlayerId - 1, new Card(Rank.Jack, Color.Clubs)),
+                new StockItem(NextPlayerId, card)
             };
             var expectedPlayerCards = new CardsSet(new[] {new Card(Rank.King, Color.Clubs)});
 
@@ -77,8 +77,8 @@ namespace ThousandSchnapsen.Common.Tests.States
         {
             var stock = new[]
             {
-                (PlayerId: 3, Card: new Card(Rank.Jack, Color.Clubs)),
-                (PlayerId: 0, Card: new Card(Rank.Ace, Color.Hearts))
+                new StockItem(3, new Card(Rank.Jack, Color.Clubs)),
+                new StockItem(0, new Card(Rank.Ace, Color.Hearts))
             };
             var state = new GameState(DealerId, NextPlayerId, _playersCards, _playersUsedCards, stock,
                 new Color[] { });
@@ -86,9 +86,9 @@ namespace ThousandSchnapsen.Common.Tests.States
             var action = new Action(NextPlayerId, card);
             var expectedStock = new[]
             {
-                (PlayerId: 3, Card: new Card(Rank.Jack, Color.Clubs)),
-                (PlayerId: 0, Card: new Card(Rank.Ace, Color.Hearts)),
-                (PlayerId: NextPlayerId, Card: card)
+                new StockItem(3, new Card(Rank.Jack, Color.Clubs)),
+                new StockItem(0, new Card(Rank.Ace, Color.Hearts)),
+                new StockItem(NextPlayerId, card)
             };
             var expectedPlayerCards = new CardsSet(new[] {new Card(Rank.King, Color.Clubs)});
 
@@ -104,8 +104,8 @@ namespace ThousandSchnapsen.Common.Tests.States
         {
             var stock = new[]
             {
-                (PlayerId: 3, Card: new Card(Rank.Jack, Color.Clubs)),
-                (PlayerId: 0, Card: new Card(Rank.Ace, Color.Hearts))
+                new StockItem(3, new Card(Rank.Jack, Color.Clubs)),
+                new StockItem(0, new Card(Rank.Ace, Color.Hearts))
             };
             var state = new GameState(DealerId, NextPlayerId, _playersCards, _playersUsedCards, stock,
                 new[] {Color.Hearts});
@@ -113,9 +113,9 @@ namespace ThousandSchnapsen.Common.Tests.States
             var action = new Action(NextPlayerId, card);
             var expectedStock = new[]
             {
-                (PlayerId: 3, Card: new Card(Rank.Jack, Color.Clubs)),
-                (PlayerId: 0, Card: new Card(Rank.Ace, Color.Hearts)),
-                (PlayerId: NextPlayerId, Card: card)
+                new StockItem(3, new Card(Rank.Jack, Color.Clubs)),
+                new StockItem(0, new Card(Rank.Ace, Color.Hearts)),
+                new StockItem(NextPlayerId, card)
             };
             var expectedPlayerCards = new CardsSet(new[] {new Card(Rank.King, Color.Clubs)});
 
@@ -129,7 +129,7 @@ namespace ThousandSchnapsen.Common.Tests.States
         [Fact]
         public void PerformAction_InvalidPlayerId_ThrowException()
         {
-            var state = new GameState(DealerId, NextPlayerId, _playersCards, _playersUsedCards, new (int PlayerId, Card Card)[] { },
+            var state = new GameState(DealerId, NextPlayerId, _playersCards, _playersUsedCards, new StockItem[] { },
                 new Color[] { });
             var card = new Card(Rank.Queen, Color.Clubs);
             var action = new Action(DealerId, card);

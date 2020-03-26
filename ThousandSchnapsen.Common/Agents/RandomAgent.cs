@@ -21,8 +21,9 @@ namespace ThousandSchnapsen.Common.Agents
                 var stockColorCards = CardsSet.Color(playerState.Stock.First().Card.Color);
                 var trumpColorCards = CardsSet.Color(playerState.Trump);
                 if (!(availableCards & stockColorCards).IsEmpty)
-                    availableCards &= (stockColorCards | trumpColorCards);   
+                    availableCards &= (stockColorCards | trumpColorCards);
             }
+
             var random = new Random();
             return new Action(_id, availableCards.GetCards().ElementAt(random.Next(availableCards.Count)));
         }

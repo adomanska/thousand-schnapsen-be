@@ -24,7 +24,7 @@ namespace ThousandSchnapsen.Common.States
         }
 
         public GameState(int dealerId, int nextPlayerId, CardsSet[] playersCards, CardsSet[] playersUsedCards,
-            (int PlayerId, Card card)[] stock, Color[] trumpsHistory, int[] playersPoints = null)
+            StockItem[] stock, Color[] trumpsHistory, int[] playersPoints = null)
         {
             DealerId = dealerId;
             NextPlayerId = nextPlayerId;
@@ -36,7 +36,7 @@ namespace ThousandSchnapsen.Common.States
                 PlayersPoints = playersPoints;
         }
 
-        public (int PlayerId, Card Card)[] Stock { get; } = { };
+        public StockItem[] Stock { get; } = { };
         public CardsSet[] PlayersCards { get; }
 
         public CardsSet[] PlayersUsedCards { get; } =
@@ -115,7 +115,7 @@ namespace ThousandSchnapsen.Common.States
                 playersPoints);
         }
 
-        private ((int PlayerId, Card Card)[], CardsSet[], CardsSet[]) MoveCard(int playerId, Card card)
+        private (StockItem[], CardsSet[], CardsSet[]) MoveCard(int playerId, Card card)
         {
             var playersCards = PlayersCards
                 .Select(cardsSet => cardsSet.Clone())
@@ -123,15 +123,15 @@ namespace ThousandSchnapsen.Common.States
             var playersUsedCards = PlayersUsedCards
                 .Select(cardsSet => cardsSet.Clone())
                 .ToArray();
-            (int, Card)[] stock;
+            StockItem[] stock;
 
             if (Stock.Length >= Constants.PlayersCount - 1)
-                stock = new[] {(playerId, card)};
+                stock = new[] {new StockItem(playerId, card)};
             else
             {
-                stock = new (int, Card)[Stock.Length + 1];
+                stock = new StockItem[Stock.Length + 1];
                 Array.Copy(Stock, stock, Stock.Length);
-                stock[Stock.Length] = (playerId, card);
+                stock[Stock.Length] = new StockItem(playerId, card);
             }
 
             playersCards[playerId].RemoveCard(card);
@@ -160,7 +160,7 @@ namespace ThousandSchnapsen.Common.States
             return nextPlayerId;
         }
 
-        private int EvaluateTurn(int[] playersPoints, (int PlayerId, Card Card)[] stock)
+        private int EvaluateTurn(int[] playersPoints, StockItem[] stock)
         {
             var firstColor = stock.First().Card.Color;
             var points = stock.Sum(stockItem => stockItem.Card.Rank.GetPoints());

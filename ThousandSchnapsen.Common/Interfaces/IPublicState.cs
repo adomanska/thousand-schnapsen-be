@@ -1,10 +1,11 @@
+using System.Text.Json.Serialization;
 using ThousandSchnapsen.Common.Commons;
 
 namespace ThousandSchnapsen.Common.Interfaces
 {
     public interface IPublicState
     {
-        (int PlayerId, Card Card)[] Stock { get; }
+        StockItem[] Stock { get; }
         CardsSet[] PlayersUsedCards { get; }
         int[] PlayersPoints { get; }
         Color[] TrumpsHistory { get; }
