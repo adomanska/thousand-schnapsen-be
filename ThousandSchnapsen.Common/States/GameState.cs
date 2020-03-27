@@ -1,8 +1,6 @@
-using System;
 using System.Linq;
 using MoreLinq;
 using ThousandSchnapsen.Common.Commons;
-using Action = ThousandSchnapsen.Common.Commons.Action;
 
 namespace ThousandSchnapsen.Common.States
 {
@@ -62,24 +60,28 @@ namespace ThousandSchnapsen.Common.States
         public Action[] GetAvailableActions()
         {
             var availableCards = PlayersCards[NextPlayerId];
-            if (Stock.Length <= 0)
-                return availableCards.GetCardsIds().Select(cardId => new Action(NextPlayerId, new Card(cardId)))
-                    .ToArray();
-            var stockColorCards = CardsSet.Color(Stock.First().Card.Color);
-            var trumpColorCards = CardsSet.Color(Trump);
-            if (!(availableCards & stockColorCards).IsEmpty)
-                availableCards &= (stockColorCards | trumpColorCards);
-            return availableCards.GetCardsIds().Select(cardId => new Action(NextPlayerId, new Card(cardId))).ToArray();
+            if (Stock.Length > 0)
+            {
+                var stockColorCards = CardsSet.Color(Stock.First().Card.Color);
+                var trumpColorCards = CardsSet.Color(Trump);
+                if (!(availableCards & stockColorCards).IsEmpty)
+                    availableCards &= (stockColorCards | trumpColorCards);
+            }
+
+            return availableCards.GetCardsIds()
+                .Select(cardId => new Action()
+                {
+                    PlayerId = NextPlayerId,
+                    Card = new Card(cardId)
+                }).ToArray();
         }
 
         public GameState PerformAction(Action action)
         {
-            var (playerId, card) = action;
+            if (action.PlayerId != NextPlayerId)
+                throw new System.InvalidOperationException();
 
-            if (playerId != NextPlayerId)
-                throw new InvalidOperationException();
-
-            var (stock, playersCards, playersUsedCards) = MoveCard(playerId, card);
+            var (stock, playersCards, playersUsedCards) = MoveCard(action);
             var playersPoints = (int[]) PlayersPoints.Clone();
             int nextPlayerId;
             Color[] trumpsHistory;
@@ -87,11 +89,11 @@ namespace ThousandSchnapsen.Common.States
             switch (stock.Length)
             {
                 case 1:
-                    trumpsHistory = CheckTrump(playerId, card, playersPoints);
-                    nextPlayerId = GetNextPlayerId(playerId);
+                    trumpsHistory = CheckTrump(action, playersPoints);
+                    nextPlayerId = GetNextPlayerId(action.PlayerId);
                     break;
                 case 2:
-                    nextPlayerId = GetNextPlayerId(playerId);
+                    nextPlayerId = GetNextPlayerId(action.PlayerId);
                     trumpsHistory = (Color[]) TrumpsHistory.Clone();
                     break;
                 default:
@@ -104,7 +106,7 @@ namespace ThousandSchnapsen.Common.States
                 playersPoints);
         }
 
-        private (StockItem[], CardsSet[], CardsSet[]) MoveCard(int playerId, Card card)
+        private (StockItem[], CardsSet[], CardsSet[]) MoveCard(Action action)
         {
             var playersCards = PlayersCards
                 .Select(cardsSet => cardsSet.Clone())
@@ -113,31 +115,32 @@ namespace ThousandSchnapsen.Common.States
                 .Select(cardsSet => cardsSet.Clone())
                 .ToArray();
             StockItem[] stock;
+            var stockItem = new StockItem(action.PlayerId, action.Card);
 
             if (Stock.Length >= Constants.PlayersCount - 1)
-                stock = new[] {new StockItem(playerId, card)};
+                stock = new[] {stockItem};
             else
             {
                 stock = new StockItem[Stock.Length + 1];
-                Array.Copy(Stock, stock, Stock.Length);
-                stock[Stock.Length] = new StockItem(playerId, card);
+                System.Array.Copy(Stock, stock, Stock.Length);
+                stock[Stock.Length] = stockItem;
             }
 
-            playersCards[playerId].RemoveCard(card);
-            playersUsedCards[playerId].AddCard(card);
+            playersCards[action.PlayerId].RemoveCard(action.Card);
+            playersUsedCards[action.PlayerId].AddCard(action.Card);
 
             return (stock, playersCards, playersUsedCards);
         }
 
-        private Color[] CheckTrump(int playerId, Card card, int[] playersPoints)
+        private Color[] CheckTrump(Action action, int[] playersPoints)
         {
-            if (!card.IsPartOfMarriage || card.SecondMarriagePart.HasValue &&
-                !PlayersCards[playerId].Contains(card.SecondMarriagePart.Value))
+            if (!action.Card.IsPartOfMarriage || action.Card.SecondMarriagePart.HasValue &&
+                !PlayersCards[action.PlayerId].Contains(action.Card.SecondMarriagePart.Value))
                 return (Color[]) TrumpsHistory.Clone();
-            playersPoints[NextPlayerId] += card.Color.GetPoints();
+            playersPoints[NextPlayerId] += action.Card.Color.GetPoints();
             var trumpsHistory = new Color[TrumpsHistory.Length + 1];
-            Array.Copy(TrumpsHistory, trumpsHistory, TrumpsHistory.Length);
-            trumpsHistory[TrumpsHistory.Length] = card.Color;
+            System.Array.Copy(TrumpsHistory, trumpsHistory, TrumpsHistory.Length);
+            trumpsHistory[TrumpsHistory.Length] = action.Card.Color;
             return trumpsHistory;
         }
 

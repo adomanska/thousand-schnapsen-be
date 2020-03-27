@@ -1,11 +1,9 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using MoreLinq;
 using ThousandSchnapsen.Common.Commons;
 using ThousandSchnapsen.Common.Interfaces;
 using ThousandSchnapsen.Common.States;
-using Action = ThousandSchnapsen.Common.Commons.Action;
 
 namespace ThousandSchnapsen.Common.Agents
 {
@@ -18,14 +16,17 @@ namespace ThousandSchnapsen.Common.Agents
             _id = id;
 
         public Action GetAction(PlayerState playerState) =>
-            new Action(_id, SelectCard(playerState));
+            new Action()
+            {
+                PlayerId = _id,
+                Card = SelectCard(playerState)
+            };
 
         private Card SelectCard(PlayerState playerState)
         {
-            if (playerState.Stock.Length == 0 || playerState.Stock.Length == 3)
+            if (playerState.Stock.Length == 0 || playerState.Stock.Length == Constants.PlayersCount - 1)
                 return SelectFirstCard(playerState);
-            else
-                return SelectNextCard(playerState);
+            return SelectNextCard(playerState);
         }
 
         private Card SelectFirstCard(PlayerState playerState)
@@ -49,21 +50,28 @@ namespace ThousandSchnapsen.Common.Agents
                 return new Card(Rank.Queen, trump);
             }
 
-            var maxInColors = Constants.Colors.Select(color =>
-            {
-                var usedCards = playerState.PlayersUsedCards.Aggregate((acc, cardsSet) => acc | cardsSet);
-                var highestOppCard = (CardsSet.Deck() - usedCards - playerState.Cards).GetHighestInColor(color);
-                var highestPlayerCard = playerState.Cards.GetHighestInColor(color);
-                if (highestPlayerCard.HasValue &&
-                    (!highestOppCard.HasValue || highestPlayerCard.Value.Rank > highestOppCard.Value.Rank))
-                    return (Card: highestPlayerCard.Value, (playerState.Cards & CardsSet.Color(color)).Count);
-                return (Card: (Card?) null, Count: 0);
-            }).Where(item => item.Count > 0);
+            var maxInColors = Constants.Colors
+                .Select(color =>
+                {
+                    var usedCards = playerState.PlayersUsedCards.Aggregate((acc, cardsSet) => acc | cardsSet);
+                    var highestOppCard = (CardsSet.Deck() - usedCards - playerState.Cards).GetHighestInColor(color);
+                    var highestPlayerCard = playerState.Cards.GetHighestInColor(color);
+                    if (highestPlayerCard.HasValue &&
+                        (!highestOppCard.HasValue || highestPlayerCard.Value.Rank > highestOppCard.Value.Rank))
+                        return (Card: highestPlayerCard.Value, (playerState.Cards & CardsSet.Color(color)).Count);
+                    return (Card: (Card?) null, Count: 0);
+                })
+                .Where(item => item.Count > 0)
+                .ToArray();
 
             if (maxInColors.Any())
-                return maxInColors.MaxBy(item => item.Count).First().Card.Value;
+            {
+                var card = maxInColors.MaxBy(item => item.Count).First().Card;
+                if (card != null)
+                    return card.Value;
+            }
 
-            var random = new Random();
+            var random = new System.Random();
             return playerState.Cards.GetCards().ElementAt(random.Next(playerState.Cards.Count));
         }
 
@@ -73,19 +81,20 @@ namespace ThousandSchnapsen.Common.Agents
             var stockColorCards = CardsSet.Color(stockColor);
             var trumpColorCards = CardsSet.Color(playerState.Trump);
             var availableCards = playerState.Cards;
-            if (!(availableCards & stockColorCards).IsEmpty)
-            {
-                availableCards &= (stockColorCards | trumpColorCards);
-                var maxInStock = playerState.Stock
-                    .Select(item => item.Card.GetValue(stockColor, playerState.Trump))
-                    .Max();
-                var greaterCards = availableCards.GetCards()
-                    .Where(card => card.GetValue(stockColor, playerState.Trump) > maxInStock);
-                if (greaterCards.Any())
-                    return greaterCards.MinBy(card => card.GetValue(stockColor, playerState.Trump)).First();
-            }
 
-            return availableCards.GetCards().MinBy(card => card.GetValue(stockColor, playerState.Trump)).First();
+            if ((availableCards & stockColorCards).IsEmpty)
+                return availableCards.GetCards().MinBy(card => card.GetValue(stockColor, playerState.Trump)).First();
+
+            availableCards &= (stockColorCards | trumpColorCards);
+            var maxInStock = playerState.Stock
+                .Select(item => item.Card.GetValue(stockColor, playerState.Trump))
+                .Max();
+            var greaterCards = availableCards.GetCards()
+                .Where(card => card.GetValue(stockColor, playerState.Trump) > maxInStock)
+                .ToArray();
+            return greaterCards.Any()
+                ? greaterCards.MinBy(card => card.GetValue(stockColor, playerState.Trump)).First()
+                : availableCards.GetCards().MinBy(card => card.GetValue(stockColor, playerState.Trump)).First();
         }
     }
 }

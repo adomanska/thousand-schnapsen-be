@@ -1,15 +1,13 @@
-using System;
 using System.Linq;
 using ThousandSchnapsen.Common.Commons;
 using ThousandSchnapsen.Common.Interfaces;
 using ThousandSchnapsen.Common.States;
-using Action = ThousandSchnapsen.Common.Commons.Action;
 
 namespace ThousandSchnapsen.Common.Agents
 {
     public class RandomAgent : IAgent
     {
-        private int _id;
+        private readonly int _id;
 
         public RandomAgent(int id) =>
             _id = id;
@@ -25,8 +23,15 @@ namespace ThousandSchnapsen.Common.Agents
                     availableCards &= (stockColorCards | trumpColorCards);
             }
 
-            var random = new Random();
-            return new Action(_id, availableCards.GetCards().ElementAt(random.Next(availableCards.Count)));
+            var random = new System.Random();
+            var card = availableCards
+                .GetCards()
+                .ElementAt(random.Next(availableCards.Count));
+            return new Action()
+            {
+                PlayerId = _id,
+                Card = card
+            };
         }
     }
 }

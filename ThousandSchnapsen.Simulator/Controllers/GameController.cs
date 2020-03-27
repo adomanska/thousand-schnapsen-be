@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using ThousandSchnapsen.Common.Agents;
@@ -22,7 +23,7 @@ namespace ThousandSchnapsen.Simulator.Controllers
     {
         private const int DealerId = 0;
 
-        private IMemoryCache _cache;
+        private readonly IMemoryCache _cache;
 
         public GameController(IMemoryCache cache) =>
             _cache = cache;
@@ -57,7 +58,11 @@ namespace ThousandSchnapsen.Simulator.Controllers
                 if (action.PlayerId != agentPlayerId)
                     return BadRequest("Invalid Player ID");
                 gameState = UpdateGameState(
-                    gameState.PerformAction(new Action(action.PlayerId, new Card(action.CardId))),
+                    gameState.PerformAction(new Action()
+                    {
+                        PlayerId = action.PlayerId,
+                        Card = new Card(action.CardId)
+                    }),
                     opponents,
                     agentPlayerId
                 );
@@ -72,7 +77,7 @@ namespace ThousandSchnapsen.Simulator.Controllers
             throw new System.Exception("Caching problem occured");
         }
 
-        private GameState UpdateGameState(GameState gameState, IAgent[] opponents, int playerId)
+        private GameState UpdateGameState(GameState gameState, IReadOnlyList<IAgent> opponents, int playerId)
         {
             while (gameState.NextPlayerId != playerId && !gameState.GameFinished)
                 gameState = gameState.PerformAction(

@@ -38,7 +38,14 @@ namespace ThousandSchnapsen.Common.Tests.States
         {
             var state = new GameState(DealerId, NextPlayerId, _playersCards, _playersUsedCards, new StockItem[] { },
                 new Color[] { });
-            var expected = PlayerCards.GetCards().Select(card => new Action(NextPlayerId, card)).ToArray();
+            var expected = PlayerCards.GetCards()
+                .Select(card => new Action()
+                    {
+                        PlayerId = NextPlayerId,
+                        Card = card
+                    }
+                )
+                .ToArray();
 
             var result = state.GetAvailableActions();
 
@@ -52,8 +59,16 @@ namespace ThousandSchnapsen.Common.Tests.States
                 new[] {new StockItem(1, new Card(Rank.King, Color.Clubs))}, new[] {Color.Hearts});
             var expected = new[]
             {
-                new Action(NextPlayerId, new Card(Rank.Jack, Color.Clubs)),
-                new Action(NextPlayerId, new Card(Rank.Nine, Color.Hearts)),
+                new Action()
+                {
+                    PlayerId = NextPlayerId,
+                    Card = new Card(Rank.Jack, Color.Clubs)
+                },
+                new Action()
+                {
+                    PlayerId = NextPlayerId,
+                    Card = new Card(Rank.Nine, Color.Hearts)
+                }
             };
 
             var result = state.GetAvailableActions();
@@ -66,7 +81,13 @@ namespace ThousandSchnapsen.Common.Tests.States
         {
             var state = new GameState(DealerId, NextPlayerId, _playersCards, _playersUsedCards,
                 new[] {new StockItem(1, new Card(Rank.King, Color.Spades))}, new Color[] { });
-            var expected = PlayerCards.GetCards().Select(card => new Action(NextPlayerId, card)).ToArray();
+            var expected = PlayerCards.GetCards()
+                .Select(card => new Action()
+                {
+                    PlayerId = NextPlayerId,
+                    Card = card
+                })
+                .ToArray();
 
             var result = state.GetAvailableActions();
 
