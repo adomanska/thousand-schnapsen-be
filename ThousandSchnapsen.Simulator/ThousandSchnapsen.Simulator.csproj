@@ -8,4 +8,8 @@
         <ProjectReference Include="..\ThousandSchnapsen.Common\ThousandSchnapsen.Common.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+        <Folder Include="Mappers" />
+    </ItemGroup>
+
 </Project>

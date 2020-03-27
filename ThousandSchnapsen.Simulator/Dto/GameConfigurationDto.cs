@@ -1,6 +1,6 @@
 namespace ThousandSchnapsen.Simulator.Dto
 {
-    public class GameConfiguration
+    public class GameConfigurationDto
     {
         public int PlayerNo { get; set; }
     }

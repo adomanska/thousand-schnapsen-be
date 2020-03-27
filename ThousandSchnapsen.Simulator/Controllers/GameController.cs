@@ -29,7 +29,7 @@ namespace ThousandSchnapsen.Simulator.Controllers
             _cache = cache;
 
         [HttpPost("reset")]
-        public ActionResult<PlayerState> Reset(GameConfiguration gameConfiguration)
+        public ActionResult<PlayerState> Reset(GameConfigurationDto gameConfiguration)
         {
             if (gameConfiguration.PlayerNo < 1 || gameConfiguration.PlayerNo > 3)
                 return BadRequest("PlayerNo should be in range from 1 to 3");
@@ -45,17 +45,17 @@ namespace ThousandSchnapsen.Simulator.Controllers
             _cache.Set(CacheKeys.Opponents, opponents);
             _cache.Set(CacheKeys.PlayerId, playerId);
 
-            return Ok(gameState.GetPlayerState(playerId));
+            return Ok(GetActionResult(gameState, playerId));
         }
 
         [HttpPost("step")]
-        public ActionResult<StepActionResult> Step(AgentAction action)
+        public ActionResult<ActionResultDto> Step(ActionDto action)
         {
-            if (_cache.TryGetValue(CacheKeys.PlayerId, out int agentPlayerId) &&
+            if (_cache.TryGetValue(CacheKeys.PlayerId, out int playerId) &&
                 _cache.TryGetValue(CacheKeys.Opponents, out IAgent[] opponents) &&
                 _cache.TryGetValue(CacheKeys.GameState, out GameState gameState))
             {
-                if (action.PlayerId != agentPlayerId)
+                if (action.PlayerId != playerId)
                     return BadRequest("Invalid Player ID");
                 gameState = UpdateGameState(
                     gameState.PerformAction(new Action()
@@ -64,14 +64,10 @@ namespace ThousandSchnapsen.Simulator.Controllers
                         Card = new Card(action.CardId)
                     }),
                     opponents,
-                    agentPlayerId
+                    playerId
                 );
                 _cache.Set(CacheKeys.GameState, gameState);
-                return Ok(new StepActionResult()
-                {
-                    Done = gameState.GameFinished,
-                    PlayerState = gameState.GetPlayerState(agentPlayerId)
-                });
+                return Ok(GetActionResult(gameState, playerId));
             }
 
             throw new System.Exception("Caching problem occured");
@@ -85,5 +81,19 @@ namespace ThousandSchnapsen.Simulator.Controllers
                 );
             return gameState;
         }
+
+        private ActionResultDto GetActionResult(GameState gameState, int playerId) =>
+            new ActionResultDto()
+            {
+                Done = gameState.GameFinished,
+                State = gameState.GetPlayerState(playerId),
+                Info = new InfoDto()
+                {
+                    AvailableCardsIds = gameState.NextPlayerId == playerId
+                        ? gameState.GetAvailableActions().Select(availableAction => availableAction.Card.CardId)
+                            .ToArray()
+                        : null
+                }
+            };
     }
 }
