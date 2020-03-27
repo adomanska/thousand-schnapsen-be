@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using ThousandSchnapsen.Common.Commons;
 using ThousandSchnapsen.Common.Interfaces;
+using ThousandSchnapsen.Common.States;
 using Action = ThousandSchnapsen.Common.Commons.Action;
 
 namespace ThousandSchnapsen.Common.Agents
@@ -13,7 +14,7 @@ namespace ThousandSchnapsen.Common.Agents
         public RandomAgent(int id) =>
             _id = id;
 
-        public Action GetAction(IPlayerState playerState)
+        public Action GetAction(PlayerState playerState)
         {
             var availableCards = playerState.Cards;
             if (playerState.Stock.Length > 0)

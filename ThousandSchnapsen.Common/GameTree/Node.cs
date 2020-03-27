@@ -1,18 +1,17 @@
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime;
 using MoreLinq.Extensions;
 using ThousandSchnapsen.Common.Commons;
-using ThousandSchnapsen.Common.Interfaces;
+using ThousandSchnapsen.Common.States;
 
 namespace ThousandSchnapsen.Common.GameTree
 {
     public class Node
     {
-        private readonly IGameState _gameState;
+        private readonly GameState _gameState;
         private Dictionary<Action, Node> _nextNodes;
 
-        public Node(IGameState gameState) =>
+        public Node(GameState gameState) =>
             _gameState = gameState;
 
         public int[] Expand()

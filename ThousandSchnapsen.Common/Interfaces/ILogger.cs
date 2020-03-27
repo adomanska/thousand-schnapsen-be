@@ -1,7 +1,9 @@
+using ThousandSchnapsen.Common.States;
+
 namespace ThousandSchnapsen.Common.Interfaces
 {
     public interface ILogger
     {
-        void Log(IGameState gameState);
+        void Log(GameState gameState);
     }
 }

@@ -3,6 +3,7 @@ using System.Linq;
 using System.Text;
 using ThousandSchnapsen.Common.Commons;
 using ThousandSchnapsen.Common.Interfaces;
+using ThousandSchnapsen.Common.States;
 
 namespace ThousandSchnapsen.Common.Loggers
 {
@@ -11,7 +12,7 @@ namespace ThousandSchnapsen.Common.Loggers
         public Logger() =>
             Console.OutputEncoding = Encoding.UTF8;
 
-        public void Log(IGameState gameState)
+        public void Log(GameState gameState)
         {
             Console.WriteLine(Utils.CreateTitle("GAME STATE", 42));
             LogStock(gameState);
@@ -20,7 +21,7 @@ namespace ThousandSchnapsen.Common.Loggers
             LogPlayersCards(gameState);
         }
 
-        private static void LogStock(IPublicState gameState)
+        private static void LogStock(GameState gameState)
         {
             Console.WriteLine("STOCK:");
             gameState.Stock
@@ -30,7 +31,7 @@ namespace ThousandSchnapsen.Common.Loggers
             Console.WriteLine();
         }
 
-        private static void LogResults(IPublicState gameState)
+        private static void LogResults(GameState gameState)
         {
             Console.WriteLine("RESULTS:");
             Console.WriteLine(
@@ -47,13 +48,13 @@ namespace ThousandSchnapsen.Common.Loggers
             Console.WriteLine();
         }
 
-        private static void LogTrump(IPublicState gameState)
+        private static void LogTrump(GameState gameState)
         {
             Console.WriteLine($"TRUMP: {gameState.Trump}");
             Console.WriteLine();
         }
 
-        private void LogPlayersCards(IGameState gameState)
+        private void LogPlayersCards(GameState gameState)
         {
             Console.WriteLine("PLAYERS CARDS:");
 

@@ -38,8 +38,8 @@ namespace ThousandSchnapsen.GameMaster
 
         private static void PerformSimulation(IAgent[] agents, int dealerId)
         {
-            ILogger logger = new Logger();
-            IGameState gameState = new GameState(dealerId);
+            var logger = new Logger();
+            var gameState = new GameState(dealerId);
             var gameTree = new Node(gameState);
             var watch = System.Diagnostics.Stopwatch.StartNew();
             gameTree.Expand();
@@ -62,7 +62,7 @@ namespace ThousandSchnapsen.GameMaster
             var wins = 0;
             for (var i = 0; i < n; i++)
             {
-                IGameState gameState = new GameState(dealerId);
+                var gameState = new GameState(dealerId);
                 while (!gameState.GameFinished)
                 {
                     var action = agents[gameState.NextPlayerId]

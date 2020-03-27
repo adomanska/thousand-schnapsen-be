@@ -2,12 +2,11 @@ using System;
 using System.Linq;
 using MoreLinq;
 using ThousandSchnapsen.Common.Commons;
-using ThousandSchnapsen.Common.Interfaces;
 using Action = ThousandSchnapsen.Common.Commons.Action;
 
 namespace ThousandSchnapsen.Common.States
 {
-    public class GameState : IGameState
+    public class GameState : PublicState
     {
         public GameState(int dealerId)
         {
@@ -36,17 +35,7 @@ namespace ThousandSchnapsen.Common.States
                 PlayersPoints = playersPoints;
         }
 
-        public StockItem[] Stock { get; } = { };
         public CardsSet[] PlayersCards { get; }
-
-        public CardsSet[] PlayersUsedCards { get; } =
-            new CardsSet[Constants.PlayersCount].Select(item => new CardsSet()).ToArray();
-
-        public int[] PlayersPoints { get; } = new int[Constants.PlayersCount];
-        public Color[] TrumpsHistory { get; } = { };
-        public Color? Trump => TrumpsHistory.Length > 0 ? TrumpsHistory.Last() : (Color?) null;
-        public int NextPlayerId { get; }
-        public int DealerId { get; }
 
         public bool GameFinished => PlayersCards
             .Select((playerCards, index) => index == DealerId || playerCards.IsEmpty)
@@ -83,7 +72,7 @@ namespace ThousandSchnapsen.Common.States
             return availableCards.GetCardsIds().Select(cardId => new Action(NextPlayerId, new Card(cardId))).ToArray();
         }
 
-        public IGameState PerformAction(Action action)
+        public GameState PerformAction(Action action)
         {
             var (playerId, card) = action;
 

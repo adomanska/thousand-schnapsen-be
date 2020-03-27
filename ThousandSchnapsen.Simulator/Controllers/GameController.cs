@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Caching.Memory;
 using ThousandSchnapsen.Common.Agents;
 using ThousandSchnapsen.Common.Commons;
 using ThousandSchnapsen.Common.Interfaces;
@@ -9,56 +9,76 @@ using ThousandSchnapsen.Simulator.Dto;
 
 namespace ThousandSchnapsen.Simulator.Controllers
 {
+    public static class CacheKeys
+    {
+        public static string GameState => "_GameState";
+        public static string Opponents => "_Opponents";
+        public static string PlayerId => "_PlayerId";
+    }
+
     [ApiController]
-    [Route("api")]
+    [Route("api/game")]
     public class GameController : ControllerBase
     {
         private const int DealerId = 0;
 
-        private readonly ILogger<GameController> _logger;
-        private IGameState _gameState;
-        private int _playerId;
-        private IAgent[] _opponents;
+        private IMemoryCache _cache;
 
-        public GameController(ILogger<GameController> logger) =>
-            _logger = logger;
+        public GameController(IMemoryCache cache) =>
+            _cache = cache;
 
         [HttpPost("reset")]
-        public ActionResult<IPlayerState> Reset(GameConfiguration gameConfiguration)
+        public ActionResult<PlayerState> Reset(GameConfiguration gameConfiguration)
         {
             if (gameConfiguration.PlayerNo < 1 || gameConfiguration.PlayerNo > 3)
                 return BadRequest("PlayerNo should be in range from 1 to 3");
-            _playerId = gameConfiguration.PlayerNo;
-            _gameState = new GameState(DealerId);
-            _opponents = Enumerable
+
+            var opponents = Enumerable
                 .Range(0, Constants.PlayersCount)
                 .Select(id => new FixedAgent(id))
                 .ToArray();
-            UpdateGameState();
-            return Ok(_gameState.GetPlayerState(_playerId));
+            var playerId = gameConfiguration.PlayerNo;
+            var gameState = UpdateGameState(new GameState(DealerId), opponents, playerId);
+
+            _cache.Set(CacheKeys.GameState, gameState);
+            _cache.Set(CacheKeys.Opponents, opponents);
+            _cache.Set(CacheKeys.PlayerId, playerId);
+
+            return Ok(gameState.GetPlayerState(playerId));
         }
 
         [HttpPost("step")]
-        public ActionResult<StepActionResult> Step(Action action)
+        public ActionResult<StepActionResult> Step(AgentAction action)
         {
-            var (playerId, card) = action;
-            if (playerId != _playerId)
-                return BadRequest("Invalid Player ID");
-            _gameState.PerformAction(action);
-            UpdateGameState();
-            return Ok(new StepActionResult()
+            if (_cache.TryGetValue(CacheKeys.PlayerId, out int agentPlayerId) &&
+                _cache.TryGetValue(CacheKeys.Opponents, out IAgent[] opponents) &&
+                _cache.TryGetValue(CacheKeys.GameState, out GameState gameState))
             {
-                Done = _gameState.GameFinished,
-                PlayerState = _gameState.GetPlayerState(_playerId)
-            });
+                if (action.PlayerId != agentPlayerId)
+                    return BadRequest("Invalid Player ID");
+                gameState = UpdateGameState(
+                    gameState.PerformAction(new Action(action.PlayerId, new Card(action.CardId))),
+                    opponents,
+                    agentPlayerId
+                );
+                _cache.Set(CacheKeys.GameState, gameState);
+                return Ok(new StepActionResult()
+                {
+                    Done = gameState.GameFinished,
+                    PlayerState = gameState.GetPlayerState(agentPlayerId)
+                });
+            }
+
+            throw new System.Exception("Caching problem occured");
         }
 
-        private void UpdateGameState()
+        private GameState UpdateGameState(GameState gameState, IAgent[] opponents, int playerId)
         {
-            while (_gameState.NextPlayerId != _playerId && !_gameState.GameFinished)
-                _gameState = _gameState.PerformAction(
-                    _opponents[_gameState.NextPlayerId].GetAction(_gameState.GetNextPlayerState())
+            while (gameState.NextPlayerId != playerId && !gameState.GameFinished)
+                gameState = gameState.PerformAction(
+                    opponents[gameState.NextPlayerId].GetAction(gameState.GetNextPlayerState())
                 );
+            return gameState;
         }
     }
 }

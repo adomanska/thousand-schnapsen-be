@@ -1,10 +1,10 @@
-using ThousandSchnapsen.Common.Interfaces;
+using ThousandSchnapsen.Common.States;
 
 namespace ThousandSchnapsen.Simulator.Dto
 {
     public class StepActionResult
     {
         public bool Done { get; set; }
-        public IPlayerState PlayerState { get; set; }
+        public PlayerState PlayerState { get; set; }
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using MoreLinq;
 using ThousandSchnapsen.Common.Commons;
 using ThousandSchnapsen.Common.Interfaces;
+using ThousandSchnapsen.Common.States;
 using Action = ThousandSchnapsen.Common.Commons.Action;
 
 namespace ThousandSchnapsen.Common.Agents
@@ -16,10 +17,10 @@ namespace ThousandSchnapsen.Common.Agents
         public FixedAgent(int id) =>
             _id = id;
 
-        public Action GetAction(IPlayerState playerState) =>
+        public Action GetAction(PlayerState playerState) =>
             new Action(_id, SelectCard(playerState));
 
-        private Card SelectCard(IPlayerState playerState)
+        private Card SelectCard(PlayerState playerState)
         {
             if (playerState.Stock.Length == 0 || playerState.Stock.Length == 3)
                 return SelectFirstCard(playerState);
@@ -27,7 +28,7 @@ namespace ThousandSchnapsen.Common.Agents
                 return SelectNextCard(playerState);
         }
 
-        private Card SelectFirstCard(IPlayerState playerState)
+        private Card SelectFirstCard(PlayerState playerState)
         {
             if (_trumps.Count > 0 && playerState.Trump == _trumps.Last())
             {
@@ -66,7 +67,7 @@ namespace ThousandSchnapsen.Common.Agents
             return playerState.Cards.GetCards().ElementAt(random.Next(playerState.Cards.Count));
         }
 
-        private Card SelectNextCard(IPlayerState playerState)
+        private Card SelectNextCard(PlayerState playerState)
         {
             var stockColor = playerState.Stock.First().Card.Color;
             var stockColorCards = CardsSet.Color(stockColor);
