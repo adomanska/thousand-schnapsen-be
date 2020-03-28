@@ -2,13 +2,7 @@ using ThousandSchnapsen.Common.Commons;
 
 namespace ThousandSchnapsen.Simulator.Dto
 {
-    public class StockItemDto
-    {
-        public int PlayerId { get; set; }
-        public int CardId { get; set; }
-    }
-
-    public class StateDto
+    public class PlayerStateDto
     {
         public StockItemDto[] Stock { get; set; }
         public int[] PlayersUsedCards { get; set; }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
-using System.Text.Json.Serialization;
 using MoreLinq;
 
 namespace ThousandSchnapsen.Common.Commons
@@ -36,9 +35,9 @@ namespace ThousandSchnapsen.Common.Commons
             }
         }
 
-        [JsonIgnore] public int Count { get; private set; }
+        public int Count { get; private set; }
 
-        [JsonIgnore] public bool IsEmpty => Code == 0;
+        public bool IsEmpty => Code == 0;
 
         public static CardsSet operator |(CardsSet cardSetA, CardsSet cardSetB) =>
             new CardsSet(cardSetA.Code | cardSetB.Code);

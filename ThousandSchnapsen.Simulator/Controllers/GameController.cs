@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using ThousandSchnapsen.Common.Agents;
@@ -24,9 +25,13 @@ namespace ThousandSchnapsen.Simulator.Controllers
         private const int DealerId = 0;
 
         private readonly IMemoryCache _cache;
+        private readonly IMapper _mapper;
 
-        public GameController(IMemoryCache cache) =>
+        public GameController(IMemoryCache cache, IMapper mapper)
+        {
             _cache = cache;
+            _mapper = mapper;
+        }
 
         [HttpPost("reset")]
         public ActionResult<PlayerState> Reset(GameConfigurationDto gameConfiguration)
@@ -86,11 +91,13 @@ namespace ThousandSchnapsen.Simulator.Controllers
             new ActionResultDto()
             {
                 Done = gameState.GameFinished,
-                State = gameState.GetPlayerState(playerId),
+                State = _mapper.Map<PlayerStateDto>(gameState.GetPlayerState(playerId)),
                 Info = new InfoDto()
                 {
-                    AvailableCardsIds = gameState.NextPlayerId == playerId
-                        ? gameState.GetAvailableActions().Select(availableAction => availableAction.Card.CardId)
+                    AvailableCardsIds = gameState.NextPlayerId == playerId && !gameState.GameFinished
+                        ? gameState
+                            .GetAvailableActions()
+                            .Select(availableAction => availableAction.Card.CardId)
                             .ToArray()
                         : null
                 }
