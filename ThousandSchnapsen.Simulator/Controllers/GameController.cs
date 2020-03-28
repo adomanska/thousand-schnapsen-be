@@ -71,17 +71,17 @@ namespace ThousandSchnapsen.Simulator.Controllers
                         PlayerId = action.PlayerId,
                         Card = new Card(action.CardId)
                     });
+                    gameState = UpdateGameState(
+                        gameState,
+                        opponents,
+                        playerId
+                    );
+                    _cache.Set(CacheKeys.GameState, gameState);
                 }
                 catch
                 {
                     return BadRequest("Invalid action");
                 }
-                gameState = UpdateGameState(
-                    gameState,
-                    opponents,
-                    playerId
-                );
-                _cache.Set(CacheKeys.GameState, gameState);
                 return Ok(GetActionResult(gameState, playerId));
             }
 
