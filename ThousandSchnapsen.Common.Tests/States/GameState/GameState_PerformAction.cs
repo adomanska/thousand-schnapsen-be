@@ -1,8 +1,6 @@
-using System;
 using ThousandSchnapsen.Common.Commons;
 using ThousandSchnapsen.Common.States;
 using Xunit;
-using Action = ThousandSchnapsen.Common.Commons.Action;
 
 namespace ThousandSchnapsen.Common.Tests.States
 {
@@ -25,19 +23,15 @@ namespace ThousandSchnapsen.Common.Tests.States
             new CardsSet()
         };
 
-        private readonly CardsSet[] _playersUsedCards =
-        {
-            new CardsSet(),
-            new CardsSet(),
-            new CardsSet(),
-            new CardsSet()
-        };
-
         [Fact]
         public void PerformAction_EmptyStockAndPlayerChecks_MoveCardAndAddNewTrump()
         {
-            var state = new GameState(DealerId, NextPlayerId, _playersCards, _playersUsedCards, new StockItem[] { },
-                new Color[] { });
+            var state = new GameState()
+            {
+                DealerId = DealerId,
+                NextPlayerId = NextPlayerId,
+                PlayersCards = _playersCards
+            };
             var card = new Card(Rank.Queen, Color.Clubs);
             var action = new Action()
             {
@@ -59,9 +53,16 @@ namespace ThousandSchnapsen.Common.Tests.States
         [Fact]
         public void PerformAction_OneCardOnStock_MoveCard()
         {
-            var state = new GameState(DealerId, NextPlayerId, _playersCards, _playersUsedCards,
-                new[] {new StockItem(NextPlayerId - 1, new Card(Rank.Jack, Color.Clubs))},
-                new Color[] { });
+            var state = new GameState()
+            {
+                DealerId = DealerId,
+                NextPlayerId = NextPlayerId,
+                PlayersCards = _playersCards,
+                Stock = new[]
+                {
+                    new StockItem(NextPlayerId - 1, new Card(Rank.Jack, Color.Clubs))
+                },
+            };
             var card = new Card(Rank.Queen, Color.Clubs);
             var action = new Action()
             {
@@ -84,13 +85,17 @@ namespace ThousandSchnapsen.Common.Tests.States
         [Fact]
         public void PerformAction_TwoCardsOnStockAndNoTrumps_MoveCardAndEvaluateTurn()
         {
-            var stock = new[]
+            var state = new GameState()
             {
-                new StockItem(3, new Card(Rank.Jack, Color.Clubs)),
-                new StockItem(0, new Card(Rank.Ace, Color.Hearts))
+                DealerId = DealerId,
+                NextPlayerId = NextPlayerId,
+                PlayersCards = _playersCards,
+                Stock = new[]
+                {
+                    new StockItem(3, new Card(Rank.Jack, Color.Clubs)),
+                    new StockItem(0, new Card(Rank.Ace, Color.Hearts))
+                }
             };
-            var state = new GameState(DealerId, NextPlayerId, _playersCards, _playersUsedCards, stock,
-                new Color[] { });
             var card = new Card(Rank.Queen, Color.Clubs);
             var action = new Action()
             {
@@ -115,13 +120,21 @@ namespace ThousandSchnapsen.Common.Tests.States
         [Fact]
         public void PerformAction_TwoCardsOnStockAndActiveTrumps_MoveCardAndEvaluateTurn()
         {
-            var stock = new[]
+            var state = new GameState()
             {
-                new StockItem(3, new Card(Rank.Jack, Color.Clubs)),
-                new StockItem(0, new Card(Rank.Ace, Color.Hearts))
+                DealerId = DealerId,
+                NextPlayerId = NextPlayerId,
+                PlayersCards = _playersCards,
+                Stock = new[]
+                {
+                    new StockItem(3, new Card(Rank.Jack, Color.Clubs)),
+                    new StockItem(0, new Card(Rank.Ace, Color.Hearts))
+                },
+                TrumpsHistory = new[]
+                {
+                    Color.Hearts
+                }
             };
-            var state = new GameState(DealerId, NextPlayerId, _playersCards, _playersUsedCards, stock,
-                new[] {Color.Hearts});
             var card = new Card(Rank.Queen, Color.Clubs);
             var action = new Action()
             {
@@ -146,8 +159,12 @@ namespace ThousandSchnapsen.Common.Tests.States
         [Fact]
         public void PerformAction_InvalidPlayerId_ThrowException()
         {
-            var state = new GameState(DealerId, NextPlayerId, _playersCards, _playersUsedCards, new StockItem[] { },
-                new Color[] { });
+            var state = new GameState()
+            {
+                DealerId = DealerId,
+                NextPlayerId = NextPlayerId,
+                PlayersCards = _playersCards,
+            };
             var card = new Card(Rank.Queen, Color.Clubs);
             var action = new Action()
             {
@@ -155,7 +172,7 @@ namespace ThousandSchnapsen.Common.Tests.States
                 Card = card
             };
 
-            Assert.Throws<InvalidOperationException>(() => state.PerformAction(action));
+            Assert.Throws<System.InvalidOperationException>(() => state.PerformAction(action));
         }
     }
 }

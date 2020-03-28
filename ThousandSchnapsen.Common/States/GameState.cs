@@ -6,6 +6,10 @@ namespace ThousandSchnapsen.Common.States
 {
     public class GameState : PublicState
     {
+        public GameState()
+        {
+        }
+
         public GameState(int dealerId)
         {
             DealerId = dealerId;
@@ -20,20 +24,7 @@ namespace ThousandSchnapsen.Common.States
                 .Sum(card => card.Rank.GetPoints());
         }
 
-        public GameState(int dealerId, int nextPlayerId, CardsSet[] playersCards, CardsSet[] playersUsedCards,
-            StockItem[] stock, Color[] trumpsHistory, int[] playersPoints = null)
-        {
-            DealerId = dealerId;
-            NextPlayerId = nextPlayerId;
-            PlayersCards = playersCards;
-            PlayersUsedCards = playersUsedCards;
-            Stock = stock;
-            TrumpsHistory = trumpsHistory;
-            if (playersPoints != null)
-                PlayersPoints = playersPoints;
-        }
-
-        public CardsSet[] PlayersCards { get; }
+        public CardsSet[] PlayersCards { get; set; }
 
         public bool GameFinished => PlayersCards
             .Select((playerCards, index) => index == DealerId || playerCards.IsEmpty)
@@ -102,8 +93,16 @@ namespace ThousandSchnapsen.Common.States
                     break;
             }
 
-            return new GameState(DealerId, nextPlayerId, playersCards, playersUsedCards, stock, trumpsHistory,
-                playersPoints);
+            return new GameState()
+            {
+                DealerId = DealerId,
+                NextPlayerId = nextPlayerId,
+                PlayersCards = playersCards,
+                PlayersUsedCards = playersUsedCards,
+                Stock = stock,
+                TrumpsHistory = trumpsHistory,
+                PlayersPoints = playersPoints
+            };
         }
 
         private (StockItem[], CardsSet[], CardsSet[]) MoveCard(Action action)

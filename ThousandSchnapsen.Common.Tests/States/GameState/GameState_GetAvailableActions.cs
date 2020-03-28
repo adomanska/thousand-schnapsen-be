@@ -25,19 +25,15 @@ namespace ThousandSchnapsen.Common.Tests.States
             new CardsSet()
         };
 
-        private readonly CardsSet[] _playersUsedCards =
-        {
-            new CardsSet(),
-            new CardsSet(),
-            new CardsSet(),
-            new CardsSet()
-        };
-
         [Fact]
         public void GetAvailableActions_EmptyStock_ReturnAllActions()
         {
-            var state = new GameState(DealerId, NextPlayerId, _playersCards, _playersUsedCards, new StockItem[] { },
-                new Color[] { });
+            var state = new GameState()
+            {
+                DealerId = DealerId,
+                NextPlayerId = NextPlayerId,
+                PlayersCards = _playersCards
+            };
             var expected = PlayerCards.GetCards()
                 .Select(card => new Action()
                     {
@@ -55,8 +51,20 @@ namespace ThousandSchnapsen.Common.Tests.States
         [Fact]
         public void GetAvailableActions_NonEmptyStock_ReturnSuitableActions()
         {
-            var state = new GameState(DealerId, NextPlayerId, _playersCards, _playersUsedCards,
-                new[] {new StockItem(1, new Card(Rank.King, Color.Clubs))}, new[] {Color.Hearts});
+            var state = new GameState()
+            {
+                DealerId = DealerId,
+                NextPlayerId = NextPlayerId,
+                PlayersCards = _playersCards,
+                Stock = new[]
+                {
+                    new StockItem(1, new Card(Rank.King, Color.Clubs))
+                },
+                TrumpsHistory = new[]
+                {
+                    Color.Hearts
+                }
+            };
             var expected = new[]
             {
                 new Action()
@@ -79,8 +87,16 @@ namespace ThousandSchnapsen.Common.Tests.States
         [Fact]
         public void GetAvailableActions_NonEmptyStockAndNoSuitableActions_ReturnAllActions()
         {
-            var state = new GameState(DealerId, NextPlayerId, _playersCards, _playersUsedCards,
-                new[] {new StockItem(1, new Card(Rank.King, Color.Spades))}, new Color[] { });
+            var state = new GameState()
+            {
+                DealerId = DealerId,
+                NextPlayerId = NextPlayerId,
+                PlayersCards = _playersCards,
+                Stock = new[]
+                {
+                    new StockItem(1, new Card(Rank.King, Color.Spades))
+                }
+            };
             var expected = PlayerCards.GetCards()
                 .Select(card => new Action()
                 {
