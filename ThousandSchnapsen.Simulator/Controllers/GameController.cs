@@ -72,7 +72,7 @@ namespace ThousandSchnapsen.Simulator.Controllers
                         Card = new Card(action.CardId)
                     });
                 }
-                catch (Exception e)
+                catch
                 {
                     return BadRequest("Invalid action");
                 }
