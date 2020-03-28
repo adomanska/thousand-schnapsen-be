@@ -51,7 +51,7 @@ namespace ThousandSchnapsen.Common.States
         public Action[] GetAvailableActions()
         {
             var availableCards = PlayersCards[NextPlayerId];
-            if (Stock.Length > 0)
+            if (Stock.Length > 0 && Stock.Length < Constants.PlayersCount - 1)
             {
                 var stockColorCards = CardsSet.Color(Stock.First().Card.Color);
                 var trumpColorCards = CardsSet.Color(Trump);

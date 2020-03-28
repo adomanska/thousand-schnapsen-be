@@ -47,6 +47,35 @@ namespace ThousandSchnapsen.Common.Tests.States
 
             Assert.Equal(expected, result);
         }
+        
+        [Fact]
+        public void GetAvailableActions_FullStock_ReturnAllActions()
+        {
+            var state = new GameState()
+            {
+                DealerId = DealerId,
+                NextPlayerId = NextPlayerId,
+                PlayersCards = _playersCards,
+                Stock = new[]
+                {
+                    new StockItem(2, new Card(Rank.Ten, Color.Clubs)),
+                    new StockItem(3, new Card(Rank.Queen, Color.Clubs)),
+                    new StockItem(1, new Card(Rank.King, Color.Clubs)),
+                },
+            };
+            var expected = PlayerCards.GetCards()
+                .Select(card => new Action()
+                    {
+                        PlayerId = NextPlayerId,
+                        Card = card
+                    }
+                )
+                .ToArray();
+
+            var result = state.GetAvailableActions();
+
+            Assert.Equal(expected, result);
+        }
 
         [Fact]
         public void GetAvailableActions_NonEmptyStock_ReturnSuitableActions()
