@@ -25,7 +25,7 @@ namespace ThousandSchnapsen.Common.Loggers
         {
             Console.WriteLine("STOCK:");
             gameState.Stock
-                .Select(stockItem => $"{stockItem.PlayerId + 1}: {stockItem.Card}")
+                .Select(stockItem => $"{stockItem.PlayerId}: {stockItem.Card}")
                 .ToList()
                 .ForEach(Console.WriteLine);
             Console.WriteLine();
@@ -64,7 +64,7 @@ namespace ThousandSchnapsen.Common.Loggers
                     : (playerId == gameState.NextPlayerId ? " ->" : "   ");
 
             Enumerable.Range(0, Constants.PlayersCount)
-                .Select(playerId => $"{PlayerSymbol(playerId)} {playerId + 1}:  {gameState.PlayersCards[playerId]}")
+                .Select(playerId => $"{PlayerSymbol(playerId)} {playerId}:  {gameState.PlayersCards[playerId]}")
                 .ToList()
                 .ForEach(Console.WriteLine);
             Console.WriteLine();
