@@ -69,7 +69,8 @@ namespace ThousandSchnapsen.Common.States
 
         public GameState PerformAction(Action action)
         {
-            if (action.PlayerId != NextPlayerId)
+            var availableActions = GetAvailableActions();
+            if (!availableActions.Contains(action))
                 throw new System.InvalidOperationException();
 
             var (stock, playersCards, playersUsedCards) = MoveCard(action);

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +9,7 @@ using ThousandSchnapsen.Common.Commons;
 using ThousandSchnapsen.Common.Interfaces;
 using ThousandSchnapsen.Common.States;
 using ThousandSchnapsen.Simulator.Dto;
+using Action = ThousandSchnapsen.Common.Commons.Action;
 
 namespace ThousandSchnapsen.Simulator.Controllers
 {
@@ -62,12 +64,20 @@ namespace ThousandSchnapsen.Simulator.Controllers
             {
                 if (action.PlayerId != playerId)
                     return BadRequest("Invalid Player ID");
-                gameState = UpdateGameState(
-                    gameState.PerformAction(new Action()
+                try
+                {
+                    gameState = gameState.PerformAction(new Action()
                     {
                         PlayerId = action.PlayerId,
                         Card = new Card(action.CardId)
-                    }),
+                    });
+                }
+                catch (Exception e)
+                {
+                    return BadRequest("Invalid action");
+                }
+                gameState = UpdateGameState(
+                    gameState,
                     opponents,
                     playerId
                 );
@@ -75,7 +85,7 @@ namespace ThousandSchnapsen.Simulator.Controllers
                 return Ok(GetActionResult(gameState, playerId));
             }
 
-            throw new System.Exception("Caching problem occured");
+            throw new Exception("Caching problem occured");
         }
 
         private GameState UpdateGameState(GameState gameState, IReadOnlyList<IAgent> opponents, int playerId)
