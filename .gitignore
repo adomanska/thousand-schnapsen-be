@@ -330,4 +330,4 @@ ASALocalRun/
 .mfractor/
 
 # Editor settings
-*.csproj.DotSettings
+*.DotSettings

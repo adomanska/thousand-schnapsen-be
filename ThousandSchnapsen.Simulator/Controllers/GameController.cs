@@ -36,7 +36,7 @@ namespace ThousandSchnapsen.Simulator.Controllers
         }
 
         [HttpPost("reset")]
-        public ActionResult<PlayerState> Reset(GameConfigurationDto gameConfiguration)
+        public ActionResult<ActionResultDto> Reset(GameConfigurationDto gameConfiguration)
         {
             if (gameConfiguration.PlayerNo < 1 || gameConfiguration.PlayerNo > 3)
                 return BadRequest("PlayerNo should be in range from 1 to 3");
