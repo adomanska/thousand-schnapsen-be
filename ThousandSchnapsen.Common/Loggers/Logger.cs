@@ -2,17 +2,16 @@ using System;
 using System.Linq;
 using System.Text;
 using ThousandSchnapsen.Common.Commons;
-using ThousandSchnapsen.Common.Interfaces;
 using ThousandSchnapsen.Common.States;
 
 namespace ThousandSchnapsen.Common.Loggers
 {
-    public class Logger : ILogger
+    public class Logger
     {
         public Logger() =>
             Console.OutputEncoding = Encoding.UTF8;
 
-        public void Log(GameState gameState)
+        public static void Log(GameState gameState)
         {
             Console.WriteLine(Utils.CreateTitle("GAME STATE", 42));
             LogStock(gameState);
@@ -36,7 +35,7 @@ namespace ThousandSchnapsen.Common.Loggers
             Console.WriteLine("RESULTS:");
             Console.WriteLine(
                 string.Join('|', Enumerable
-                    .Range(1, Constants.PlayersCount)
+                    .Range(0, Constants.PlayersCount)
                     .Select(id => $"{id,4}")
                 )
             );
@@ -54,7 +53,7 @@ namespace ThousandSchnapsen.Common.Loggers
             Console.WriteLine();
         }
 
-        private void LogPlayersCards(GameState gameState)
+        private static void LogPlayersCards(GameState gameState)
         {
             Console.WriteLine("PLAYERS CARDS:");
 

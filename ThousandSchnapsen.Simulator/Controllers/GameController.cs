@@ -4,9 +4,11 @@ using System.Linq;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Configuration;
 using ThousandSchnapsen.Common.Agents;
 using ThousandSchnapsen.Common.Commons;
 using ThousandSchnapsen.Common.Interfaces;
+using ThousandSchnapsen.Common.Loggers;
 using ThousandSchnapsen.Common.States;
 using ThousandSchnapsen.Simulator.Dto;
 using Action = ThousandSchnapsen.Common.Commons.Action;
@@ -28,11 +30,13 @@ namespace ThousandSchnapsen.Simulator.Controllers
 
         private readonly IMemoryCache _cache;
         private readonly IMapper _mapper;
+        private readonly IConfiguration _configuration;
 
-        public GameController(IMemoryCache cache, IMapper mapper)
+        public GameController(IMemoryCache cache, IMapper mapper, IConfiguration configuration)
         {
             _cache = cache;
             _mapper = mapper;
+            _configuration = configuration;
         }
 
         [HttpPost("reset")]
@@ -51,6 +55,9 @@ namespace ThousandSchnapsen.Simulator.Controllers
             _cache.Set(CacheKeys.GameState, gameState);
             _cache.Set(CacheKeys.Opponents, opponents);
             _cache.Set(CacheKeys.PlayerId, playerId);
+
+            if (_configuration.GetValue<bool>("verbose"))
+                Logger.Log(gameState);
 
             return Ok(GetActionResult(gameState, playerId));
         }
@@ -77,11 +84,14 @@ namespace ThousandSchnapsen.Simulator.Controllers
                         playerId
                     );
                     _cache.Set(CacheKeys.GameState, gameState);
+                    if (_configuration.GetValue<bool>("verbose"))
+                        Logger.Log(gameState);
                 }
                 catch
                 {
                     return BadRequest("Invalid action");
                 }
+
                 return Ok(GetActionResult(gameState, playerId));
             }
 
