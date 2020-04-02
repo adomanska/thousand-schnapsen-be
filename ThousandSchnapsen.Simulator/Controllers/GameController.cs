@@ -56,9 +56,6 @@ namespace ThousandSchnapsen.Simulator.Controllers
             _cache.Set(CacheKeys.Opponents, opponents);
             _cache.Set(CacheKeys.PlayerId, playerId);
 
-            if (_configuration.GetValue<bool>("verbose"))
-                Logger.Log(gameState);
-
             return Ok(GetActionResult(gameState, playerId));
         }
 
@@ -78,14 +75,14 @@ namespace ThousandSchnapsen.Simulator.Controllers
                         PlayerId = action.PlayerId,
                         Card = new Card(action.CardId)
                     });
+                    if (_configuration.GetValue<bool>("verbose"))
+                        Logger.Log(gameState);
                     gameState = UpdateGameState(
                         gameState,
                         opponents,
                         playerId
                     );
                     _cache.Set(CacheKeys.GameState, gameState);
-                    if (_configuration.GetValue<bool>("verbose"))
-                        Logger.Log(gameState);
                 }
                 catch
                 {
@@ -100,10 +97,15 @@ namespace ThousandSchnapsen.Simulator.Controllers
 
         private GameState UpdateGameState(GameState gameState, IReadOnlyList<IAgent> opponents, int playerId)
         {
+            var verbose = _configuration.GetValue<bool>("verbose");
             while (gameState.NextPlayerId != playerId && !gameState.GameFinished)
+            {
                 gameState = gameState.PerformAction(
                     opponents[gameState.NextPlayerId].GetAction(gameState.GetNextPlayerState())
                 );
+                if (verbose)
+                    Logger.Log(gameState);    
+            }
             return gameState;
         }
 
