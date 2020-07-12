@@ -53,10 +53,30 @@ namespace ThousandSchnapsen.Common.States
             var availableCards = PlayersCards[NextPlayerId];
             if (Stock.Length > 0 && Stock.Length < Constants.PlayersCount - 1)
             {
-                var stockColorCards = CardsSet.Color(Stock.First().Card.Color);
-                var trumpColorCards = CardsSet.Color(Trump);
-                if (!(availableCards & stockColorCards).IsEmpty)
-                    availableCards &= (stockColorCards | trumpColorCards);
+                var stockColor = Stock.First().Card.Color;
+                var stockColorCards = availableCards & CardsSet.Color(stockColor);
+                var stockMaxValue = Stock
+                    .Select(stockItem => stockItem.Card.GetValue(stockColor, Trump))
+                    .Max();
+                var greaterStockColorCards = new CardsSet(
+                    stockColorCards
+                        .GetCards()
+                        .Where(card => card.GetValue(stockColor, Trump) > stockMaxValue)
+                        .ToArray()
+                    );
+                var greaterTrumpColorCards = new CardsSet(
+                    (availableCards & CardsSet.Color(Trump))
+                        .GetCards()
+                        .Where(card => card.GetValue(stockColor, Trump) > stockMaxValue)
+                        .ToArray()
+                );
+
+                if (!greaterStockColorCards.IsEmpty)
+                    availableCards = greaterStockColorCards;
+                else if (!stockColorCards.IsEmpty)
+                    availableCards = stockColorCards;
+                else if (!greaterTrumpColorCards.IsEmpty)
+                    availableCards = greaterTrumpColorCards;
             }
 
             return availableCards.GetCardsIds()
