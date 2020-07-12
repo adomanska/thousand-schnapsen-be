@@ -78,7 +78,7 @@ namespace ThousandSchnapsen.Common.Tests.States
         }
 
         [Fact]
-        public void GetAvailableActions_NonEmptyStock_ReturnSuitableActions()
+        public void GetAvailableActions_NonEmptyStockAndHaveColorAndCannotBeat_ReturnSuitableActions()
         {
             var state = new GameState()
             {
@@ -87,7 +87,7 @@ namespace ThousandSchnapsen.Common.Tests.States
                 PlayersCards = _playersCards,
                 Stock = new[]
                 {
-                    new StockItem(1, new Card(Rank.King, Color.Clubs))
+                    new StockItem(1, new Card(Rank.Ace, Color.Clubs))
                 },
                 TrumpsHistory = new[]
                 {
@@ -100,7 +100,64 @@ namespace ThousandSchnapsen.Common.Tests.States
                 {
                     PlayerId = NextPlayerId,
                     Card = new Card(Rank.Jack, Color.Clubs)
+                }
+            };
+
+            var result = state.GetAvailableActions();
+
+            Assert.Equal(expected, result);
+        }
+        
+        [Fact]
+        public void GetAvailableActions_NonEmptyStockAndHaveColorAndCanBeat_ReturnSuitableActions()
+        {
+            var state = new GameState()
+            {
+                DealerId = DealerId,
+                NextPlayerId = NextPlayerId,
+                PlayersCards = _playersCards,
+                Stock = new[]
+                {
+                    new StockItem(1, new Card(Rank.Queen, Color.Diamonds))
                 },
+                TrumpsHistory = new[]
+                {
+                    Color.Hearts
+                }
+            };
+            var expected = new[]
+            {
+                new Action()
+                {
+                    PlayerId = NextPlayerId,
+                    Card = new Card(Rank.Ace, Color.Diamonds)
+                }
+            };
+
+            var result = state.GetAvailableActions();
+
+            Assert.Equal(expected, result);
+        }
+        
+        [Fact]
+        public void GetAvailableActions_NonEmptyStockAndDontHaveColorAndCanBeat_ReturnSuitableActions()
+        {
+            var state = new GameState()
+            {
+                DealerId = DealerId,
+                NextPlayerId = NextPlayerId,
+                PlayersCards = _playersCards,
+                Stock = new[]
+                {
+                    new StockItem(1, new Card(Rank.Queen, Color.Spades))
+                },
+                TrumpsHistory = new[]
+                {
+                    Color.Hearts
+                }
+            };
+            var expected = new[]
+            {
                 new Action()
                 {
                     PlayerId = NextPlayerId,
