@@ -1,5 +1,3 @@
-using System;
-
 namespace ThousandSchnapsen.Common.Commons
 {
     public struct Action
