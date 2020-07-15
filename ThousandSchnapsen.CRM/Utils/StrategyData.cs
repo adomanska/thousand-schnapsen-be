@@ -8,10 +8,10 @@ namespace ThousandSchnapsen.CRM.Utils
 {
     public class StrategyData
     {
-        private readonly Card[] _availableActions;
+        private readonly int[] _availableActions;
         private double[] _regretSum = new double[Constants.CardsCount];
 
-        public StrategyData(IEnumerable<Card> availableActions)
+        public StrategyData(IEnumerable<int> availableActions)
         {
             _availableActions = availableActions.ToArray();
             ResetStrategy();
@@ -27,7 +27,7 @@ namespace ThousandSchnapsen.CRM.Utils
             }
         }
         
-        public double[] StrategySum { get; set; }
+        public double[] StrategySum { get; } = new double[Constants.CardsCount];
         
         public double[] Strategy { get; private set; }
 
@@ -49,7 +49,7 @@ namespace ThousandSchnapsen.CRM.Utils
         private void ResetStrategy()
         {
             Strategy = new double[Constants.CardsCount];
-            _availableActions.ForEach(card => Strategy[card.CardId] = 1.0 / _availableActions.Length);
+            _availableActions.ForEach(cardId => Strategy[cardId] = 1.0 / _availableActions.Length);
         }
     }
 }

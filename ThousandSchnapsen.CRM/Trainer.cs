@@ -3,82 +3,92 @@ using System.Collections.Generic;
 using System.Linq;
 using ThousandSchnapsen.Common.Commons;
 using ThousandSchnapsen.Common.States;
+using ThousandSchnapsen.CRM.Utils;
 using Action = ThousandSchnapsen.Common.Commons.Action;
 
 namespace ThousandSchnapsen.CRM
 {
     public class Trainer
     {
-        private const int NumActions = 24;
         private static readonly int[] Players = {
             0, 1, 2
         };
-        private Dictionary<(string, int, int), Node> nodeMap = new Dictionary<(string, int, int), Node>();
-        public int nodesCount = 0;
+        private Dictionary<(int, int, int, (int, int)), StrategyData> nodeMap = new Dictionary<(int, int, int, (int, int)), StrategyData>();
+        private int nodesCount;
+        private int newInfoSetsCount = 0;
+        private Random random = new Random();
 
         public void Train(int iterations)
         {
             double util = 0;
-            for (var i = 0; i < iterations; i++)
+            for (var i = 1; i < iterations + 1; i++)
             {
                 foreach (var player in Players)
                 {
-                    var gameState = new GameState(3);
-                    util += Crm(gameState, new byte[] {},  player, new double[] {1, 1, 1});
+                    var node = new Node(null);
+                    util += Crm(node, player, new double[] {1, 1, 1});
                 }
 
-                if (i % 100 == 0)
-                    Console.WriteLine(i.ToString("D8") + ": " + nodesCount);
+                if (i % 10 == 0)
+                {
+                    Console.WriteLine(i.ToString("D8") + ": " + (newInfoSetsCount * 100) / nodesCount);
+                    nodesCount = 0;
+                    newInfoSetsCount = 0;
+                }
             }
         }
 
-        private double Crm(GameState gameState, byte[] history, int playerId, double[] probs)
+        private double Crm(Node node, int playerId, double[] probs)
         {
-            if (gameState.GameFinished)
+            nodesCount++;
+            if (node.IsTerminal)
+                return node.GetUtil(playerId);
+
+            var infoSet = node.InfoSet;
+            if (!nodeMap.TryGetValue(infoSet, out var strategyData))
             {
-                return gameState.PlayersPoints[playerId];
-            }
-            var availableActions =
-                gameState.GetAvailableActions().Select(action => (byte) action.Card.CardId).ToArray();
-            var nodeKey = GetNodeKey(gameState, playerId);
-            if (!nodeMap.TryGetValue(nodeKey, out var node))
-            {
-                node = new Node(availableActions);
-                nodeMap.Add(nodeKey, node);
-                nodesCount += 1;
+                strategyData = new StrategyData(node.AvailableActions);
+                nodeMap.Add(infoSet, strategyData);
+                newInfoSetsCount++;
             }
 
-            var strategy = node.GetStrategy(probs[playerId]);
+            var strategy = strategyData.Strategy;
             double nodeUtil = 0;
-            var a = availableActions[new Random().Next(availableActions.Length)];
-            var newProbs = RecalculateReachProbabilities(strategy[a], gameState.NextPlayerId, probs);
-            var nextHistory = new List<byte>(history) {a};
-            var action = new Action() { PlayerId = gameState.NextPlayerId, Card = new Card(a)};
-            var util = Crm(gameState.PerformAction(action), nextHistory.ToArray(), playerId, newProbs);
-            nodeUtil += strategy[a] * util;
+            var utils = new double[Constants.CardsCount];
 
-            if (gameState.NextPlayerId == playerId)
+            int[] actions;
+
+            if (node.PlayerId == playerId)
+                actions = node.AvailableActions;
+            else
             {
-                var regret = util - nodeUtil;
-                node.RegretSum[a] += Players.Where(id => id != playerId).Sum(id => probs[id]) * regret;
+                var randVal = random.NextDouble();
+                int i = 0;
+                double curVal = strategy[node.AvailableActions[i]];
+                while (curVal < randVal)
+                    curVal += strategy[node.AvailableActions[++i]];
+                actions = new[] {node.AvailableActions[i]};
+            }
+
+            foreach (var action in actions)
+            {
+                var newProbabilities = probs
+                    .Select((prob, id) => id == playerId ? strategy[action] * prob : prob)
+                    .ToArray();
+                utils[action] = Crm(node.GetNext(new Card(action)), playerId, newProbabilities);
+                nodeUtil += strategy[action] * utils[action];
+            }
+
+            if (node.PlayerId == playerId)
+            {
+                var oppProbs = probs.Aggregate(1.0, (acc, prob) => acc * prob) / probs[playerId];
+                foreach (var action in actions)
+                {
+                    strategyData.RegretSum[action] += oppProbs * (nodeUtil - utils[action]);
+                    strategyData.StrategySum[action] += probs[playerId] * strategy[action];
+                }
             }
             return nodeUtil;
-        }
-
-        private double[] RecalculateReachProbabilities(double strategyValue, int playerId, double[] probs)
-        {
-            var newProbs = (double[])probs.Clone();
-            newProbs[playerId] *= strategyValue;
-            return newProbs;
-        }
-
-        private (string, int, int) GetNodeKey(GameState gameState, int playerId)
-        {
-            var stock = String.Join("", gameState.Stock.Select(stockItem => stockItem.Card.CardId.ToString("D2")));
-            var usedCards = gameState.PlayersUsedCards.Aggregate((acc, cur) => acc | cur).Code;
-            var cards = gameState.PlayersCards[playerId].Code;
-
-            return (stock, usedCards, cards);
         }
     }
 }
