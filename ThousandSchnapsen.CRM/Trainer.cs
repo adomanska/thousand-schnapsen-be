@@ -2,9 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using ThousandSchnapsen.Common.Commons;
-using ThousandSchnapsen.Common.States;
 using ThousandSchnapsen.CRM.Utils;
-using Action = ThousandSchnapsen.Common.Commons.Action;
 
 namespace ThousandSchnapsen.CRM
 {
@@ -87,6 +85,7 @@ namespace ThousandSchnapsen.CRM
                     strategyData.RegretSum[action] += oppProbs * (nodeUtil - utils[action]);
                     strategyData.StrategySum[action] += probs[playerId] * strategy[action];
                 }
+                strategyData.UpdateStrategy();
             }
             return nodeUtil;
         }

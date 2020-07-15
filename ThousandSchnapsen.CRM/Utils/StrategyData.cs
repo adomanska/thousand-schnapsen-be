@@ -31,7 +31,7 @@ namespace ThousandSchnapsen.CRM.Utils
         
         public double[] Strategy { get; private set; }
 
-        private void UpdateStrategy()
+        public void UpdateStrategy()
         {
             Strategy = RegretSum
                 .Select(regretSum => Math.Max(0, regretSum))
