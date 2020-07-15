@@ -24,7 +24,7 @@ namespace ThousandSchnapsen.CRM
                 foreach (var player in Players)
                 {
                     var node = new Node(null);
-                    util += Crm(node, player, new double[] {1, 1, 1});
+                    util += Crm(node, player, new float[] {1, 1, 1});
                 }
 
                 if (i % 10 == 0)
@@ -36,7 +36,7 @@ namespace ThousandSchnapsen.CRM
             }
         }
 
-        private double Crm(Node node, int playerId, double[] probs)
+        private float Crm(Node node, int playerId, float[] probs)
         {
             nodesCount++;
             if (node.IsTerminal)
@@ -51,41 +51,42 @@ namespace ThousandSchnapsen.CRM
             }
 
             var strategy = strategyData.Strategy;
-            double nodeUtil = 0;
-            var utils = new double[Constants.CardsCount];
+            float nodeUtil = 0;
+            var utils = new float[node.AvailableActions.Length];
 
-            byte[] actions;
+            IEnumerable<byte> actionsIndices;
 
             if (node.PlayerId == playerId)
-                actions = node.AvailableActions;
+                actionsIndices = Enumerable.Range(0, node.AvailableActions.Length).Select(i => (byte)i);
             else
             {
                 var randVal = random.NextDouble();
-                int i = 0;
-                double curVal = strategy[node.AvailableActions[i]];
+                byte i = 0;
+                double curVal = strategy[i];
                 while (curVal < randVal)
-                    curVal += strategy[node.AvailableActions[++i]];
-                actions = new[] {node.AvailableActions[i]};
+                    curVal += strategy[++i];
+                actionsIndices = new [] {i};
             }
 
-            foreach (var action in actions)
+            foreach (var index in actionsIndices)
             {
                 var newProbabilities = probs
-                    .Select((prob, id) => id == playerId ? strategy[action] * prob : prob)
+                    .Select((prob, id) => id == playerId ? strategy[index] * prob : prob)
                     .ToArray();
-                utils[action] = Crm(node.GetNext(new Card(action)), playerId, newProbabilities);
-                nodeUtil += strategy[action] * utils[action];
+                utils[index] = Crm(node.GetNext(new Card(node.AvailableActions[index])), playerId, newProbabilities);
+                nodeUtil += strategy[index] * utils[index];
             }
 
             if (node.PlayerId == playerId)
             {
-                var oppProbs = probs.Aggregate(1.0, (acc, prob) => acc * prob) / probs[playerId];
-                foreach (var action in actions)
-                {
-                    strategyData.RegretSum[action] += oppProbs * (nodeUtil - utils[action]);
-                    strategyData.StrategySum[action] += probs[playerId] * strategy[action];
-                }
-                strategyData.UpdateStrategy();
+                float oppProbs = probs.Aggregate(1f, (acc, prob) => acc * prob) / probs[playerId];
+
+                strategyData.RegretSum = strategyData.RegretSum
+                    .Select((regretSum, index) => regretSum + oppProbs * (nodeUtil - utils[index]))
+                    .ToArray();
+                strategyData.StrategySum = strategyData.StrategySum
+                    .Select((strategySum, index) => strategySum + probs[playerId] * strategy[index])
+                    .ToArray();
             }
             return nodeUtil;
         }

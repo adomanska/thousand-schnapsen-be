@@ -1,23 +1,23 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using MoreLinq;
-using ThousandSchnapsen.Common.Commons;
 
 namespace ThousandSchnapsen.CRM.Utils
 {
     public class StrategyData
     {
         private readonly byte[] _availableActions;
-        private double[] _regretSum = new double[Constants.CardsCount];
+        private float[] _regretSum;
 
         public StrategyData(IEnumerable<byte> availableActions)
         {
             _availableActions = availableActions.ToArray();
+            _regretSum = new float[_availableActions.Length];
+            StrategySum = new float[_availableActions.Length];
             ResetStrategy();
         }
 
-        public double[] RegretSum
+        public float[] RegretSum
         {
             get => _regretSum;
             set
@@ -27,9 +27,9 @@ namespace ThousandSchnapsen.CRM.Utils
             }
         }
         
-        public double[] StrategySum { get; } = new double[Constants.CardsCount];
+        public float[] StrategySum { get; set; }
         
-        public double[] Strategy { get; private set; }
+        public float[] Strategy { get; private set; }
 
         public void UpdateStrategy()
         {
@@ -48,8 +48,9 @@ namespace ThousandSchnapsen.CRM.Utils
 
         private void ResetStrategy()
         {
-            Strategy = new double[Constants.CardsCount];
-            _availableActions.ForEach(cardId => Strategy[cardId] = 1.0 / _availableActions.Length);
+            Strategy = Enumerable.Range(0, _availableActions.Length)
+                .Select(i => 1f / _availableActions.Length)
+                .ToArray();
         }
     }
 }
