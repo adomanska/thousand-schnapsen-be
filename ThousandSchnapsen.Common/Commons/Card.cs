@@ -2,15 +2,15 @@ namespace ThousandSchnapsen.Common.Commons
 {
     public struct Card
     {
-        public Card(int cardId) =>
+        public Card(byte cardId) =>
             CardId = cardId;
 
         public Card(Rank rank, Color color) :
-            this((int) color * Constants.CardsInColorCount + (int) rank)
+            this((byte)((int)color * Constants.CardsInColorCount + (int)rank))
         {
         }
 
-        public int CardId { get; }
+        public byte CardId { get; }
         public Color Color => (Color) (CardId / Constants.CardsInColorCount);
         public Rank Rank => (Rank) (CardId % Constants.CardsInColorCount);
         public bool IsPartOfMarriage => Rank == Rank.Queen || Rank == Rank.King;

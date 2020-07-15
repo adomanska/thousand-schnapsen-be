@@ -15,7 +15,7 @@ namespace ThousandSchnapsen.Common.Commons
         private CardsSet(int code) =>
             Code = code;
 
-        public CardsSet(IEnumerable<int> cardsIds) :
+        public CardsSet(IEnumerable<byte> cardsIds) :
             this(cardsIds.Sum(id => (int) Math.Pow(2, id)))
         {
         }
@@ -77,10 +77,10 @@ namespace ThousandSchnapsen.Common.Commons
         public CardsSet Clone() =>
             new CardsSet(Code);
 
-        public int[] GetCardsIds()
+        public byte[] GetCardsIds()
         {
-            var cardsList = new List<int>();
-            for (var cardId = 0; cardId < Constants.CardsCount; cardId++)
+            var cardsList = new List<byte>();
+            for (byte cardId = 0; cardId < Constants.CardsCount; cardId++)
                 if (Contains(cardId))
                     cardsList.Add(cardId);
             return cardsList.ToArray();

@@ -54,7 +54,7 @@ namespace ThousandSchnapsen.CRM
             double nodeUtil = 0;
             var utils = new double[Constants.CardsCount];
 
-            int[] actions;
+            byte[] actions;
 
             if (node.PlayerId == playerId)
                 actions = node.AvailableActions;

@@ -9,7 +9,7 @@ namespace ThousandSchnapsen.Common.Tests.Commons
         public void GetCardsIds_EmptySet_ReturnEmptyCollection()
         {
             var cardsSetA = new CardsSet();
-            var expected = new int[] { };
+            var expected = new byte[] { };
 
             var actual = cardsSetA.GetCardsIds();
 
@@ -19,7 +19,7 @@ namespace ThousandSchnapsen.Common.Tests.Commons
         [Fact]
         public void GetCardsIds_NonEmptySet_ReturnArrayOfIds()
         {
-            var cardsIds = new[] {1, 2, 6, 10, 22};
+            var cardsIds = new byte[] {1, 2, 6, 10, 22};
             var cardsSetA = new CardsSet(cardsIds);
             var expected = cardsIds;
 

@@ -34,7 +34,7 @@ namespace ThousandSchnapsen.CRM.Utils
             }
         }
 
-        public int[] AvailableActions =>
+        public byte[] AvailableActions =>
             _gameState.GetAvailableActions().Select(action => action.Card.CardId).ToArray();
 
         public bool IsTerminal => _gameState.GameFinished;

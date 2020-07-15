@@ -8,10 +8,10 @@ namespace ThousandSchnapsen.CRM.Utils
 {
     public class StrategyData
     {
-        private readonly int[] _availableActions;
+        private readonly byte[] _availableActions;
         private double[] _regretSum = new double[Constants.CardsCount];
 
-        public StrategyData(IEnumerable<int> availableActions)
+        public StrategyData(IEnumerable<byte> availableActions)
         {
             _availableActions = availableActions.ToArray();
             ResetStrategy();

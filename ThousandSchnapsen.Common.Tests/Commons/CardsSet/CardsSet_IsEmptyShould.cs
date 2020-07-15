@@ -8,7 +8,7 @@ namespace ThousandSchnapsen.Common.Tests.Commons
         [Fact]
         public void IsEmpty_EmptySet_ReturnTrue()
         {
-            var cardsSetA = new CardsSet(new int[] { });
+            var cardsSetA = new CardsSet(new byte[] { });
 
             Assert.True(cardsSetA.IsEmpty);
         }
@@ -16,7 +16,7 @@ namespace ThousandSchnapsen.Common.Tests.Commons
         [Fact]
         public void IsEmpty_NonEmptySet_ReturnFalse()
         {
-            var cardsSetA = new CardsSet(new[] {2, 8, 16});
+            var cardsSetA = new CardsSet(new byte[] {2, 8, 16});
 
             Assert.False(cardsSetA.IsEmpty);
         }
