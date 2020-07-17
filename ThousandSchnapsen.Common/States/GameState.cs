@@ -1,3 +1,4 @@
+using System.IO;
 using System.Linq;
 using MoreLinq;
 using ThousandSchnapsen.Common.Commons;
@@ -6,6 +7,7 @@ namespace ThousandSchnapsen.Common.States
 {
     public class GameState : PublicState
     {
+        private bool initialized = false;
         public GameState()
         {
         }
@@ -48,6 +50,23 @@ namespace ThousandSchnapsen.Common.States
         public PlayerState GetNextPlayerState() =>
             GetPlayerState(NextPlayerId);
 
+        public void Init(byte[] cardsToLet)
+        {
+            if (initialized)
+                return;
+            
+            PlayersCards[NextPlayerId] |= PlayersCards[DealerId];
+
+            if (!cardsToLet.All(cardId => PlayersCards[NextPlayerId].Contains(cardId)))
+                throw new InvalidDataException("Player cannot give cards which he doesn't own");
+            
+            Enumerable.Range(0, Constants.PlayersCount)
+                .Where(playerId => playerId != DealerId && playerId != NextPlayerId)
+                .ForEach((playerId, index) => PlayersCards[playerId].AddCard(cardsToLet[index]));
+            
+            PlayersCards[NextPlayerId] -= new CardsSet(cardsToLet);
+        }
+
         public Action[] GetAvailableActions()
         {
             var availableCards = PlayersCards[NextPlayerId];
@@ -87,7 +106,7 @@ namespace ThousandSchnapsen.Common.States
                 }).ToArray();
         }
 
-        public GameState PerformAction(Action action)
+        public GameState PerformAction(Action action, System.Action onTrump = null)
         {
             var availableActions = GetAvailableActions();
             if (!availableActions.Contains(action))
@@ -101,7 +120,9 @@ namespace ThousandSchnapsen.Common.States
             switch (stock.Length)
             {
                 case 1:
-                    trumpsHistory = CheckTrump(action, playersPoints);
+                    trumpsHistory = CheckTrump(action, playersPoints, out var isTrump);
+                    if (isTrump)
+                        onTrump?.Invoke();
                     nextPlayerId = GetNextPlayerId(action.PlayerId);
                     break;
                 case 2:
@@ -152,15 +173,19 @@ namespace ThousandSchnapsen.Common.States
             return (stock, playersCards, playersUsedCards);
         }
 
-        private Color[] CheckTrump(Action action, int[] playersPoints)
+        private Color[] CheckTrump(Action action, int[] playersPoints, out bool isTrump)
         {
             if (!action.Card.IsPartOfMarriage || action.Card.SecondMarriagePart.HasValue &&
                 !PlayersCards[action.PlayerId].Contains(action.Card.SecondMarriagePart.Value))
+            {
+                isTrump = false;
                 return (Color[]) TrumpsHistory.Clone();
+            }
             playersPoints[NextPlayerId] += action.Card.Color.GetPoints();
             var trumpsHistory = new Color[TrumpsHistory.Length + 1];
             System.Array.Copy(TrumpsHistory, trumpsHistory, TrumpsHistory.Length);
             trumpsHistory[TrumpsHistory.Length] = action.Card.Color;
+            isTrump = true;
             return trumpsHistory;
         }
 

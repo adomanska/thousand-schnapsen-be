@@ -11,7 +11,7 @@ namespace ThousandSchnapsen.CRM
         private static readonly int[] Players = {
             0, 1, 2
         };
-        private Dictionary<(int, int, int, (int, int)), StrategyData> nodeMap = new Dictionary<(int, int, int, (int, int)), StrategyData>();
+        private Dictionary<(int, int, (int, int)), StrategyData> nodeMap = new Dictionary<(int, int, (int, int)), StrategyData>();
         private int nodesCount;
         private int newInfoSetsCount = 0;
         private Random random = new Random();
