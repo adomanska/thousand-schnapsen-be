@@ -12,6 +12,7 @@ namespace ThousandSchnapsen.CRM.Utils
         private GameState _gameState;
         private CardsSet[] _possibleCardsSets;
         private CardsSet[] _certainCardsSets;
+        private static readonly Random Random = new Random();
 
         public Node(NodeParams? nodeParams)
         {
@@ -29,33 +30,37 @@ namespace ThousandSchnapsen.CRM.Utils
                     .Select(playerId => CardsSet.Deck())
                     .ToArray();
                 _certainCardsSets = Enumerable
-                        
                     .Range(0, Constants.PlayersCount)
                     .Select(playerId => new CardsSet())
                     .ToArray();
                 
-                var random = new Random();
-                var availableCardsToLet =
-                    (_gameState.PlayersCards[PlayerId] | _gameState.PlayersCards[_gameState.DealerId])
-                    .GetCardsIds()
-                    .OrderBy(cardId => random.Next());
-                var cardsToLet = availableCardsToLet.Slice(0, 2).ToArray();
-                _gameState.Init(cardsToLet);
-                var cardsToLetSet = new CardsSet(cardsToLet);
-                _possibleCardsSets[PlayerId] |= _gameState.PlayersCards[_gameState.DealerId];
-                _possibleCardsSets[PlayerId] -= cardsToLetSet;
-                _certainCardsSets[PlayerId] |= _gameState.PlayersCards[_gameState.DealerId];
-                _certainCardsSets[PlayerId] -= cardsToLetSet;
-                
-                Enumerable.Range(0, Constants.PlayersCount)
+                var dealerCards = _gameState.PlayersCards[_gameState.DealerId];
+                var opponentsIds = Enumerable.Range(0, Constants.PlayersCount)
                     .Where(playerId => playerId != PlayerId && playerId != _gameState.DealerId)
-                    .ForEach((playerId, index) =>
-                        {
-                            _possibleCardsSets[playerId] -= _gameState.PlayersCards[_gameState.DealerId];
-                            _possibleCardsSets[playerId].AddCard(cardsToLet[index]);
-                            _certainCardsSets[playerId] -= _gameState.PlayersCards[_gameState.DealerId];
-                            _certainCardsSets[playerId].AddCard(cardsToLet[index]);
-                        });
+                    .ToArray();
+                var cardsToLet =
+                    (_gameState.PlayersCards[PlayerId] | dealerCards)
+                    .GetCardsIds()
+                    .OrderBy(cardId => Random.Next())
+                    .Take(2)
+                    .Select((cardId, index) => (opponentsIds[index], cardId))
+                    .ToArray();
+                
+                 _gameState.Init(cardsToLet);
+                 _possibleCardsSets[PlayerId] |= dealerCards;
+                 _certainCardsSets[PlayerId] |= dealerCards;
+                 cardsToLet.ForEach(item => {
+                    _possibleCardsSets[PlayerId].RemoveCard(item.cardId);
+                    _certainCardsSets[PlayerId].RemoveCard(item.cardId);
+                 });
+                 
+                 cardsToLet.ForEach(item =>
+                 {
+                     var (playerId, cardId) = item;
+                     _possibleCardsSets[playerId] -= dealerCards;
+                     _possibleCardsSets[playerId].AddCard(cardId);
+                     _certainCardsSets[playerId].AddCard(cardId);
+                 });
             }
         }
 
@@ -104,10 +109,12 @@ namespace ThousandSchnapsen.CRM.Utils
             Action onTrump = () =>
             {
                 if (card.SecondMarriagePart != null)
+                {
                     nextCertainCardsSets[PlayerId].AddCard(card.SecondMarriagePart.Value);
-                Enumerable.Range(0, Constants.PlayersCount)
-                    .Where(playerId => playerId != PlayerId)
-                    .ForEach(playerId => nextPossibleCardsSets[playerId].RemoveCard(card.SecondMarriagePart.Value));
+                    Enumerable.Range(0, Constants.PlayersCount)
+                        .Where(playerId => playerId != PlayerId)
+                        .ForEach(playerId => nextPossibleCardsSets[playerId].RemoveCard(card.SecondMarriagePart.Value));
+                }
             };
 
             var nextGameState = _gameState.PerformAction(new Common.Commons.Action()

@@ -50,21 +50,22 @@ namespace ThousandSchnapsen.Common.States
         public PlayerState GetNextPlayerState() =>
             GetPlayerState(NextPlayerId);
 
-        public void Init(byte[] cardsToLet)
+        public void Init((int PlayerId, byte CardId)[] cardsToLet)
         {
             if (initialized)
                 return;
             
             PlayersCards[NextPlayerId] |= PlayersCards[DealerId];
 
-            if (!cardsToLet.All(cardId => PlayersCards[NextPlayerId].Contains(cardId)))
+            if (!cardsToLet.All(item => PlayersCards[NextPlayerId].Contains(item.CardId)))
                 throw new InvalidDataException("Player cannot give cards which he doesn't own");
             
-            Enumerable.Range(0, Constants.PlayersCount)
-                .Where(playerId => playerId != DealerId && playerId != NextPlayerId)
-                .ForEach((playerId, index) => PlayersCards[playerId].AddCard(cardsToLet[index]));
-            
-            PlayersCards[NextPlayerId] -= new CardsSet(cardsToLet);
+            cardsToLet.ForEach(item =>
+            {
+                var (playerId, cardId) = item;
+                PlayersCards[playerId].AddCard(cardId);
+                PlayersCards[NextPlayerId].RemoveCard(cardId);
+            });
         }
 
         public Action[] GetAvailableActions()
