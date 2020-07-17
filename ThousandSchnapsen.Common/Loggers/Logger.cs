@@ -13,7 +13,7 @@ namespace ThousandSchnapsen.Common.Loggers
 
         public static void Log(GameState gameState)
         {
-            Console.WriteLine(Utils.CreateTitle("GAME STATE", 42));
+            Console.WriteLine(CreateTitle("GAME STATE", 42));
             LogStock(gameState);
             LogResults(gameState);
             LogTrump(gameState);
@@ -67,6 +67,14 @@ namespace ThousandSchnapsen.Common.Loggers
                 .ToList()
                 .ForEach(Console.WriteLine);
             Console.WriteLine();
+        }
+        
+        private static string CreateTitle(string title, int lineWidth)
+        {
+            var dashesCount = (lineWidth - title.Length) / 2.0;
+            var startDashes = new string('-', (int) Math.Floor(dashesCount));
+            var endDashes = new string('-', (int) Math.Ceiling(dashesCount));
+            return $"{startDashes}{title}{endDashes}";
         }
     }
 }

@@ -1,7 +1,9 @@
+using System;
 using System.IO;
 using System.Linq;
 using MoreLinq;
 using ThousandSchnapsen.Common.Commons;
+using Action = ThousandSchnapsen.Common.Commons.Action;
 
 namespace ThousandSchnapsen.Common.States
 {
@@ -16,11 +18,15 @@ namespace ThousandSchnapsen.Common.States
         {
             DealerId = dealerId;
             NextPlayerId = (DealerId + 1) % Constants.PlayersCount;
-            PlayersCards = Constants.Deck
-                .Shuffle()
-                .Batch(Constants.CardsPerPlayerCount)
-                .Select(cards => new CardsSet(cards))
-                .ToArrayByIndex(Utils.GetCardsSetsIndexer(DealerId));
+            PlayersCards = new CardsSet[Constants.PlayersCount];
+            var shuffledDeck = Constants.Deck.Shuffle().ToArray();
+            var dealtCards = 0;
+            for (var playerId = 0; playerId < Constants.PlayersCount; playerId++)
+            {
+                var cardToDeal = playerId == dealerId ? Constants.CardsPerDealerCount : Constants.CardsPerPlayerCount;
+                PlayersCards[playerId] = new CardsSet(shuffledDeck.Slice(dealtCards, cardToDeal));
+                dealtCards += cardToDeal;
+            }
             PlayersPoints[DealerId] = PlayersCards[DealerId]
                 .GetCards()
                 .Sum(card => card.Rank.GetPoints());
@@ -111,7 +117,7 @@ namespace ThousandSchnapsen.Common.States
         {
             var availableActions = GetAvailableActions();
             if (!availableActions.Contains(action))
-                throw new System.InvalidOperationException();
+                throw new InvalidOperationException();
 
             var (stock, playersCards, playersUsedCards) = MoveCard(action);
             var playersPoints = (int[]) PlayersPoints.Clone();
@@ -164,7 +170,7 @@ namespace ThousandSchnapsen.Common.States
             else
             {
                 stock = new StockItem[Stock.Length + 1];
-                System.Array.Copy(Stock, stock, Stock.Length);
+                Array.Copy(Stock, stock, Stock.Length);
                 stock[Stock.Length] = stockItem;
             }
 
@@ -184,7 +190,7 @@ namespace ThousandSchnapsen.Common.States
             }
             playersPoints[NextPlayerId] += action.Card.Color.GetPoints();
             var trumpsHistory = new Color[TrumpsHistory.Length + 1];
-            System.Array.Copy(TrumpsHistory, trumpsHistory, TrumpsHistory.Length);
+            Array.Copy(TrumpsHistory, trumpsHistory, TrumpsHistory.Length);
             trumpsHistory[TrumpsHistory.Length] = action.Card.Color;
             isTrump = true;
             return trumpsHistory;

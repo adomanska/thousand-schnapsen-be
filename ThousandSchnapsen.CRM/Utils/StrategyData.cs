@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using ThousandSchnapsen.Common.Utils;
 
 namespace ThousandSchnapsen.CRM.Utils
 {
@@ -48,9 +49,8 @@ namespace ThousandSchnapsen.CRM.Utils
 
         private void ResetStrategy()
         {
-            Strategy = Enumerable.Range(0, _availableActions.Length)
-                .Select(i => 1f / _availableActions.Length)
-                .ToArray();
+            Strategy = new float[_availableActions.Length]
+                .Populate(() => 1f / _availableActions.Length);
         }
     }
 }

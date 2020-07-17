@@ -9,6 +9,7 @@ namespace ThousandSchnapsen.Common.Commons
         public const int CardsCount = 24;
         public const int CardsInColorCount = 6;
         public const int CardsPerPlayerCount = 7;
+        public const int CardsPerDealerCount = 3;
         public const int MaxCardValue = 11;
 
         public static readonly Color[] Colors =

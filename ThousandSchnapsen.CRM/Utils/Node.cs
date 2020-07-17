@@ -3,6 +3,7 @@ using System.Linq;
 using MoreLinq;
 using ThousandSchnapsen.Common.Commons;
 using ThousandSchnapsen.Common.States;
+using ThousandSchnapsen.Common.Utils;
 using Action = System.Action;
 
 namespace ThousandSchnapsen.CRM.Utils
@@ -25,14 +26,8 @@ namespace ThousandSchnapsen.CRM.Utils
             else
             {
                 _gameState = new GameState(3);
-                _possibleCardsSets = Enumerable
-                    .Range(0, Constants.PlayersCount)
-                    .Select(playerId => CardsSet.Deck())
-                    .ToArray();
-                _certainCardsSets = Enumerable
-                    .Range(0, Constants.PlayersCount)
-                    .Select(playerId => new CardsSet())
-                    .ToArray();
+                _possibleCardsSets = new CardsSet[Constants.PlayersCount].Populate(CardsSet.Deck);
+                _certainCardsSets = new CardsSet[Constants.PlayersCount].Populate(() => new CardsSet());
                 
                 var dealerCards = _gameState.PlayersCards[_gameState.DealerId];
                 var opponentsIds = Enumerable.Range(0, Constants.PlayersCount)
