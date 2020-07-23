@@ -3,30 +3,32 @@ using System.IO;
 using System.Linq;
 using MoreLinq;
 using ThousandSchnapsen.Common.Commons;
+using ThousandSchnapsen.Common.Utils;
 using Action = ThousandSchnapsen.Common.Commons.Action;
 
 namespace ThousandSchnapsen.Common.States
 {
     public class GameState : PublicState
     {
-        private bool initialized = false;
+        private bool _initialized;
         public GameState()
         {
         }
 
         public GameState(int dealerId)
         {
-            DealerId = dealerId;
-            NextPlayerId = (DealerId + 1) % Constants.PlayersCount;
-            PlayersCards = new CardsSet[Constants.PlayersCount];
             var shuffledDeck = Constants.Deck.Shuffle().ToArray();
             var dealtCards = 0;
-            for (var playerId = 0; playerId < Constants.PlayersCount; playerId++)
-            {
-                var cardToDeal = playerId == dealerId ? Constants.CardsPerDealerCount : Constants.CardsPerPlayerCount;
-                PlayersCards[playerId] = new CardsSet(shuffledDeck.Slice(dealtCards, cardToDeal));
-                dealtCards += cardToDeal;
-            }
+            
+            DealerId = dealerId;
+            NextPlayerId = (DealerId + 1) % Constants.PlayersCount;
+            PlayersCards = new CardsSet[Constants.PlayersCount].Populate(playerId =>
+                {
+                    var cardToDeal = playerId == dealerId ? Constants.CardsPerDealerCount : Constants.CardsPerPlayerCount;
+                    var cardsSet = new CardsSet(shuffledDeck.Slice(dealtCards, cardToDeal));
+                    dealtCards += cardToDeal;
+                    return cardsSet;
+                });
             PlayersPoints[DealerId] = PlayersCards[DealerId]
                 .GetCards()
                 .Sum(card => card.Rank.GetPoints());
@@ -58,7 +60,7 @@ namespace ThousandSchnapsen.Common.States
 
         public void Init((int PlayerId, byte CardId)[] cardsToLet)
         {
-            if (initialized)
+            if (_initialized)
                 return;
             
             PlayersCards[NextPlayerId] |= PlayersCards[DealerId];
@@ -72,6 +74,8 @@ namespace ThousandSchnapsen.Common.States
                 PlayersCards[playerId].AddCard(cardId);
                 PlayersCards[NextPlayerId].RemoveCard(cardId);
             });
+
+            _initialized = true;
         }
 
         public Action[] GetAvailableActions()

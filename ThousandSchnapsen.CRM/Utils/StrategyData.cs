@@ -27,9 +27,9 @@ namespace ThousandSchnapsen.CRM.Utils
                 UpdateStrategy();
             }
         }
-        
+
         public float[] StrategySum { get; set; }
-        
+
         public float[] Strategy { get; private set; }
 
         public void UpdateStrategy()
@@ -50,7 +50,7 @@ namespace ThousandSchnapsen.CRM.Utils
         private void ResetStrategy()
         {
             Strategy = new float[_availableActions.Length]
-                .Populate(() => 1f / _availableActions.Length);
+                .Populate(_ => 1f / _availableActions.Length);
         }
     }
 }

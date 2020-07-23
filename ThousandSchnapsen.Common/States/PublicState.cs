@@ -1,5 +1,6 @@
 using System.Linq;
 using ThousandSchnapsen.Common.Commons;
+using ThousandSchnapsen.Common.Utils;
 
 namespace ThousandSchnapsen.Common.States
 {
@@ -8,8 +9,7 @@ namespace ThousandSchnapsen.Common.States
         public StockItem[] Stock { get; set; } = { };
 
         public CardsSet[] PlayersUsedCards { get; set; } = new CardsSet[Constants.PlayersCount]
-            .Select(item => new CardsSet())
-            .ToArray();
+            .Populate(_ => new CardsSet());
 
         public int[] PlayersPoints { get; set; } = new int[Constants.PlayersCount];
         public Color[] TrumpsHistory { get; set; } = { };
