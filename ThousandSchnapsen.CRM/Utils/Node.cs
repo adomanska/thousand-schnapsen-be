@@ -1,8 +1,10 @@
+using System;
 using System.Linq;
 using MoreLinq;
 using ThousandSchnapsen.Common.Commons;
 using ThousandSchnapsen.Common.States;
 using ThousandSchnapsen.Common.Utils;
+using Action = ThousandSchnapsen.Common.Commons.Action;
 
 namespace ThousandSchnapsen.CRM.Utils
 {
@@ -41,20 +43,21 @@ namespace ThousandSchnapsen.CRM.Utils
 
                 _gameState.Init(cardsToLet);
 
-                _possibleCardsSets[PlayerId] |= dealerCards;
+                _possibleCardsSets[PlayerId] -= dealerCards;
                 _certainCardsSets[PlayerId] |= dealerCards;
-                cardsToLet.ForEach(item =>
+                cardsToLet.ForEach((item, index) =>
                 {
-                    _possibleCardsSets[PlayerId].RemoveCard(item.cardId);
-                    _certainCardsSets[PlayerId].RemoveCard(item.cardId);
-                });
+                    var (opponentId, cardId) = item;
+                    
+                    _possibleCardsSets[PlayerId].RemoveCard(cardId);
+                    _certainCardsSets[PlayerId].RemoveCard(cardId);
+                    
+                    _possibleCardsSets[opponentId] -= dealerCards;
+                    _possibleCardsSets[opponentId].RemoveCard(cardId);
+                    _certainCardsSets[opponentId].AddCard(cardId);
 
-                cardsToLet.ForEach(item =>
-                {
-                    var (playerId, cardId) = item;
-                    _possibleCardsSets[playerId] -= dealerCards;
-                    _possibleCardsSets[playerId].AddCard(cardId);
-                    _certainCardsSets[playerId].AddCard(cardId);
+                    var secondOpponentId = opponentsIds[Math.Abs(index - 1)];
+                    _possibleCardsSets[secondOpponentId].RemoveCard(cardId);
                 });
             }
         }
@@ -66,7 +69,7 @@ namespace ThousandSchnapsen.CRM.Utils
 
         public int PlayerId => _gameState.NextPlayerId;
 
-        public (int, (int, int)) InfoSet
+        public (int, int, (int, int)) InfoSet
         {
             get
             {
@@ -92,7 +95,7 @@ namespace ThousandSchnapsen.CRM.Utils
 
                 return (
                     availableCardsSet.Code,
-                    // possibleCardsSet.Code,
+                    possibleCardsSet.Code,
                     (certainCardsSets[0], certainCardsSets[1])
                 );
             }
@@ -138,22 +141,17 @@ namespace ThousandSchnapsen.CRM.Utils
                 .Select(stockItem => stockItem.Card.GetValue(stockColor, trumpColor))
                 .Max();
 
-            var impossibleCards = new CardsSet();
+            var stockColorCardsSet = CardsSet.Color(stockColor);
+            var greaterCardsSet = new CardsSet(CardsSet.Deck().GetCards().Where(c => c.GetValue(stockColor, trumpColor) > maxStockValue));
 
             if (card.Color == stockColor && card.GetValue(stockColor, trumpColor) < maxStockValue)
-                impossibleCards |= new CardsSet(CardsSet.Color(stockColor).GetCards()
-                    .Where(c => c.GetValue(stockColor, trumpColor) > maxStockValue)
-                );
-            else if (card.Color != stockColor)
-            {
-                impossibleCards |= CardsSet.Color(stockColor);
-                if (card.GetValue(stockColor, trumpColor) < maxStockValue && trumpColor.HasValue)
-                    impossibleCards |= new CardsSet(CardsSet.Color(trumpColor.Value).GetCards()
-                        .Where(c => c.GetValue(stockColor, trumpColor) > maxStockValue)
-                    );
-            }
-
-            return impossibleCards;
+                return stockColorCardsSet & greaterCardsSet;
+            if (card.Color != stockColor && card.GetValue(stockColor, trumpColor) > maxStockValue)
+                return stockColorCardsSet;
+            if (card.Color != stockColor && card.GetValue(stockColor, trumpColor) < maxStockValue)
+                return stockColorCardsSet | greaterCardsSet;
+            
+            return new CardsSet();
         }
 
         public int GetUtil(int playerId) =>

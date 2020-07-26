@@ -13,8 +13,8 @@ namespace ThousandSchnapsen.CRM
             0, 1, 2
         };
 
-        private readonly Dictionary<(int, (int, int)), StrategyData> _nodeMap =
-            new Dictionary<(int, (int, int)), StrategyData>();
+        private readonly Dictionary<(int, int, (int, int)), StrategyData> _nodeMap =
+            new Dictionary<(int, int, (int, int)), StrategyData>();
 
         private int _nodesCount;
         private int _newInfoSetsCount;
