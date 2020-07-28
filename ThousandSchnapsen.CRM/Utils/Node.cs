@@ -93,10 +93,18 @@ namespace ThousandSchnapsen.CRM.Utils
                     .Code
                 }.OrderBy(code => code).ToArray();
 
-                return (
+                var data = CodeUnification.Unify(new []
+                {
                     availableCardsSet.Code,
                     possibleCardsSet.Code,
-                    (certainCardsSets[0], certainCardsSets[1])
+                    certainCardsSets[0],
+                    certainCardsSets[1]
+                });
+
+                return (
+                    data[0],
+                    data[1],
+                    (data[2], data[3])
                 );
             }
         }
