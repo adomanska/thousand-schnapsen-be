@@ -12,7 +12,7 @@ namespace ThousandSchnapsen.Common.Commons
         public CardsSet() =>
             Code = 0;
 
-        private CardsSet(int code) =>
+        public CardsSet(int code) =>
             Code = code;
 
         public CardsSet(IEnumerable<byte> cardsIds) :

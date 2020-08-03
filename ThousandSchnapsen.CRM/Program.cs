@@ -1,9 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-using System.Timers;
-using ThousandSchnapsen.Common.States;
-
-namespace ThousandSchnapsen.CRM
+﻿namespace ThousandSchnapsen.CRM
 {
     class Program
     {

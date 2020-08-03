@@ -113,9 +113,11 @@ namespace ThousandSchnapsen.CRM.Utils
         {
             var nextPossibleCardsSets = _possibleCardsSets.Select(cardsSet => cardsSet.Clone()).ToArray();
             var nextCertainCardsSets = _certainCardsSets.Select(cardsSet => cardsSet.Clone()).ToArray();
+            bool trump = false;
 
             void OnTrump()
             {
+                trump = true;
                 if (card.SecondMarriagePart == null) return;
                 nextCertainCardsSets[PlayerId].AddCard(card.SecondMarriagePart.Value);
                 nextPossibleCardsSets[PlayerId].RemoveCard(card.SecondMarriagePart.Value);
@@ -126,6 +128,10 @@ namespace ThousandSchnapsen.CRM.Utils
 
             var nextGameState = _gameState.PerformAction(new Action()
                 {Card = card, PlayerId = PlayerId}, OnTrump);
+
+            if (!trump && card.IsPartOfMarriage && (_gameState.Stock.Length == 0 || _gameState.Stock.Length == 3))
+                nextPossibleCardsSets[PlayerId].RemoveCard(card.SecondMarriagePart.Value);
+
             nextPossibleCardsSets.ForEach(cardsSet => cardsSet.RemoveCard(card));
             nextCertainCardsSets[PlayerId].RemoveCard(card);
             nextPossibleCardsSets[PlayerId] -= GetImpossibleCardsSet(card);

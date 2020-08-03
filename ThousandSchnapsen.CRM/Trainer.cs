@@ -60,10 +60,10 @@ namespace ThousandSchnapsen.CRM
             float nodeUtil = 0;
             var utils = new float[node.AvailableActions.Length];
 
-            IEnumerable<byte> actionsIndices;
+            byte[] actionsIndices;
 
             if (node.PlayerId == playerId)
-                actionsIndices = Enumerable.Range(0, node.AvailableActions.Length).Select(i => (byte) i);
+                actionsIndices = Enumerable.Range(0, node.AvailableActions.Length).Select(i => (byte) i).ToArray();
             else
             {
                 var randVal = _random.NextDouble();
