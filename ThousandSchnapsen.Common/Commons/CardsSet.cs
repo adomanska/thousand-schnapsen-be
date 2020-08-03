@@ -112,6 +112,19 @@ namespace ThousandSchnapsen.Common.Commons
                 : (Card?) null;
         }
 
+        public static CardsSet GetHigherCardsSet(Card card, Color stockColor, Color? trumpColor)
+        {
+            int code;
+            if (card.Color == stockColor)
+                code = (Color(stockColor).Code & ~(1 << card.CardId)) | Color(trumpColor).Code;
+            else if (card.Color == trumpColor)
+                code = Color(trumpColor).Code & ~(1 << card.CardId);
+            else
+                code = Color(stockColor).Code | Color(trumpColor).Code;
+            
+            return new CardsSet(code);
+        }
+
         public override string ToString() =>
             string.Join("  ", GetCardsIds().Select(cardId => new Card(cardId).ToString()));
 

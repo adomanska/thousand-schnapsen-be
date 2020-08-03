@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using ThousandSchnapsen.Common.Utils;
 
@@ -7,14 +6,14 @@ namespace ThousandSchnapsen.CRM.Utils
 {
     public class StrategyData
     {
-        private readonly byte[] _availableActions;
+        private readonly int _availableActionsCount;
         private float[] _regretSum;
 
-        public StrategyData(IEnumerable<byte> availableActions)
+        public StrategyData(int availableActionsCount)
         {
-            _availableActions = availableActions.ToArray();
-            _regretSum = new float[_availableActions.Length];
-            StrategySum = new float[_availableActions.Length];
+            _availableActionsCount = availableActionsCount;
+            _regretSum = new float[availableActionsCount];
+            StrategySum = new float[availableActionsCount];
             ResetStrategy();
         }
 
@@ -32,7 +31,7 @@ namespace ThousandSchnapsen.CRM.Utils
 
         public float[] Strategy { get; private set; }
 
-        public void UpdateStrategy()
+        private void UpdateStrategy()
         {
             Strategy = RegretSum
                 .Select(regretSum => Math.Max(0, regretSum))
@@ -49,8 +48,8 @@ namespace ThousandSchnapsen.CRM.Utils
 
         private void ResetStrategy()
         {
-            Strategy = new float[_availableActions.Length]
-                .Populate(_ => 1f / _availableActions.Length);
+            Strategy = new float[_availableActionsCount]
+                .Populate(_ => 1f / _availableActionsCount);
         }
     }
 }

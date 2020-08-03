@@ -45,25 +45,28 @@ namespace ThousandSchnapsen.CRM
         private float Crm(Node node, int playerId, float[] probabilities)
         {
             _nodesCount++;
+            
             if (node.IsTerminal)
                 return node.GetUtil(playerId);
 
             var infoSet = node.InfoSet;
+            var availableActions = node.AvailableActions;
+            
             if (!_nodeMap.TryGetValue(infoSet, out var strategyData))
             {
-                strategyData = new StrategyData(node.AvailableActions);
+                strategyData = new StrategyData(availableActions.Length);
                 _nodeMap.Add(infoSet, strategyData);
                 _newInfoSetsCount++;
             }
 
             var strategy = strategyData.Strategy;
             float nodeUtil = 0;
-            var utils = new float[node.AvailableActions.Length];
+            var utils = new float[availableActions.Length];
 
             byte[] actionsIndices;
 
             if (node.PlayerId == playerId)
-                actionsIndices = Enumerable.Range(0, node.AvailableActions.Length).Select(i => (byte) i).ToArray();
+                actionsIndices = Enumerable.Range(0, availableActions.Length).Select(i => (byte) i).ToArray();
             else
             {
                 var randVal = _random.NextDouble();
@@ -79,7 +82,7 @@ namespace ThousandSchnapsen.CRM
                 var newProbabilities = probabilities
                     .Select((prob, id) => id == playerId ? strategy[index] * prob : prob)
                     .ToArray();
-                utils[index] = Crm(node.GetNext(new Card(node.AvailableActions[index])), playerId, newProbabilities);
+                utils[index] = Crm(node.GetNext(new Card(availableActions[index])), playerId, newProbabilities);
                 nodeUtil += strategy[index] * utils[index];
             }
 

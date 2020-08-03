@@ -151,12 +151,13 @@ namespace ThousandSchnapsen.CRM.Utils
 
             var stockColor = _gameState.Stock.First().Card.Color;
             var trumpColor = _gameState.Trump;
-            var maxStockValue = _gameState.Stock
-                .Select(stockItem => stockItem.Card.GetValue(stockColor, trumpColor))
-                .Max();
+            var maxStockCard = _gameState.Stock
+                .MaxBy(stockItem => stockItem.Card.GetValue(stockColor, trumpColor))
+                .First().Card;
+            var maxStockValue = maxStockCard.GetValue(stockColor, trumpColor);
 
             var stockColorCardsSet = CardsSet.Color(stockColor);
-            var greaterCardsSet = new CardsSet(CardsSet.Deck().GetCards().Where(c => c.GetValue(stockColor, trumpColor) > maxStockValue));
+            var greaterCardsSet = CardsSet.GetHigherCardsSet(maxStockCard, stockColor, trumpColor);
 
             if (card.Color == stockColor && card.GetValue(stockColor, trumpColor) < maxStockValue)
                 return stockColorCardsSet & greaterCardsSet;
