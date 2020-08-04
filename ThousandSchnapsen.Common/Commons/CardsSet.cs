@@ -115,8 +115,10 @@ namespace ThousandSchnapsen.Common.Commons
         public static CardsSet GetHigherCardsSet(Card card, Color stockColor, Color? trumpColor)
         {
             int code;
-            if (card.Color == stockColor)
+            if (card.Color == stockColor && stockColor != trumpColor)
                 code = (Color(stockColor).Code & ~((1 << (card.CardId + 1)) - 1)) | Color(trumpColor).Code;
+            else if(card.Color == stockColor && stockColor == trumpColor)
+                code = (Color(stockColor).Code & ~((1 << (card.CardId + 1)) - 1));
             else if (card.Color == trumpColor)
                 code = Color(trumpColor).Code & ~((1 << (card.CardId + 1)) - 1);
             else

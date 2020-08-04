@@ -50,7 +50,7 @@ namespace ThousandSchnapsen.CRM
             
             if (node.IsTerminal)
                 return node.GetUtil(playerId);
-            
+
             var availableActions = node.AvailableActions;
 
             if (availableActions.Length == 1)
@@ -60,16 +60,7 @@ namespace ThousandSchnapsen.CRM
 
             if (infoSet.Item2 == 0 && infoSet.Item3.Item1 == 0)
             {
-                Console.WriteLine("Possible cards sets:");
-                node.Data.Item1.ForEach(data => Console.WriteLine(data));
-                Console.WriteLine("Certain cards sets:");
-                node.Data.Item2.ForEach(data => Console.WriteLine(data));
-                Console.WriteLine("Info set data:");
-                Console.WriteLine(Convert.ToString(infoSet.Item1, 2).PadLeft(24, '0'));
-                Console.WriteLine(Convert.ToString(infoSet.Item2, 2).PadLeft(24, '0'));
-                Console.WriteLine(Convert.ToString(infoSet.Item3.Item1, 2).PadLeft(24, '0'));
-                Console.WriteLine(Convert.ToString(infoSet.Item3.Item2, 2).PadLeft(24, '0'));
-                Logger.Log(node.GameState);
+                Console.ReadLine();
             }
 
             if (!_nodeMap.TryGetValue(infoSet, out var strategyData))

@@ -69,5 +69,18 @@ namespace ThousandSchnapsen.Common.Tests.Commons
 
             Assert.Equal(expected, result.Code);
         }
+        
+        [Fact]
+        public void GetHigherCardsSet_CardOfStockColorAndTrumpIsStockColor_ReturnProperCardsSet()
+        {
+            var card = new Card(Rank.Jack, Color.Diamonds);
+            var stockColor = Color.Diamonds;
+            Color? trump = Color.Diamonds;
+            var expected = 0b000000111100000000000000;
+
+            var result = CardsSet.GetHigherCardsSet(card, stockColor, trump);
+
+            Assert.Equal(expected, result.Code);
+        }
     }
 }
