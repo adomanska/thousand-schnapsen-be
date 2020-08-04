@@ -48,10 +48,14 @@ namespace ThousandSchnapsen.CRM
             
             if (node.IsTerminal)
                 return node.GetUtil(playerId);
-
-            var infoSet = node.InfoSet;
-            var availableActions = node.AvailableActions;
             
+            var availableActions = node.AvailableActions;
+
+            if (availableActions.Length == 1)
+                return Crm(node.GetNext(new Card(availableActions[0])), playerId, probabilities);
+            
+            var infoSet = node.InfoSet;
+
             if (!_nodeMap.TryGetValue(infoSet, out var strategyData))
             {
                 strategyData = new StrategyData(availableActions.Length);
