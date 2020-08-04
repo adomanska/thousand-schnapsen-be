@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using MoreLinq;
 using ThousandSchnapsen.Common.Commons;
+using ThousandSchnapsen.Common.Loggers;
 using ThousandSchnapsen.CRM.Utils;
 
 namespace ThousandSchnapsen.CRM
@@ -55,6 +57,20 @@ namespace ThousandSchnapsen.CRM
                 return Crm(node.GetNext(new Card(availableActions[0])), playerId, probabilities);
             
             var infoSet = node.InfoSet;
+
+            if (infoSet.Item2 == 0 && infoSet.Item3.Item1 == 0)
+            {
+                Console.WriteLine("Possible cards sets:");
+                node.Data.Item1.ForEach(data => Console.WriteLine(data));
+                Console.WriteLine("Certain cards sets:");
+                node.Data.Item2.ForEach(data => Console.WriteLine(data));
+                Console.WriteLine("Info set data:");
+                Console.WriteLine(Convert.ToString(infoSet.Item1, 2).PadLeft(24, '0'));
+                Console.WriteLine(Convert.ToString(infoSet.Item2, 2).PadLeft(24, '0'));
+                Console.WriteLine(Convert.ToString(infoSet.Item3.Item1, 2).PadLeft(24, '0'));
+                Console.WriteLine(Convert.ToString(infoSet.Item3.Item2, 2).PadLeft(24, '0'));
+                Logger.Log(node.GameState);
+            }
 
             if (!_nodeMap.TryGetValue(infoSet, out var strategyData))
             {

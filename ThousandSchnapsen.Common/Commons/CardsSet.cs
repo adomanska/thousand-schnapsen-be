@@ -116,9 +116,9 @@ namespace ThousandSchnapsen.Common.Commons
         {
             int code;
             if (card.Color == stockColor)
-                code = (Color(stockColor).Code & ~(1 << card.CardId)) | Color(trumpColor).Code;
+                code = (Color(stockColor).Code & ~((1 << (card.CardId + 1)) - 1)) | Color(trumpColor).Code;
             else if (card.Color == trumpColor)
-                code = Color(trumpColor).Code & ~(1 << card.CardId);
+                code = Color(trumpColor).Code & ~((1 << (card.CardId + 1)) - 1);
             else
                 code = Color(stockColor).Code | Color(trumpColor).Code;
             

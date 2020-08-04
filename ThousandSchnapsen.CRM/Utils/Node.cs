@@ -62,6 +62,10 @@ namespace ThousandSchnapsen.CRM.Utils
             }
         }
 
+        public GameState GameState => _gameState;
+
+        public (CardsSet[], CardsSet[]) Data => (_possibleCardsSets, _certainCardsSets);
+
         public byte[] AvailableActions =>
             _gameState.GetAvailableActions().Select(action => action.Card.CardId).ToArray();
 
@@ -93,13 +97,13 @@ namespace ThousandSchnapsen.CRM.Utils
                     .Code
                 }.OrderBy(code => code).ToArray();
 
-                var data = CodeUnification.Unify(new []
+                var data = new []
                 {
                     availableCardsSet.Code,
                     possibleCardsSet.Code,
                     certainCardsSets[0],
                     certainCardsSets[1]
-                });
+                };
 
                 return (
                     data[0],
