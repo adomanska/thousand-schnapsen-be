@@ -31,7 +31,7 @@ namespace ThousandSchnapsen.Common.Commons
             private set
             {
                 _code = value;
-                Count = CountSetBits(value);
+                Count = CountSetBits(value, Constants.CardsCount);
             }
         }
 
@@ -139,16 +139,24 @@ namespace ThousandSchnapsen.Common.Commons
         private bool Equals(CardsSet other) =>
             Code == other.Code;
 
-        private static int CountSetBits(int code)
+        private static int CountSetBits(int code, int length)
         {
-            var count = 0;
-            while (code != 0)
-            {
-                code &= (code - 1);
-                count++;
-            }
+            if (code == 0)
+                return 0;
+            if (length == 0)
+                return 0;
+            if (length == 1)
+                return code;
 
-            return count;
+            var rightLength = length / 2;
+            var leftLength = length - rightLength;
+            var rightCode = code & ((1 << rightLength) - 1);
+            var leftCode = code >> rightLength;
+
+            var binLeft = Convert.ToString(leftCode, 2);
+            var binRight = Convert.ToString(rightCode, 2);
+
+            return CountSetBits(leftCode, leftLength) + CountSetBits(rightCode, rightLength);
         }
     }
 }

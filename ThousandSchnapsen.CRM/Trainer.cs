@@ -58,10 +58,8 @@ namespace ThousandSchnapsen.CRM
             
             var infoSet = node.InfoSet;
 
-            if (infoSet.Item2 == 0 && infoSet.Item3.Item1 == 0)
-            {
-                Console.ReadLine();
-            }
+            if (infoSet.Item2 == 0)
+                return 0;
 
             if (!_nodeMap.TryGetValue(infoSet, out var strategyData))
             {

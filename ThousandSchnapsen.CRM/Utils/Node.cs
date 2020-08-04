@@ -13,6 +13,7 @@ namespace ThousandSchnapsen.CRM.Utils
         private readonly GameState _gameState;
         private readonly CardsSet[] _possibleCardsSets;
         private readonly CardsSet[] _certainCardsSets;
+        private readonly byte[] _cardsLeft;
 
         public Node(NodeParams? nodeParams)
         {
@@ -21,12 +22,14 @@ namespace ThousandSchnapsen.CRM.Utils
                 _gameState = nodeParams.Value.GameState;
                 _possibleCardsSets = nodeParams.Value.PossibleCardsSets;
                 _certainCardsSets = nodeParams.Value.CertainCardsSet;
+                _cardsLeft = nodeParams.Value.CardsLeft;
             }
             else
             {
                 _gameState = new GameState(3);
                 _possibleCardsSets = new CardsSet[Constants.PlayersCount].Populate(_ => CardsSet.Deck());
                 _certainCardsSets = new CardsSet[Constants.PlayersCount].Populate(_ => new CardsSet());
+                _cardsLeft = new byte[Constants.PlayersCount];
 
                 var dealerCards = _gameState.PlayersCards[_gameState.DealerId];
                 var opponentsIds = Enumerable.Range(0, Constants.PlayersCount)
@@ -62,10 +65,6 @@ namespace ThousandSchnapsen.CRM.Utils
             }
         }
 
-        public GameState GameState => _gameState;
-
-        public (CardsSet[], CardsSet[]) Data => (_possibleCardsSets, _certainCardsSets);
-
         public byte[] AvailableActions =>
             _gameState.GetAvailableActions().Select(action => action.Card.CardId).ToArray();
 
@@ -97,13 +96,13 @@ namespace ThousandSchnapsen.CRM.Utils
                     .Code
                 }.OrderBy(code => code).ToArray();
 
-                var data = new []
+                var data = CodeUnification.Unify(new []
                 {
                     availableCardsSet.Code,
                     possibleCardsSet.Code,
                     certainCardsSets[0],
                     certainCardsSets[1]
-                };
+                });
 
                 return (
                     data[0],
@@ -117,7 +116,10 @@ namespace ThousandSchnapsen.CRM.Utils
         {
             var nextPossibleCardsSets = _possibleCardsSets.Select(cardsSet => cardsSet.Clone()).ToArray();
             var nextCertainCardsSets = _certainCardsSets.Select(cardsSet => cardsSet.Clone()).ToArray();
+            var nextCardsLeft = new byte[Constants.PlayersCount];
+            Array.Copy(_cardsLeft, nextCardsLeft, _cardsLeft.Length);
             bool trump = false;
+            nextCardsLeft[PlayerId] -= 1;
 
             void OnTrump()
             {
@@ -144,7 +146,8 @@ namespace ThousandSchnapsen.CRM.Utils
             {
                 CertainCardsSet = nextCertainCardsSets,
                 PossibleCardsSets = nextPossibleCardsSets,
-                GameState = nextGameState
+                GameState = nextGameState,
+                CardsLeft = nextCardsLeft
             });
         }
 

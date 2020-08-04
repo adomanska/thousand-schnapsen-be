@@ -8,5 +8,6 @@ namespace ThousandSchnapsen.CRM.Utils
         public GameState GameState;
         public CardsSet[] PossibleCardsSets;
         public CardsSet[] CertainCardsSet;
+        public byte[] CardsLeft;
     }
 }
