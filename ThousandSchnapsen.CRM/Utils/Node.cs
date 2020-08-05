@@ -72,7 +72,9 @@ namespace ThousandSchnapsen.CRM.Utils
 
         public int PlayerId => _gameState.NextPlayerId;
 
-        public (int, int, int, int) InfoSet
+        public PublicState PublicGameState => _gameState;
+
+        public InfoSet InfoSet
         {
             get
             {
@@ -83,47 +85,8 @@ namespace ThousandSchnapsen.CRM.Utils
                     .Where(playerId => playerId != PlayerId && playerId != _gameState.DealerId)
                     .ToArray();
 
-                var possibleCardsSet = (_possibleCardsSets[opponentsIds[0]] - playerCardsSet) & (
-                    _possibleCardsSets[opponentsIds[1]] - playerCardsSet);
-
-                var certainCardsSets = new[]
-                {
-                    (_certainCardsSets[opponentsIds[0]] |
-                     (_possibleCardsSets[opponentsIds[0]] - playerCardsSet - possibleCardsSet)),
-                    (_certainCardsSets[opponentsIds[1]] |
-                     (_possibleCardsSets[opponentsIds[1]] - playerCardsSet - possibleCardsSet))
-                };
-
-                if (certainCardsSets[0].Count == _cardsLeft[opponentsIds[0]])
-                {
-                    certainCardsSets[1] |= possibleCardsSet;
-                    possibleCardsSet = new CardsSet();
-                }
-                else if (certainCardsSets[1].Count == _cardsLeft[opponentsIds[1]])
-                {
-                    certainCardsSets[0] |= possibleCardsSet;
-                    possibleCardsSet = new CardsSet();
-                }
-
-                var certainCardsSetsCodes = certainCardsSets
-                    .OrderBy(cardsSet => cardsSet.Code)
-                    .Select(cardsSet => cardsSet.Code)
-                    .ToArray();
-
-                var data = CodeUnification.Unify(new[]
-                {
-                    availableCardsSet.Code,
-                    possibleCardsSet.Code,
-                    certainCardsSetsCodes[0],
-                    certainCardsSetsCodes[1]
-                });
-
-                return (
-                    data[0],
-                    data[1],
-                    data[2],
-                    data[3]
-                );
+                return new InfoSet(playerCardsSet, availableCardsSet, opponentsIds,
+                    _possibleCardsSets, _certainCardsSets, _cardsLeft, PlayerId);
             }
         }
 

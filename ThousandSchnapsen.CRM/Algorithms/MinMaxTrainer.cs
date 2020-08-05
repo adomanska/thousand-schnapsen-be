@@ -9,6 +9,7 @@ namespace ThousandSchnapsen.CRM.Algorithms
     {
         public static int Train(PublicState publicGameState, CardsSet[] playersCards, int playerId)
         {
+            playersCards[publicGameState.DealerId] = new CardsSet();
             var gameState = new GameState()
             {
                 DealerId = publicGameState.DealerId,

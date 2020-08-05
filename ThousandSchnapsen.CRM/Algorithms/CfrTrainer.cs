@@ -56,13 +56,13 @@ namespace ThousandSchnapsen.CRM.Algorithms
 
             var infoSet = node.InfoSet;
 
-            if (infoSet.Item2 == 0)
-                return 0; // TODO: Handle certain info set by Min - Max
+            if (infoSet.IsCertain)
+                return MinMaxTrainer.Train(node.PublicGameState, infoSet.PlayersCards, playerId);
 
-            if (!_nodeMap.TryGetValue(infoSet, out var strategyData))
+            if (!_nodeMap.TryGetValue(infoSet.RawData, out var strategyData))
             {
                 strategyData = new StrategyData(availableActions.Length);
-                _nodeMap.Add(infoSet, strategyData);
+                _nodeMap.Add(infoSet.RawData, strategyData);
                 _newInfoSetsCount++;
             }
 
