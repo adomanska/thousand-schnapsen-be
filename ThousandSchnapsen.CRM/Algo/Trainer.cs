@@ -4,7 +4,7 @@ using System.Linq;
 using ThousandSchnapsen.Common.Commons;
 using ThousandSchnapsen.CRM.Utils;
 
-namespace ThousandSchnapsen.CRM
+namespace ThousandSchnapsen.CRM.Algo
 {
     public class Trainer
     {
@@ -22,20 +22,20 @@ namespace ThousandSchnapsen.CRM
 
         public void Train(int iterations)
         {
-            double util = 0;
-            int totalNodes = 0;
+            var totalNodes = 0;
             for (var i = 1; i < iterations + 1; i++)
             {
                 foreach (var player in Players)
                 {
                     var node = new Node(null);
-                    util += Crm(node, player, new float[] {1, 1, 1});
+                    Crm(node, player, new float[] {1, 1, 1});
                 }
 
                 if (i % 10 == 0)
                 {
                     totalNodes += _newInfoSetsCount;
-                    Console.WriteLine($"{i:D8}: {(_newInfoSetsCount * 100) / _nodesCount}% of new nodes -- {_newInfoSetsCount} new nodes -- {totalNodes} total nodes");
+                    Console.WriteLine(
+                        $"{i:D8}: {(_newInfoSetsCount * 100) / _nodesCount}% of new nodes -- {_newInfoSetsCount} new nodes -- {totalNodes} total nodes");
                     _nodesCount = 0;
                     _newInfoSetsCount = 0;
                 }
@@ -45,7 +45,7 @@ namespace ThousandSchnapsen.CRM
         private float Crm(Node node, int playerId, float[] probabilities)
         {
             _nodesCount++;
-            
+
             if (node.IsTerminal)
                 return node.GetUtil(playerId);
 
@@ -53,7 +53,7 @@ namespace ThousandSchnapsen.CRM
 
             if (availableActions.Length == 1)
                 return Crm(node.GetNext(new Card(availableActions[0])), playerId, probabilities);
-            
+
             var infoSet = node.InfoSet;
 
             if (infoSet.Item2 == 0)
@@ -95,7 +95,8 @@ namespace ThousandSchnapsen.CRM
 
             if (node.PlayerId == playerId)
             {
-                var opponentsProbabilities = probabilities.Aggregate(1f, (acc, prob) => acc * prob) / probabilities[playerId];
+                var opponentsProbabilities =
+                    probabilities.Aggregate(1f, (acc, prob) => acc * prob) / probabilities[playerId];
 
                 strategyData.RegretSum = strategyData.RegretSum
                     .Select((regretSum, index) => regretSum + opponentsProbabilities * (nodeUtil - utils[index]))

@@ -40,6 +40,8 @@ namespace ThousandSchnapsen.Common.States
             .Select((playerCards, index) => index == DealerId || playerCards.IsEmpty)
             .All(finished => finished);
 
+        public bool StockEmpty => Stock.Length == 0 || Stock.Length == Constants.PlayersCount - 1;
+
         public PlayerState GetPlayerState(int playerId)
         {
             return new PlayerState()
@@ -81,7 +83,7 @@ namespace ThousandSchnapsen.Common.States
         public Action[] GetAvailableActions()
         {
             var availableCards = PlayersCards[NextPlayerId];
-            if (Stock.Length > 0 && Stock.Length < Constants.PlayersCount - 1)
+            if (!StockEmpty)
             {
                 var stockColor = Stock.First().Card.Color;
                 var maxStockValue = Stock
@@ -161,7 +163,7 @@ namespace ThousandSchnapsen.Common.States
             StockItem[] stock;
             var stockItem = new StockItem(action.PlayerId, action.Card);
 
-            if (Stock.Length >= Constants.PlayersCount - 1)
+            if (StockEmpty)
                 stock = new[] {stockItem};
             else
             {
