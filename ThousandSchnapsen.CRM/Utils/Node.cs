@@ -29,17 +29,17 @@ namespace ThousandSchnapsen.CRM.Utils
                 _gameState = new GameState(3);
                 _possibleCardsSets = new CardsSet[Constants.PlayersCount].Populate(_ => CardsSet.Deck());
                 _certainCardsSets = new CardsSet[Constants.PlayersCount].Populate(_ => new CardsSet());
-                _cardsLeft = new byte[Constants.PlayersCount];
+                _cardsLeft = new byte[Constants.PlayersCount].Populate(_ => (byte)Constants.CardsPerPlayerCount);
 
                 var dealerCards = _gameState.PlayersCards[_gameState.DealerId];
                 var opponentsIds = Enumerable.Range(0, Constants.PlayersCount)
                     .Where(playerId => playerId != PlayerId && playerId != _gameState.DealerId)
                     .ToArray();
 
+                var availableCardsToLet = (_gameState.PlayersCards[PlayerId] | dealerCards);
+
                 var cardsToLet =
-                    (_gameState.PlayersCards[PlayerId] | dealerCards)
-                    .GetCardsIds()
-                    .Shuffle()
+                    MoreEnumerable.Shuffle(availableCardsToLet.GetCardsIds())
                     .Take(2)
                     .Select((cardId, index) => (opponentsIds[index], cardId))
                     .ToArray();
@@ -48,7 +48,7 @@ namespace ThousandSchnapsen.CRM.Utils
 
                 _possibleCardsSets[PlayerId] -= dealerCards;
                 _certainCardsSets[PlayerId] |= dealerCards;
-                cardsToLet.ForEach((item, index) =>
+                MoreEnumerable.ForEach(cardsToLet, (item, index) =>
                 {
                     var (opponentId, cardId) = item;
                     
@@ -72,7 +72,7 @@ namespace ThousandSchnapsen.CRM.Utils
 
         public int PlayerId => _gameState.NextPlayerId;
 
-        public (int, int, (int, int)) InfoSet
+        public (int, int, int, int) InfoSet
         {
             get
             {
@@ -89,25 +89,40 @@ namespace ThousandSchnapsen.CRM.Utils
                 var certainCardsSets = new[]
                 {
                     (_certainCardsSets[opponentsIds[0]] |
-                     (_possibleCardsSets[opponentsIds[0]] - playerCardsSet - possibleCardsSet))
-                    .Code,
+                     (_possibleCardsSets[opponentsIds[0]] - playerCardsSet - possibleCardsSet)),
                     (_certainCardsSets[opponentsIds[1]] |
                      (_possibleCardsSets[opponentsIds[1]] - playerCardsSet - possibleCardsSet))
-                    .Code
-                }.OrderBy(code => code).ToArray();
+                };
+
+                if (certainCardsSets[0].Count == _cardsLeft[opponentsIds[0]])
+                {
+                    certainCardsSets[1] |= possibleCardsSet;
+                    possibleCardsSet = new CardsSet();
+                }
+                else if (certainCardsSets[1].Count == _cardsLeft[opponentsIds[1]])
+                {
+                    certainCardsSets[0] |= possibleCardsSet;
+                    possibleCardsSet = new CardsSet();
+                }
+
+                var certainCardsSetsCodes = certainCardsSets
+                .OrderBy(cardsSet => cardsSet.Code)
+                .Select(cardsSet => cardsSet.Code)
+                .ToArray();
 
                 var data = CodeUnification.Unify(new []
                 {
                     availableCardsSet.Code,
                     possibleCardsSet.Code,
-                    certainCardsSets[0],
-                    certainCardsSets[1]
+                    certainCardsSetsCodes[0],
+                    certainCardsSetsCodes[1]
                 });
 
                 return (
                     data[0],
                     data[1],
-                    (data[2], data[3])
+                    data[2],
+                    data[3]
                 );
             }
         }
@@ -158,9 +173,8 @@ namespace ThousandSchnapsen.CRM.Utils
 
             var stockColor = _gameState.Stock.First().Card.Color;
             var trumpColor = _gameState.Trump;
-            var maxStockCard = _gameState.Stock
-                .MaxBy(stockItem => stockItem.Card.GetValue(stockColor, trumpColor))
-                .First().Card;
+            var maxStockCard = MoreEnumerable.First(_gameState.Stock
+                    .MaxBy(stockItem => stockItem.Card.GetValue(stockColor, trumpColor))).Card;
             var maxStockValue = maxStockCard.GetValue(stockColor, trumpColor);
 
             var stockColorCardsSet = CardsSet.Color(stockColor);

@@ -24,7 +24,7 @@ namespace ThousandSchnapsen.Common.States
             NextPlayerId = (DealerId + 1) % Constants.PlayersCount;
             PlayersCards = new CardsSet[Constants.PlayersCount].Populate(playerId =>
                 {
-                    var cardToDeal = playerId == dealerId ? Constants.CardsPerDealerCount : Constants.CardsPerPlayerCount;
+                    var cardToDeal = playerId == dealerId ? Constants.CardsPerDealerCount : (Constants.CardsPerPlayerCount - 1);
                     var cardsSet = new CardsSet(shuffledDeck.Slice(dealtCards, cardToDeal));
                     dealtCards += cardToDeal;
                     return cardsSet;

@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using MoreLinq;
 using ThousandSchnapsen.Common.Commons;
-using ThousandSchnapsen.Common.Loggers;
 using ThousandSchnapsen.CRM.Utils;
 
 namespace ThousandSchnapsen.CRM
@@ -15,8 +13,8 @@ namespace ThousandSchnapsen.CRM
             0, 1, 2
         };
 
-        private readonly Dictionary<(int, int, (int, int)), StrategyData> _nodeMap =
-            new Dictionary<(int, int, (int, int)), StrategyData>();
+        private readonly Dictionary<(int, int, int, int), StrategyData> _nodeMap =
+            new Dictionary<(int, int, int, int), StrategyData>();
 
         private int _nodesCount;
         private int _newInfoSetsCount;
@@ -59,7 +57,7 @@ namespace ThousandSchnapsen.CRM
             var infoSet = node.InfoSet;
 
             if (infoSet.Item2 == 0)
-                return 0;
+                return 0; // TODO: Handle certain info set by Min - Max
 
             if (!_nodeMap.TryGetValue(infoSet, out var strategyData))
             {
