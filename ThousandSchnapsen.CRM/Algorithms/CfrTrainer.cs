@@ -4,9 +4,9 @@ using System.Linq;
 using ThousandSchnapsen.Common.Commons;
 using ThousandSchnapsen.CRM.Utils;
 
-namespace ThousandSchnapsen.CRM.Algo
+namespace ThousandSchnapsen.CRM.Algorithms
 {
-    public class Trainer
+    public class CfrTrainer
     {
         private static readonly int[] Players =
         {
@@ -28,7 +28,7 @@ namespace ThousandSchnapsen.CRM.Algo
                 foreach (var player in Players)
                 {
                     var node = new Node(null);
-                    Crm(node, player, new float[] {1, 1, 1});
+                    Cfr(node, player, new float[] {1, 1, 1});
                 }
 
                 if (i % 10 == 0)
@@ -42,7 +42,7 @@ namespace ThousandSchnapsen.CRM.Algo
             }
         }
 
-        private float Crm(Node node, int playerId, float[] probabilities)
+        private float Cfr(Node node, int playerId, float[] probabilities)
         {
             _nodesCount++;
 
@@ -52,7 +52,7 @@ namespace ThousandSchnapsen.CRM.Algo
             var availableActions = node.AvailableActions;
 
             if (availableActions.Length == 1)
-                return Crm(node.GetNext(new Card(availableActions[0])), playerId, probabilities);
+                return Cfr(node.GetNext(new Card(availableActions[0])), playerId, probabilities);
 
             var infoSet = node.InfoSet;
 
@@ -89,7 +89,7 @@ namespace ThousandSchnapsen.CRM.Algo
                 var newProbabilities = probabilities
                     .Select((prob, id) => id == playerId ? strategy[index] * prob : prob)
                     .ToArray();
-                utils[index] = Crm(node.GetNext(new Card(availableActions[index])), playerId, newProbabilities);
+                utils[index] = Cfr(node.GetNext(new Card(availableActions[index])), playerId, newProbabilities);
                 nodeUtil += strategy[index] * utils[index];
             }
 

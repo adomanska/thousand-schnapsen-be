@@ -1,4 +1,4 @@
-﻿using ThousandSchnapsen.CRM.Algo;
+﻿using ThousandSchnapsen.CRM.Algorithms;
 
 namespace ThousandSchnapsen.CRM
 {
@@ -6,7 +6,7 @@ namespace ThousandSchnapsen.CRM
     {
         static void Main()
         {
-            var trainer = new Trainer();
+            var trainer = new CfrTrainer();
             trainer.Train(100_000);
         }
     }
