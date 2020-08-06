@@ -77,7 +77,6 @@ namespace ThousandSchnapsen.Common.Agents
 
         private Card SelectNextCard(PlayerState playerState, Card[] availableCards)
         {
-            var stockColor = playerState.Stock.First().Card.Color;
             var trumps = playerState.Cards.GetTrumps();
 
             var noTrumpColorCards = availableCards
@@ -85,7 +84,7 @@ namespace ThousandSchnapsen.Common.Agents
                 .ToArray();
             if (noTrumpColorCards.Any())
                 return noTrumpColorCards
-                    .MinBy(card => card.GetValue(stockColor, playerState.Trump))
+                    .MinBy(card => card.GetValue(playerState.StockColor, playerState.Trump))
                     .First();
 
             var noMarriagesCards = availableCards
@@ -93,11 +92,11 @@ namespace ThousandSchnapsen.Common.Agents
                 .ToArray();
             if (noMarriagesCards.Any())
                 return noTrumpColorCards
-                    .MinBy(card => card.GetValue(stockColor, playerState.Trump))
+                    .MinBy(card => card.GetValue(playerState.StockColor, playerState.Trump))
                     .First();
 
             return noTrumpColorCards
-                .MinBy(card => card.GetValue(stockColor, playerState.Trump))
+                .MinBy(card => card.GetValue(playerState.StockColor, playerState.Trump))
                 .First();
         }
     }

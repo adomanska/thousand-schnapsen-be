@@ -92,8 +92,7 @@ namespace ThousandSchnapsen.CRM.Utils
         {
             if (gameState.StockEmpty)
                 return new CardsSet();
-
-            var stockColor = gameState.Stock.First().Card.Color;
+            var stockColor = gameState.StockColor;
             var trumpColor = gameState.Trump;
             var maxStockCard = gameState.Stock
                 .MaxBy(stockItem => stockItem.Card.GetValue(stockColor, trumpColor))

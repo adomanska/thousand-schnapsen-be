@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using ThousandSchnapsen.Common.Commons;
 using ThousandSchnapsen.Common.Utils;
@@ -17,5 +18,14 @@ namespace ThousandSchnapsen.Common.States
         public int NextPlayerId { get; set; }
         public int DealerId { get; set; }
         public bool StockEmpty => Stock.Length == 0 || Stock.Length == Constants.PlayersCount - 1;
+        public Color StockColor
+        {
+            get
+            {
+                if (StockEmpty)
+                    throw new Exception("Stock color cannot be fetched when stock is empty");
+                return Stock[0].Card.Color;
+            }
+        }
     }
 }

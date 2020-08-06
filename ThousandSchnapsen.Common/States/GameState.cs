@@ -86,14 +86,13 @@ namespace ThousandSchnapsen.Common.States
             var availableCards = PlayersCards[NextPlayerId];
             if (!StockEmpty)
             {
-                var stockColor = Stock.First().Card.Color;
                 var maxStockValue = Stock
-                    .Select(stockItem => stockItem.Card.GetValue(stockColor, Trump))
+                    .Select(stockItem => stockItem.Card.GetValue(StockColor, Trump))
                     .Max();
 
-                var stockColorCards = availableCards & CardsSet.Color(stockColor);
+                var stockColorCards = availableCards & CardsSet.Color(StockColor);
                 var greaterCards = new CardsSet(availableCards.GetCards()
-                    .Where(card => card.GetValue(stockColor, Trump) > maxStockValue)
+                    .Where(card => card.GetValue(StockColor, Trump) > maxStockValue)
                 );
 
                 if (!(stockColorCards & greaterCards).IsEmpty)
@@ -206,10 +205,9 @@ namespace ThousandSchnapsen.Common.States
 
         private int EvaluateTurn(int[] playersPoints, StockItem[] stock)
         {
-            var firstColor = stock.First().Card.Color;
             var points = stock.Sum(stockItem => stockItem.Card.Rank.GetPoints());
             var (nextPlayerId, _) = stock
-                .MaxBy(stockItem => stockItem.Card.GetValue(firstColor, Trump))
+                .MaxBy(stockItem => stockItem.Card.GetValue(StockColor, Trump))
                 .First();
             playersPoints[nextPlayerId] += points;
             return nextPlayerId;
