@@ -45,10 +45,11 @@ namespace ThousandSchnapsen.CRM.Utils
 
                 var progressBlockCount = (int) (_currentProgress * BlockCount);
                 var percent = (int) (_currentProgress * 100);
-                var text = string.Format("[{0}{1}] {2,3}% {3}",
+                var text = string.Format("[{0}{1}] {2,3}% {3} {4}",
                     new string('#', progressBlockCount), new string('-', BlockCount - progressBlockCount),
                     percent,
-                    Animation[_animationIndex++ % Animation.Length]);
+                    Animation[_animationIndex++ % Animation.Length],
+                    _currentAdditionalInfo);
                 UpdateText(text);
 
                 ResetTimer();
