@@ -32,6 +32,7 @@ namespace ThousandSchnapsen.CRM.Algorithms
                         Cfr(node, player, new float[] {1, 1, 1});
                     }
                     _totalNodes += _newInfoSetsCount;
+                    _newInfoSetsCount = 0;
                     progressBar.Report(((double)i / iterations, _totalNodes.ToString()));
                 }
             }
