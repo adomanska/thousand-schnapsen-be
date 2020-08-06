@@ -22,21 +22,17 @@ namespace ThousandSchnapsen.CRM.Algorithms
 
         public void Train(int iterations)
         {
-            for (var i = 1; i < iterations + 1; i++)
+            using (var progressBar = new ProgressBar())
             {
-                foreach (var player in _players)
+                for (var i = 1; i < iterations + 1; i++)
                 {
-                    var node = new Node();
-                    Cfr(node, player, new float[] {1, 1, 1});
-                }
-
-                if (i % 10 == 0)
-                {
+                    foreach (var player in _players)
+                    {
+                        var node = new Node();
+                        Cfr(node, player, new float[] {1, 1, 1});
+                    }
                     _totalNodes += _newInfoSetsCount;
-                    Console.WriteLine(
-                        $"{i:D8}: {(_newInfoSetsCount * 100) / _nodesCount}% of new nodes -- {_newInfoSetsCount} new nodes -- {_totalNodes} total nodes");
-                    _nodesCount = 0;
-                    _newInfoSetsCount = 0;
+                    progressBar.Report(((double)i / iterations, _totalNodes.ToString()));
                 }
             }
         }

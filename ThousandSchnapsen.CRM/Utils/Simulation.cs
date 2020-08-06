@@ -27,7 +27,7 @@ namespace ThousandSchnapsen.CRM.Utils
             {
                 for (var step = 0; step < totalSteps; step++)
                 {
-                    progressBar.Report((double)step / totalSteps);
+                    progressBar.Report(((double)step / totalSteps, null));
                     var playersPoints = SimulateGame();
                     var winnerId = playersPoints
                         .ToList()

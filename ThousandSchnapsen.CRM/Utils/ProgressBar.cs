@@ -4,7 +4,7 @@ using System.Threading;
 
 namespace ThousandSchnapsen.CRM.Utils
 {
-    public class ProgressBar : IDisposable, IProgress<double>
+    public class ProgressBar : IDisposable, IProgress<(double, string)>
     {
         private const int BlockCount = 100;
         private readonly TimeSpan _animationInterval = TimeSpan.FromSeconds(1.0 / 8);
@@ -14,6 +14,7 @@ namespace ThousandSchnapsen.CRM.Utils
 
         private double _currentProgress;
         private string _currentText = string.Empty;
+        private string _currentAdditionalInfo = string.Empty;
         private bool _disposed;
         private int _animationIndex;
 
@@ -27,10 +28,13 @@ namespace ThousandSchnapsen.CRM.Utils
             }
         }
 
-        public void Report(double value)
+        public void Report((double, string) data)
         {
+            var (value, additionalInfo) = data;
             value = Math.Max(0, Math.Min(1, value));
             Interlocked.Exchange(ref _currentProgress, value);
+            if (!String.IsNullOrEmpty(additionalInfo))
+                Interlocked.Exchange(ref _currentAdditionalInfo, additionalInfo);
         }
 
         private void TimerHandler(object state)
