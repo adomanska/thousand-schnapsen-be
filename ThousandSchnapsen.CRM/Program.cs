@@ -7,7 +7,10 @@ namespace ThousandSchnapsen.CRM
         static void Main()
         {
             var trainer = new CfrTrainer();
-            trainer.Train(100_000);
+            trainer.Train(10);
+            trainer.Save("./nodeData.dat");
+            trainer.Load("./nodeData.dat");
+            trainer.Train(10);
         }
     }
 }

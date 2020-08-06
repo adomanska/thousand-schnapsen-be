@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 using ThousandSchnapsen.Common.Commons;
 using ThousandSchnapsen.CRM.Utils;
 
@@ -8,24 +11,21 @@ namespace ThousandSchnapsen.CRM.Algorithms
 {
     public class CfrTrainer
     {
-        private static readonly int[] Players =
-        {
-            0, 1, 2
-        };
+        private readonly int[] _players = {0, 1, 2};
 
-        private readonly Dictionary<(int, int, int, int), StrategyData> _nodeMap =
+        private Dictionary<(int, int, int, int), StrategyData> _nodeMap =
             new Dictionary<(int, int, int, int), StrategyData>();
 
         private int _nodesCount;
         private int _newInfoSetsCount;
+        private int _totalNodes;
         private readonly Random _random = new Random();
 
         public void Train(int iterations)
         {
-            var totalNodes = 0;
             for (var i = 1; i < iterations + 1; i++)
             {
-                foreach (var player in Players)
+                foreach (var player in _players)
                 {
                     var node = new Node(null);
                     Cfr(node, player, new float[] {1, 1, 1});
@@ -33,9 +33,9 @@ namespace ThousandSchnapsen.CRM.Algorithms
 
                 if (i % 10 == 0)
                 {
-                    totalNodes += _newInfoSetsCount;
+                    _totalNodes += _newInfoSetsCount;
                     Console.WriteLine(
-                        $"{i:D8}: {(_newInfoSetsCount * 100) / _nodesCount}% of new nodes -- {_newInfoSetsCount} new nodes -- {totalNodes} total nodes");
+                        $"{i:D8}: {(_newInfoSetsCount * 100) / _nodesCount}% of new nodes -- {_newInfoSetsCount} new nodes -- {_totalNodes} total nodes");
                     _nodesCount = 0;
                     _newInfoSetsCount = 0;
                 }
@@ -104,6 +104,46 @@ namespace ThousandSchnapsen.CRM.Algorithms
             }
 
             return nodeUtil;
+        }
+
+        public void Save(string path)
+        {
+            var fs = new FileStream(path, FileMode.Create);
+            
+            var formatter = new BinaryFormatter();
+            try
+            {
+                formatter.Serialize(fs, _nodeMap);
+            }
+            catch (SerializationException e)
+            {
+                Console.WriteLine("Failed to serialize. Reason: " + e.Message);
+                throw;
+            }
+            finally
+            {
+                fs.Close();
+            }
+        }
+
+        public void Load(string path)
+        {
+            var fs = new FileStream(path, FileMode.Open);
+            try
+            {
+                var formatter = new BinaryFormatter();
+                _nodeMap = (Dictionary<(int, int, int, int), StrategyData>) formatter.Deserialize(fs);
+                _totalNodes = _nodeMap.Count;
+            }
+            catch (SerializationException e)
+            {
+                Console.WriteLine("Failed to deserialize. Reason: " + e.Message);
+                throw;
+            }
+            finally
+            {
+                fs.Close();
+            }
         }
     }
 }

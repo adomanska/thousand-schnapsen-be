@@ -1,13 +1,18 @@
 using System;
 using System.Linq;
+using System.Runtime.Serialization;
 using ThousandSchnapsen.Common.Utils;
 
 namespace ThousandSchnapsen.CRM.Utils
 {
+    [Serializable]
     public class StrategyData
     {
-        private readonly int _availableActionsCount;
+        [NonSerialized]
+        private int _availableActionsCount;
         private float[] _regretSum;
+        
+        public StrategyData() {}
 
         public StrategyData(int availableActionsCount)
         {
@@ -51,5 +56,9 @@ namespace ThousandSchnapsen.CRM.Utils
             Strategy = new float[_availableActionsCount]
                 .Populate(_ => 1f / _availableActionsCount);
         }
+
+        [OnDeserialized]
+        private void SetValuesOnDeserialized(StreamingContext context) =>
+            _availableActionsCount = RegretSum.Length;
     }
 }
