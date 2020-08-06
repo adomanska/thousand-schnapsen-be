@@ -56,9 +56,6 @@ namespace ThousandSchnapsen.CRM.Algorithms
 
             var infoSet = node.InfoSet;
 
-            if (infoSet.IsCertain)
-                return MinMaxTrainer.Train(node.PublicGameState, infoSet.PlayersCards, playerId);
-
             if (!_nodeMap.TryGetValue(infoSet.RawData, out var strategyData))
             {
                 strategyData = new StrategyData(availableActions.Length);
