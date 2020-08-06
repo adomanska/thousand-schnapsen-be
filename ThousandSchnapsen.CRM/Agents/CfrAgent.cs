@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
+using MoreLinq;
 using ThousandSchnapsen.Common.Commons;
 using ThousandSchnapsen.Common.Interfaces;
 using ThousandSchnapsen.Common.States;
@@ -17,17 +19,36 @@ namespace ThousandSchnapsen.CRM.Agents
         private Dictionary<(int, int, int, int), StrategyData> _nodeMap;
         private Knowledge _knowledge;
         private PublicState _gameState;
-        private int[] _opponentsIds;
+        private readonly int[] _opponentsIds;
 
-        public CfrAgent(int playerId, int[] opponentsIds, string dataPath, Knowledge initialKnowledge)
+        public CfrAgent(int playerId, int[] opponentsIds, string dataPath)
         {
             PlayerId = playerId;
             _opponentsIds = opponentsIds;
-            _knowledge = initialKnowledge;
             LoadData(dataPath);
         }
 
         public int PlayerId { get; }
+
+        public (int, byte)[] GetCardsToLet(PlayerState playerState)
+        {
+            var availableCardsToLet = (playerState.Cards | playerState.DealerCards);
+
+            var cardsToLet = availableCardsToLet.GetCardsIds()
+                .Shuffle()
+                .Take(2)
+                .Select((cardId, index) => (_opponentsIds[index], cardId))
+                .ToArray();
+
+            // TODO: Improve cards to let selection
+            return cardsToLet;
+        }
+
+        public void Init((int, byte)[] cardsToLet, int initializerId, PublicState gameState)
+        {
+            _knowledge = new Knowledge(gameState.DealerCards, initializerId, cardsToLet);
+            _gameState = gameState;
+        }
 
         public Action GetAction(PlayerState playerState, Card[] availableCards)
         {

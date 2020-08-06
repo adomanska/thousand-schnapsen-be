@@ -27,5 +27,7 @@ namespace ThousandSchnapsen.Common.States
                 return Stock[0].Card.Color;
             }
         }
+
+        public CardsSet DealerCards;
     }
 }

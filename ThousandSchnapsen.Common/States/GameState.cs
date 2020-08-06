@@ -54,7 +54,8 @@ namespace ThousandSchnapsen.Common.States
                 PlayersPoints = (int[]) PlayersPoints.Clone(),
                 TrumpsHistory = (Color[]) TrumpsHistory.Clone(),
                 Cards = PlayersCards[playerId].Clone(),
-                PlayerId = playerId
+                PlayerId = playerId,
+                DealerCards = PlayersCards[DealerId]
             };
         }
 
