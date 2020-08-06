@@ -16,5 +16,6 @@ namespace ThousandSchnapsen.Common.States
         public Color? Trump => TrumpsHistory.Length > 0 ? TrumpsHistory.Last() : (Color?) null;
         public int NextPlayerId { get; set; }
         public int DealerId { get; set; }
+        public bool StockEmpty => Stock.Length == 0 || Stock.Length == Constants.PlayersCount - 1;
     }
 }

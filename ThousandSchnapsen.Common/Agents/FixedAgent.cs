@@ -15,18 +15,18 @@ namespace ThousandSchnapsen.Common.Agents
         public FixedAgent(int id) =>
             _id = id;
 
-        public Action GetAction(PlayerState playerState) =>
+        public Action GetAction(PlayerState playerState, Card[] availableCards) =>
             new Action()
             {
                 PlayerId = _id,
-                Card = SelectCard(playerState)
+                Card = SelectCard(playerState, availableCards)
             };
 
-        private Card SelectCard(PlayerState playerState)
+        private Card SelectCard(PlayerState playerState, Card [] availableCards)
         {
             if (playerState.Stock.Length == 0 || playerState.Stock.Length == Constants.PlayersCount - 1)
                 return SelectFirstCard(playerState);
-            return SelectNextCard(playerState);
+            return SelectNextCard(playerState, availableCards);
         }
 
         private Card SelectFirstCard(PlayerState playerState)
@@ -75,26 +75,31 @@ namespace ThousandSchnapsen.Common.Agents
             return playerState.Cards.GetCards().ElementAt(random.Next(playerState.Cards.Count));
         }
 
-        private Card SelectNextCard(PlayerState playerState)
+        private Card SelectNextCard(PlayerState playerState, Card[] availableCards)
         {
             var stockColor = playerState.Stock.First().Card.Color;
-            var stockColorCards = CardsSet.Color(stockColor);
-            var trumpColorCards = CardsSet.Color(playerState.Trump);
-            var availableCards = playerState.Cards;
-
-            if ((availableCards & stockColorCards).IsEmpty)
-                return availableCards.GetCards().MinBy(card => card.GetValue(stockColor, playerState.Trump)).First();
-
-            availableCards &= (stockColorCards | trumpColorCards);
-            var maxInStock = playerState.Stock
-                .Select(item => item.Card.GetValue(stockColor, playerState.Trump))
-                .Max();
-            var greaterCards = availableCards.GetCards()
-                .Where(card => card.GetValue(stockColor, playerState.Trump) > maxInStock)
+            var trumps = playerState.Cards.GetTrumps();
+            
+            var noTrumpColorCards = availableCards
+                .Where(card => !trumps.Contains(card.Color))
                 .ToArray();
-            return greaterCards.Any()
-                ? greaterCards.MinBy(card => card.GetValue(stockColor, playerState.Trump)).First()
-                : availableCards.GetCards().MinBy(card => card.GetValue(stockColor, playerState.Trump)).First();
+            if (noTrumpColorCards.Any())
+                return noTrumpColorCards
+                    .MinBy(card => card.GetValue(stockColor, playerState.Trump))
+                    .First();
+
+            var noMarriagesCards = availableCards
+                .Where(card => !(trumps.Contains(card.Color) && card.IsPartOfMarriage))
+                .ToArray();
+            if (noMarriagesCards.Any())
+                return noTrumpColorCards
+                    .MinBy(card => card.GetValue(stockColor, playerState.Trump))
+                    .First();
+            
+            return noTrumpColorCards
+                .MinBy(card => card.GetValue(stockColor, playerState.Trump))
+                .First();
+
         }
     }
 }

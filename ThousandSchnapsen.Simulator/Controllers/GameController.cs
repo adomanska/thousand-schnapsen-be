@@ -100,8 +100,11 @@ namespace ThousandSchnapsen.Simulator.Controllers
             var verbose = _configuration.GetValue<bool>("verbose");
             while (gameState.NextPlayerId != playerId && !gameState.GameFinished)
             {
+                var availableCards = gameState.GetAvailableActions()
+                    .Select(action => action.Card)
+                    .ToArray();
                 gameState = gameState.PerformAction(
-                    opponents[gameState.NextPlayerId].GetAction(gameState.GetNextPlayerState())
+                    opponents[gameState.NextPlayerId].GetAction(gameState.GetNextPlayerState(), availableCards)
                 );
                 if (verbose)
                     Logger.Log(gameState);    

@@ -5,6 +5,6 @@ namespace ThousandSchnapsen.Common.Interfaces
 {
     public interface IAgent
     {
-        Action GetAction(PlayerState playerState);
+        Action GetAction(PlayerState playerState, Card[] availableCards);
     }
 }

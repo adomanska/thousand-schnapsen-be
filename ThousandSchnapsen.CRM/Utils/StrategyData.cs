@@ -36,6 +36,24 @@ namespace ThousandSchnapsen.CRM.Utils
 
         public float[] Strategy { get; private set; }
 
+        public float[] AverageStrategy
+        {
+            get
+            {
+                var strategy = StrategySum
+                    .Select(strategySum => Math.Max(0, strategySum))
+                    .ToArray();
+                var normalizingSum = strategy.Sum();
+
+                if (normalizingSum > 0)
+                    return strategy
+                        .Select(actionStrategy => actionStrategy / normalizingSum)
+                        .ToArray();
+                return new float[_availableActionsCount]
+                    .Populate(_ => 1f / _availableActionsCount );
+            }
+        }
+
         private void UpdateStrategy()
         {
             Strategy = RegretSum

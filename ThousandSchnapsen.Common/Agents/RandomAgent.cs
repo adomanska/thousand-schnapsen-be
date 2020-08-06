@@ -12,21 +12,11 @@ namespace ThousandSchnapsen.Common.Agents
         public RandomAgent(int id) =>
             _id = id;
 
-        public Action GetAction(PlayerState playerState)
+        public Action GetAction(PlayerState playerState, Card[] availableCards)
         {
-            var availableCards = playerState.Cards;
-            if (playerState.Stock.Length > 0)
-            {
-                var stockColorCards = CardsSet.Color(playerState.Stock.First().Card.Color);
-                var trumpColorCards = CardsSet.Color(playerState.Trump);
-                if (!(availableCards & stockColorCards).IsEmpty)
-                    availableCards &= (stockColorCards | trumpColorCards);
-            }
-
             var random = new System.Random();
             var card = availableCards
-                .GetCards()
-                .ElementAt(random.Next(availableCards.Count));
+                .ElementAt(random.Next(availableCards.Length));
             return new Action()
             {
                 PlayerId = _id,

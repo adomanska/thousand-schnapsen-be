@@ -40,8 +40,6 @@ namespace ThousandSchnapsen.Common.States
             .Select((playerCards, index) => index == DealerId || playerCards.IsEmpty)
             .All(finished => finished);
 
-        public bool StockEmpty => Stock.Length == 0 || Stock.Length == Constants.PlayersCount - 1;
-
         public PlayerState GetPlayerState(int playerId)
         {
             return new PlayerState()
