@@ -20,7 +20,7 @@ namespace ThousandSchnapsen.CRM.Utils
         public ProgressBar()
         {
             _timer = new Timer(TimerHandler);
-            
+
             if (!Console.IsOutputRedirected)
             {
                 ResetTimer();
@@ -62,7 +62,7 @@ namespace ThousandSchnapsen.CRM.Utils
 
             var outputBuilder = new StringBuilder();
             outputBuilder.Append('\b', _currentText.Length - commonPrefixLength);
-            
+
             outputBuilder.Append(text.Substring(commonPrefixLength));
 
             var overlapCount = _currentText.Length - text.Length;

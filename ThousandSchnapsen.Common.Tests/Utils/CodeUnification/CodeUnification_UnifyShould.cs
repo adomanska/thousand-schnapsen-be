@@ -18,10 +18,10 @@ namespace ThousandSchnapsen.Common.Tests.Utils
             var expected = data;
 
             var result = CodeUnification.Unify(data);
-            
+
             Assert.Equal(expected, result);
         }
-        
+
         [Fact]
         public void Unify_NoFirstColorSet_ReturnsShiftedCodes()
         {
@@ -41,10 +41,10 @@ namespace ThousandSchnapsen.Common.Tests.Utils
             };
 
             var result = CodeUnification.Unify(data);
-            
+
             Assert.Equal(expected, result);
         }
-        
+
         [Fact]
         public void Unify_NoTwoColorsSets_ReturnsShiftedCodes()
         {
@@ -64,10 +64,10 @@ namespace ThousandSchnapsen.Common.Tests.Utils
             };
 
             var result = CodeUnification.Unify(data);
-            
+
             Assert.Equal(expected, result);
         }
-        
+
         [Fact]
         public void Unify_MoreThanTwoEmptyColors_ReturnsShiftedCodes()
         {
@@ -83,7 +83,7 @@ namespace ThousandSchnapsen.Common.Tests.Utils
             };
 
             var result = CodeUnification.Unify(data);
-            
+
             Assert.Equal(expected, result);
         }
     }

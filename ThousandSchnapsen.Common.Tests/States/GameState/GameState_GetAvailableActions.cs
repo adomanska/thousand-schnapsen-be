@@ -107,7 +107,7 @@ namespace ThousandSchnapsen.Common.Tests.States
 
             Assert.Equal(expected, result);
         }
-        
+
         [Fact]
         public void GetAvailableActions_NonEmptyStockAndHaveColorAndCanBeat_ReturnSuitableActions()
         {
@@ -138,7 +138,7 @@ namespace ThousandSchnapsen.Common.Tests.States
 
             Assert.Equal(expected, result);
         }
-        
+
         [Fact]
         public void GetAvailableActions_NonEmptyStockAndDontHaveColorAndCanBeat_ReturnSuitableActions()
         {

@@ -6,7 +6,7 @@ namespace ThousandSchnapsen.Common.Commons
             CardId = cardId;
 
         public Card(Rank rank, Color color) :
-            this((byte)((int)color * Constants.CardsInColorCount + (int)rank))
+            this((byte) ((int) color * Constants.CardsInColorCount + (int) rank))
         {
         }
 

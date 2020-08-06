@@ -38,7 +38,7 @@ namespace ThousandSchnapsen.Common.GameTree
                 var action = availableActions[random.Next(0, availableActions.Length)];
                 _nextNodes.Add(action, new Node(_gameState.PerformAction(action)));
             }
-            
+
             return _nextNodes
                 .Select(item => item.Value.Expand(playerId))
                 .MaxBy(points => points[_gameState.NextPlayerId])

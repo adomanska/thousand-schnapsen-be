@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
-using ThousandSchnapsen.Common.Commons;
 using ThousandSchnapsen.CRM.Utils;
 
 namespace ThousandSchnapsen.CRM.Algorithms
@@ -27,7 +26,7 @@ namespace ThousandSchnapsen.CRM.Algorithms
             {
                 foreach (var player in _players)
                 {
-                    var node = new Node(null);
+                    var node = new Node();
                     Cfr(node, player, new float[] {1, 1, 1});
                 }
 
@@ -52,7 +51,7 @@ namespace ThousandSchnapsen.CRM.Algorithms
             var availableActions = node.AvailableActions;
 
             if (availableActions.Length == 1)
-                return Cfr(node.GetNext(new Card(availableActions[0])), playerId, probabilities);
+                return Cfr(node.GetNext(availableActions[0]), playerId, probabilities);
 
             var infoSet = node.InfoSet;
 
@@ -86,7 +85,7 @@ namespace ThousandSchnapsen.CRM.Algorithms
                 var newProbabilities = probabilities
                     .Select((prob, id) => id == playerId ? strategy[index] * prob : prob)
                     .ToArray();
-                utils[index] = Cfr(node.GetNext(new Card(availableActions[index])), playerId, newProbabilities);
+                utils[index] = Cfr(node.GetNext(availableActions[index]), playerId, newProbabilities);
                 nodeUtil += strategy[index] * utils[index];
             }
 
@@ -109,7 +108,7 @@ namespace ThousandSchnapsen.CRM.Algorithms
         public void Save(string path)
         {
             var fs = new FileStream(path, FileMode.Create);
-            
+
             var formatter = new BinaryFormatter();
             try
             {

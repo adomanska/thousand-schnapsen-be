@@ -11,6 +11,7 @@ namespace ThousandSchnapsen.Common.States
     public class GameState : PublicState
     {
         private bool _initialized;
+
         public GameState()
         {
         }
@@ -19,16 +20,18 @@ namespace ThousandSchnapsen.Common.States
         {
             var shuffledDeck = Constants.Deck.Shuffle().ToArray();
             var dealtCards = 0;
-            
+
             DealerId = dealerId;
             NextPlayerId = (DealerId + 1) % Constants.PlayersCount;
             PlayersCards = new CardsSet[Constants.PlayersCount].Populate(playerId =>
-                {
-                    var cardToDeal = playerId == dealerId ? Constants.CardsPerDealerCount : (Constants.CardsPerPlayerCount - 1);
-                    var cardsSet = new CardsSet(shuffledDeck.Slice(dealtCards, cardToDeal));
-                    dealtCards += cardToDeal;
-                    return cardsSet;
-                });
+            {
+                var cardToDeal = playerId == dealerId
+                    ? Constants.CardsPerDealerCount
+                    : (Constants.CardsPerPlayerCount - 1);
+                var cardsSet = new CardsSet(shuffledDeck.Slice(dealtCards, cardToDeal));
+                dealtCards += cardToDeal;
+                return cardsSet;
+            });
             PlayersPoints[DealerId] = PlayersCards[DealerId]
                 .GetCards()
                 .Sum(card => card.Rank.GetPoints());
@@ -62,12 +65,12 @@ namespace ThousandSchnapsen.Common.States
         {
             if (_initialized)
                 return;
-            
+
             PlayersCards[NextPlayerId] |= PlayersCards[DealerId];
 
             if (!cardsToLet.All(item => PlayersCards[NextPlayerId].Contains(item.CardId)))
                 throw new InvalidDataException("Player cannot give cards which he doesn't own");
-            
+
             cardsToLet.ForEach(item =>
             {
                 var (playerId, cardId) = item;
@@ -87,7 +90,7 @@ namespace ThousandSchnapsen.Common.States
                 var maxStockValue = Stock
                     .Select(stockItem => stockItem.Card.GetValue(stockColor, Trump))
                     .Max();
-                
+
                 var stockColorCards = availableCards & CardsSet.Color(stockColor);
                 var greaterCards = new CardsSet(availableCards.GetCards()
                     .Where(card => card.GetValue(stockColor, Trump) > maxStockValue)
@@ -184,6 +187,7 @@ namespace ThousandSchnapsen.Common.States
                 isTrump = false;
                 return (Color[]) TrumpsHistory.Clone();
             }
+
             playersPoints[NextPlayerId] += action.Card.Color.GetPoints();
             var trumpsHistory = new Color[TrumpsHistory.Length + 1];
             Array.Copy(TrumpsHistory, trumpsHistory, TrumpsHistory.Length);

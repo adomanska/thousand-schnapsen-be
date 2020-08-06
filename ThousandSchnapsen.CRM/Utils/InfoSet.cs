@@ -10,6 +10,7 @@ namespace ThousandSchnapsen.CRM.Utils
         private readonly CardsSet[] _opponentsCardsSets;
         private readonly int[] _opponentsIds;
         private readonly int _playerId;
+
         public InfoSet(CardsSet playerCardsSet, CardsSet availableCardsSet, int[] opponentsIds,
             CardsSet[] possibleCardsSets, CardsSet[] certainCardsSets, byte[] cardsLeft, int playerId)
         {
@@ -29,7 +30,8 @@ namespace ThousandSchnapsen.CRM.Utils
                 opponentsCertainCardsSets[1] |= opponentsPossibleCardsSet;
                 opponentsPossibleCardsSet = new CardsSet();
             }
-            else if (opponentsCertainCardsSets[1].Count == cardsLeft[opponentsIds[1]] && !opponentsPossibleCardsSet.IsEmpty)
+            else if (opponentsCertainCardsSets[1].Count == cardsLeft[opponentsIds[1]] &&
+                     !opponentsPossibleCardsSet.IsEmpty)
             {
                 opponentsCertainCardsSets[0] |= opponentsPossibleCardsSet;
                 opponentsPossibleCardsSet = new CardsSet();

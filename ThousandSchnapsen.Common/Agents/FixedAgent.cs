@@ -22,7 +22,7 @@ namespace ThousandSchnapsen.Common.Agents
                 Card = SelectCard(playerState, availableCards)
             };
 
-        private Card SelectCard(PlayerState playerState, Card [] availableCards)
+        private Card SelectCard(PlayerState playerState, Card[] availableCards)
         {
             if (playerState.Stock.Length == 0 || playerState.Stock.Length == Constants.PlayersCount - 1)
                 return SelectFirstCard(playerState);
@@ -79,7 +79,7 @@ namespace ThousandSchnapsen.Common.Agents
         {
             var stockColor = playerState.Stock.First().Card.Color;
             var trumps = playerState.Cards.GetTrumps();
-            
+
             var noTrumpColorCards = availableCards
                 .Where(card => !trumps.Contains(card.Color))
                 .ToArray();
@@ -95,11 +95,10 @@ namespace ThousandSchnapsen.Common.Agents
                 return noTrumpColorCards
                     .MinBy(card => card.GetValue(stockColor, playerState.Trump))
                     .First();
-            
+
             return noTrumpColorCards
                 .MinBy(card => card.GetValue(stockColor, playerState.Trump))
                 .First();
-
         }
     }
 }

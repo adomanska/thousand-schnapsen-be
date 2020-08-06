@@ -17,7 +17,7 @@ namespace ThousandSchnapsen.Common.Tests.Commons
 
             Assert.Equal(expected, result.Code);
         }
-        
+
         [Fact]
         public void GetHigherCardsSet_CardOfStockColorAndTrump_ReturnProperCardsSet()
         {
@@ -30,7 +30,7 @@ namespace ThousandSchnapsen.Common.Tests.Commons
 
             Assert.Equal(expected, result.Code);
         }
-        
+
         [Fact]
         public void GetHigherCardsSet_CardOfTrumpColor_ReturnProperCardsSet()
         {
@@ -43,7 +43,7 @@ namespace ThousandSchnapsen.Common.Tests.Commons
 
             Assert.Equal(expected, result.Code);
         }
-        
+
         [Fact]
         public void GetHigherCardsSet_OtherCardAndNoTrump_ReturnProperCardsSet()
         {
@@ -56,7 +56,7 @@ namespace ThousandSchnapsen.Common.Tests.Commons
 
             Assert.Equal(expected, result.Code);
         }
-        
+
         [Fact]
         public void GetHigherCardsSet_OtherCardAndTrump_ReturnProperCardsSet()
         {
@@ -69,7 +69,7 @@ namespace ThousandSchnapsen.Common.Tests.Commons
 
             Assert.Equal(expected, result.Code);
         }
-        
+
         [Fact]
         public void GetHigherCardsSet_CardOfStockColorAndTrumpIsStockColor_ReturnProperCardsSet()
         {

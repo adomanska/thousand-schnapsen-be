@@ -68,7 +68,7 @@ namespace ThousandSchnapsen.Common.Loggers
                 .ForEach(Console.WriteLine);
             Console.WriteLine();
         }
-        
+
         private static string CreateTitle(string title, int lineWidth)
         {
             var dashesCount = (lineWidth - title.Length) / 2.0;

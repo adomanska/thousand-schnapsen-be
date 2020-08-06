@@ -11,27 +11,30 @@ using Action = ThousandSchnapsen.Common.Commons.Action;
 
 namespace ThousandSchnapsen.CRM.Agents
 {
-    public class CfrAgent: IAgent
+    public class CfrAgent : IAgent
     {
         private Dictionary<(int, int, int, int), StrategyData> _nodeMap;
         private Knowledge _knowledge;
         private PublicState _gameState;
+        private int[] _opponentsIds;
 
-        public CfrAgent(int playerId, string dataPath, Knowledge initialKnowledge)
+        public CfrAgent(int playerId, int[] opponentsIds, string dataPath, Knowledge initialKnowledge)
         {
             PlayerId = playerId;
+            _opponentsIds = opponentsIds;
             _knowledge = initialKnowledge;
             LoadData(dataPath);
         }
 
         public int PlayerId { get; }
+
         public Action GetAction(PlayerState playerState, Card[] availableCards)
         {
-            var infoSet = _knowledge.GetInfoSet(playerState.Cards, availableCards);
+            var infoSet = _knowledge.GetInfoSet(playerState.Cards, availableCards, PlayerId, _opponentsIds);
             Card card;
-            
+
             // TODO: Handle certain info set using Min Max
-            
+
             if (_nodeMap.TryGetValue(infoSet.RawData, out var strategyData))
             {
                 var strategy = strategyData.AverageStrategy;
@@ -46,6 +49,7 @@ namespace ThousandSchnapsen.CRM.Agents
             {
                 card = availableCards[new Random().Next(availableCards.Length)];
             }
+
             return new Action()
             {
                 PlayerId = PlayerId,

@@ -13,6 +13,7 @@ namespace ThousandSchnapsen.Common.Utils
             {2, 0b111111000000000000},
             {3, 0b111111000000000000000000},
         };
+
         public static int[] Unify(int[] data)
         {
             var aggregatedData = data.Aggregate((acc, code) => acc | code);
@@ -24,7 +25,7 @@ namespace ThousandSchnapsen.Common.Utils
             return presentColorsIds.Aggregate(new int[data.Length], (acc, colorId) =>
             {
                 var result = acc
-                    .Select((code, index) => 
+                    .Select((code, index) =>
                         code | ((data[index] & ColorMasks[colorId]) << ((i - colorId) * Constants.CardsInColorCount)))
                     .ToArray();
                 i--;

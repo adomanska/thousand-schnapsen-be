@@ -107,8 +107,9 @@ namespace ThousandSchnapsen.Simulator.Controllers
                     opponents[gameState.NextPlayerId].GetAction(gameState.GetNextPlayerState(), availableCards)
                 );
                 if (verbose)
-                    Logger.Log(gameState);    
+                    Logger.Log(gameState);
             }
+
             return gameState;
         }
 

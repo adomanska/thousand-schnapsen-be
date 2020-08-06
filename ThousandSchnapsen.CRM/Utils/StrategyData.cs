@@ -8,11 +8,12 @@ namespace ThousandSchnapsen.CRM.Utils
     [Serializable]
     public class StrategyData
     {
-        [NonSerialized]
-        private int _availableActionsCount;
+        [NonSerialized] private int _availableActionsCount;
         private float[] _regretSum;
-        
-        public StrategyData() {}
+
+        public StrategyData()
+        {
+        }
 
         public StrategyData(int availableActionsCount)
         {
@@ -50,7 +51,7 @@ namespace ThousandSchnapsen.CRM.Utils
                         .Select(actionStrategy => actionStrategy / normalizingSum)
                         .ToArray();
                 return new float[_availableActionsCount]
-                    .Populate(_ => 1f / _availableActionsCount );
+                    .Populate(_ => 1f / _availableActionsCount);
             }
         }
 
