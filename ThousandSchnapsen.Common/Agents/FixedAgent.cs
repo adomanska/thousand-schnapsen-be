@@ -9,18 +9,23 @@ namespace ThousandSchnapsen.Common.Agents
 {
     public class FixedAgent : IAgent
     {
-        private readonly int _id;
         private readonly List<Color> _trumps = new List<Color>();
 
         public FixedAgent(int id) =>
-            _id = id;
+            PlayerId = id;
+
+        public int PlayerId { get; }
+
+        public void Init((int, byte)[] cardsToLet, int initializerId, PublicState gameState) { }
 
         public Action GetAction(PlayerState playerState, Card[] availableCards) =>
             new Action()
             {
-                PlayerId = _id,
+                PlayerId = PlayerId,
                 Card = SelectCard(playerState, availableCards)
             };
+
+        public void UpdateState(Action action, PublicState newState, bool trump) { }
 
         private Card SelectCard(PlayerState playerState, Card[] availableCards)
         {
@@ -98,6 +103,22 @@ namespace ThousandSchnapsen.Common.Agents
             return noTrumpColorCards
                 .MinBy(card => card.GetValue(playerState.StockColor, playerState.Trump))
                 .First();
+        }
+        
+        public (int, byte)[] GetCardsToLet(PlayerState playerState)
+        {
+            var availableCardsToLet = (playerState.Cards | playerState.DealerCards);
+            var opponentsIds = Enumerable.Range(0, Constants.PlayersCount)
+                .Where(playerId => playerId != playerState.PlayerId && playerId != playerState.DealerId)
+                .ToArray();
+
+            var cardsToLet = availableCardsToLet.GetCardsIds()
+                .Shuffle()
+                .Take(2)
+                .Select((cardId, index) => (opponentsIds[index], cardId))
+                .ToArray();
+            
+            return cardsToLet;
         }
     }
 }
