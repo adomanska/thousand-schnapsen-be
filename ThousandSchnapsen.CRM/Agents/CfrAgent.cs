@@ -6,6 +6,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using ThousandSchnapsen.Common.Commons;
 using ThousandSchnapsen.Common.Interfaces;
 using ThousandSchnapsen.Common.States;
+using ThousandSchnapsen.CRM.Algorithms;
 using ThousandSchnapsen.CRM.Utils;
 using Action = ThousandSchnapsen.Common.Commons.Action;
 
@@ -33,9 +34,12 @@ namespace ThousandSchnapsen.CRM.Agents
             var infoSet = _knowledge.GetInfoSet(playerState.Cards, availableCards, PlayerId, _opponentsIds);
             Card card;
 
-            // TODO: Handle certain info set using Min Max
-
-            if (_nodeMap.TryGetValue(infoSet.RawData, out var strategyData))
+            if (infoSet.IsCertain)
+            {
+                var (action, _) = MinMaxTrainer.Train(playerState, infoSet.PlayersCards, PlayerId);
+                card = action.Card;
+            }
+            else if (_nodeMap.TryGetValue(infoSet.RawData, out var strategyData))
             {
                 var strategy = strategyData.AverageStrategy;
                 var randVal = new Random().NextDouble();

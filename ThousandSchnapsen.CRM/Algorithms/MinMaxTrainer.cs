@@ -1,13 +1,15 @@
+using System;
 using System.Linq;
 using MoreLinq;
 using ThousandSchnapsen.Common.Commons;
 using ThousandSchnapsen.Common.States;
+using Action = ThousandSchnapsen.Common.Commons.Action;
 
 namespace ThousandSchnapsen.CRM.Algorithms
 {
     public static class MinMaxTrainer
     {
-        public static int Train(PublicState publicGameState, CardsSet[] playersCards, int playerId)
+        public static (Action, int) Train(PublicState publicGameState, CardsSet[] playersCards, int playerId)
         {
             playersCards[publicGameState.DealerId] = new CardsSet();
             var gameState = new GameState()
@@ -21,17 +23,22 @@ namespace ThousandSchnapsen.CRM.Algorithms
                 TrumpsHistory = publicGameState.TrumpsHistory
             };
 
-            return MinMax(gameState)[playerId];
+            var (action, playersPoints) = MinMax(gameState);
+            
+            if (!action.HasValue)
+                throw new Exception("Given game state is final.");
+            
+            return (action.Value, playersPoints[playerId]);
         }
 
-        private static int[] MinMax(GameState gameState)
+        private static (Action? Action, int[] PlayersPoints) MinMax(GameState gameState)
         {
             if (gameState.GameFinished)
-                return gameState.PlayersPoints;
+                return (Action: null, gameState.PlayersPoints);
 
             return gameState.GetAvailableActions()
-                .Select(action => MinMax(gameState.PerformAction(action)))
-                .MaxBy(playersPoints => playersPoints[gameState.NextPlayerId])
+                .Select(action => (Action: action, MinMax(gameState.PerformAction(action)).PlayersPoints))
+                .MaxBy(minMaxResult => minMaxResult.PlayersPoints[gameState.NextPlayerId])
                 .First();
         }
     }
