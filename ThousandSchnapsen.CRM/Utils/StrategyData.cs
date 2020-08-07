@@ -9,7 +9,8 @@ namespace ThousandSchnapsen.CRM.Utils
     public class StrategyData
     {
         [NonSerialized] private int _availableActionsCount;
-        private float[] _regretSum;
+        [NonSerialized] private float[] _regretSum;
+        private float[] _strategySum;
 
         public StrategyData()
         {
@@ -22,7 +23,7 @@ namespace ThousandSchnapsen.CRM.Utils
             StrategySum = new float[availableActionsCount];
             ResetStrategy();
         }
-
+        
         public float[] RegretSum
         {
             get => _regretSum;
@@ -33,27 +34,15 @@ namespace ThousandSchnapsen.CRM.Utils
             }
         }
 
-        public float[] StrategySum { get; set; }
+        public float[] StrategySum
+        {
+            get => _strategySum;
+            set => _strategySum = value;
+        }
 
         public float[] Strategy { get; private set; }
 
-        public float[] AverageStrategy
-        {
-            get
-            {
-                var strategy = StrategySum
-                    .Select(strategySum => Math.Max(0, strategySum))
-                    .ToArray();
-                var normalizingSum = strategy.Sum();
-
-                if (normalizingSum > 0)
-                    return strategy
-                        .Select(actionStrategy => actionStrategy / normalizingSum)
-                        .ToArray();
-                return new float[_availableActionsCount]
-                    .Populate(_ => 1f / _availableActionsCount);
-            }
-        }
+        public float[] AverageStrategy { get; private set; }
 
         private void UpdateStrategy()
         {
@@ -77,7 +66,19 @@ namespace ThousandSchnapsen.CRM.Utils
         }
 
         [OnDeserialized]
-        private void SetValuesOnDeserialized(StreamingContext context) =>
-            _availableActionsCount = RegretSum.Length;
+        private void SetValuesOnDeserialized(StreamingContext context)
+        {
+            var strategy = StrategySum
+                .Select(strategySum => Math.Max(0, strategySum))
+                .ToArray();
+            var normalizingSum = strategy.Sum();
+
+            if (normalizingSum > 0)
+                AverageStrategy = strategy
+                    .Select(actionStrategy => actionStrategy / normalizingSum)
+                    .ToArray();
+            AverageStrategy = new float[StrategySum.Length]
+                .Populate(_ => 1f / StrategySum.Length);
+        }
     }
 }

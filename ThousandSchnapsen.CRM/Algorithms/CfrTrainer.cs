@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
+using ThousandSchnapsen.Common.Utils;
 using ThousandSchnapsen.CRM.Utils;
 
 namespace ThousandSchnapsen.CRM.Algorithms
@@ -17,6 +18,7 @@ namespace ThousandSchnapsen.CRM.Algorithms
 
         private int _nodesCount;
         private int _newInfoSetsCount;
+        private int _existingInfoSetsCount;
         private int _totalNodes;
         private readonly Random _random = new Random();
 
@@ -32,8 +34,10 @@ namespace ThousandSchnapsen.CRM.Algorithms
                         Cfr(node, player, new float[] {1, 1, 1});
                     }
                     _totalNodes += _newInfoSetsCount;
+                    progressBar.Report(((double)i / iterations, $"{_totalNodes} ({((float)_existingInfoSetsCount / _nodesCount)})"));
                     _newInfoSetsCount = 0;
-                    progressBar.Report(((double)i / iterations, _totalNodes.ToString()));
+                    _nodesCount = 0;
+                    _existingInfoSetsCount = 0;
                 }
             }
         }
@@ -51,15 +55,25 @@ namespace ThousandSchnapsen.CRM.Algorithms
                 return Cfr(node.GetNext(availableActions[0]), playerId, probabilities);
 
             var infoSet = node.InfoSet;
+            float[] strategy;
 
-            if (!_nodeMap.TryGetValue(infoSet.RawData, out var strategyData))
+            if (_nodeMap.TryGetValue(infoSet.RawData, out var strategyData))
+            {
+                strategy = strategyData.Strategy;
+                _existingInfoSetsCount++;
+            }
+            else if (node.PlayerId == playerId)
             {
                 strategyData = new StrategyData(availableActions.Length);
                 _nodeMap.Add(infoSet.RawData, strategyData);
                 _newInfoSetsCount++;
+                strategy = strategyData.Strategy;
             }
-
-            var strategy = strategyData.Strategy;
+            else
+            {
+                strategy = new float[availableActions.Length].Populate(_ => 1f / availableActions.Length);
+            }
+            
             float nodeUtil = 0;
             var utils = new float[availableActions.Length];
 
@@ -80,13 +94,13 @@ namespace ThousandSchnapsen.CRM.Algorithms
             foreach (var index in actionsIndices)
             {
                 var newProbabilities = probabilities
-                    .Select((prob, id) => id == playerId ? strategy[index] * prob : prob)
+                    .Select((prob, id) => id == node.PlayerId ? strategy[index] * prob : prob)
                     .ToArray();
                 utils[index] = Cfr(node.GetNext(availableActions[index]), playerId, newProbabilities);
                 nodeUtil += strategy[index] * utils[index];
             }
 
-            if (node.PlayerId == playerId)
+            if (strategyData != null && node.PlayerId == playerId)
             {
                 var opponentsProbabilities =
                     probabilities.Aggregate(1f, (acc, prob) => acc * prob) / probabilities[playerId];
