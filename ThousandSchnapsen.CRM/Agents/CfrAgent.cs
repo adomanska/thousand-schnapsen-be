@@ -16,7 +16,7 @@ namespace ThousandSchnapsen.CRM.Agents
 {
     public class CfrAgent : IAgent
     {
-        private Dictionary<(int, int, int, int), StrategyData> _nodeMap;
+        private readonly string _dataDirectory;
         private Knowledge _knowledge;
         private PublicState _gameState;
         private readonly int[] _opponentsIds;
@@ -25,7 +25,7 @@ namespace ThousandSchnapsen.CRM.Agents
         {
             PlayerId = playerId;
             _opponentsIds = opponentsIds;
-            LoadData(dataPath);
+            _dataDirectory = dataPath;
         }
 
         public int PlayerId { get; }
@@ -60,19 +60,23 @@ namespace ThousandSchnapsen.CRM.Agents
                 var (action, _) = MinMaxTrainer.Train(playerState, infoSet.PlayersCards, PlayerId);
                 card = action.Card;
             }
-            else if (_nodeMap.TryGetValue(infoSet.RawData, out var strategyData))
-            {
-                var strategy = strategyData.AverageStrategy;
-                var randVal = new Random().NextDouble();
-                byte actionIndex = 0;
-                double curVal = strategy[actionIndex];
-                while (curVal < randVal)
-                    curVal += strategy[++actionIndex];
-                card = availableCards[actionIndex];
-            }
             else
             {
-                card = availableCards[new Random().Next(availableCards.Length)];
+                var (primaryKey, secondaryKey) = infoSet.RawData;
+                var dataPath = $"{_dataDirectory}/{primaryKey}.dat";
+
+                if (LoadData(dataPath, out var data) && data.TryGetValue(secondaryKey, out var strategyData))
+                {
+                    var strategy = strategyData.AverageStrategy;
+                    var randVal = new Random().NextDouble();
+                    byte actionIndex = 0;
+                    double curVal = strategy[actionIndex];
+                    while (curVal < randVal)
+                        curVal += strategy[++actionIndex];
+                    card = availableCards[actionIndex];
+                }
+                else
+                    card = availableCards[new Random().Next(availableCards.Length)];
             }
 
             return new Action()
@@ -88,22 +92,27 @@ namespace ThousandSchnapsen.CRM.Agents
             _gameState = newState;
         }
 
-        private void LoadData(string path)
+        private bool LoadData(string path, out Dictionary<(int, int, int), StrategyData> data)
         {
-            var fs = new FileStream(path, FileMode.Open);
-            try
+            if (!File.Exists(path))
             {
-                var formatter = new BinaryFormatter();
-                _nodeMap = (Dictionary<(int, int, int, int), StrategyData>) formatter.Deserialize(fs);
+                data = null;
+                return false;
             }
-            catch (SerializationException e)
+            
+            using (var fs = new FileStream(path, FileMode.Open))
             {
-                Console.WriteLine("Failed to deserialize. Reason: " + e.Message);
-                throw;
-            }
-            finally
-            {
-                fs.Close();
+                try
+                {
+                    var formatter = new BinaryFormatter();
+                    data = (Dictionary<(int, int, int), StrategyData>) formatter.Deserialize(fs);
+                    return true;
+                }
+                catch (SerializationException e)
+                {
+                    Console.WriteLine("Failed to deserialize. Reason: " + e.Message);
+                    throw;
+                }
             }
         }
     }

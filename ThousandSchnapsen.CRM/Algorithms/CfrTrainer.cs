@@ -1,9 +1,5 @@
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters.Binary;
 using ThousandSchnapsen.Common.Utils;
 using ThousandSchnapsen.CRM.Utils;
 
@@ -13,8 +9,7 @@ namespace ThousandSchnapsen.CRM.Algorithms
     {
         private readonly int[] _players = {0, 1, 2};
 
-        private Dictionary<(int, int, int, int), StrategyData> _nodeMap =
-            new Dictionary<(int, int, int, int), StrategyData>();
+        private readonly StrategyDatabase<int, (int, int, int)> _nodeMap = new StrategyDatabase<int, (int, int, int)>();
 
         private int _nodesCount;
         private int _newInfoSetsCount;
@@ -58,7 +53,7 @@ namespace ThousandSchnapsen.CRM.Algorithms
 
             var infoSet = node.InfoSet;
             float[] strategy;
-
+            
             if (_nodeMap.TryGetValue(infoSet.RawData, out var strategyData))
             {
                 strategy = strategyData.Strategy;
@@ -67,7 +62,7 @@ namespace ThousandSchnapsen.CRM.Algorithms
             else if (node.PlayerId == playerId)
             {
                 strategyData = new StrategyData(availableActions.Length);
-                _nodeMap.Add(infoSet.RawData, strategyData);
+                _nodeMap.AddValue(infoSet.RawData, strategyData);
                 _newInfoSetsCount++;
                 strategy = strategyData.Strategy;
             }
@@ -118,44 +113,8 @@ namespace ThousandSchnapsen.CRM.Algorithms
             return nodeUtil;
         }
 
-        public void Save(string path)
-        {
-            var fs = new FileStream(path, FileMode.Create);
+        public void Save(string dataDirectory) =>
+            _nodeMap.Save(dataDirectory);
 
-            var formatter = new BinaryFormatter();
-            try
-            {
-                formatter.Serialize(fs, _nodeMap);
-            }
-            catch (SerializationException e)
-            {
-                Console.WriteLine("Failed to serialize. Reason: " + e.Message);
-                throw;
-            }
-            finally
-            {
-                fs.Close();
-            }
-        }
-
-        public void Load(string path)
-        {
-            var fs = new FileStream(path, FileMode.Open);
-            try
-            {
-                var formatter = new BinaryFormatter();
-                _nodeMap = (Dictionary<(int, int, int, int), StrategyData>) formatter.Deserialize(fs);
-                _totalNodes = _nodeMap.Count;
-            }
-            catch (SerializationException e)
-            {
-                Console.WriteLine("Failed to deserialize. Reason: " + e.Message);
-                throw;
-            }
-            finally
-            {
-                fs.Close();
-            }
-        }
     }
 }

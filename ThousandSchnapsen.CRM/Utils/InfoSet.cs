@@ -52,9 +52,9 @@ namespace ThousandSchnapsen.CRM.Utils
 
             RawData = (
                 data[0],
-                data[1],
+                (data[1],
                 data[2],
-                data[3]
+                data[3])
             );
             _playerCardsSet = playerCardsSet;
             _opponentsIds = opponentsIds;
@@ -62,9 +62,9 @@ namespace ThousandSchnapsen.CRM.Utils
             _playerId = playerId;
         }
 
-        public (int, int, int, int) RawData;
+        public (int, (int, int, int)) RawData;
 
-        public bool IsCertain => RawData.Item2 == 0;
+        public bool IsCertain => RawData.Item2.Item1 == 0;
 
         public CardsSet[] PlayersCards
         {
