@@ -33,8 +33,10 @@ namespace ThousandSchnapsen.CRM.Algorithms
                         var node = new Node();
                         Cfr(node, player, new float[] {1, 1, 1});
                     }
+
                     _totalNodes += _newInfoSetsCount;
-                    progressBar.Report(((double)i / iterations, $"{_totalNodes} ({((float)_existingInfoSetsCount / _nodesCount)})"));
+                    progressBar.Report(((double) i / iterations,
+                        $"{_totalNodes} ({((float) _existingInfoSetsCount / _nodesCount)})"));
                     _newInfoSetsCount = 0;
                     _nodesCount = 0;
                     _existingInfoSetsCount = 0;
@@ -73,7 +75,7 @@ namespace ThousandSchnapsen.CRM.Algorithms
             {
                 strategy = new float[availableActions.Length].Populate(_ => 1f / availableActions.Length);
             }
-            
+
             float nodeUtil = 0;
             var utils = new float[availableActions.Length];
 

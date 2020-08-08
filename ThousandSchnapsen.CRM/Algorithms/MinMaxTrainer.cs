@@ -24,10 +24,10 @@ namespace ThousandSchnapsen.CRM.Algorithms
             };
 
             var (action, playersPoints) = MinMax(gameState);
-            
+
             if (!action.HasValue)
                 throw new Exception("Given game state is final.");
-            
+
             return (action.Value, playersPoints[playerId]);
         }
 

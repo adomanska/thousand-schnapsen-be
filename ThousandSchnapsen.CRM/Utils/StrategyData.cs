@@ -23,7 +23,7 @@ namespace ThousandSchnapsen.CRM.Utils
             StrategySum = new float[availableActionsCount];
             ResetStrategy();
         }
-        
+
         public float[] RegretSum
         {
             get => _regretSum;

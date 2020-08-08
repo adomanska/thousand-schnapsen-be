@@ -18,6 +18,7 @@ namespace ThousandSchnapsen.Common.States
         public int NextPlayerId { get; set; }
         public int DealerId { get; set; }
         public bool StockEmpty => Stock.Length == 0 || Stock.Length == Constants.PlayersCount - 1;
+
         public Color StockColor
         {
             get

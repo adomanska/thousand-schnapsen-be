@@ -16,7 +16,9 @@ namespace ThousandSchnapsen.Common.Agents
 
         public int PlayerId { get; }
 
-        public void Init((int, byte)[] cardsToLet, int initializerId, PublicState gameState) { }
+        public void Init((int, byte)[] cardsToLet, int initializerId, PublicState gameState)
+        {
+        }
 
         public Action GetAction(PlayerState playerState, Card[] availableCards) =>
             new Action()
@@ -25,7 +27,9 @@ namespace ThousandSchnapsen.Common.Agents
                 Card = SelectCard(playerState, availableCards)
             };
 
-        public void UpdateState(Action action, PublicState newState, bool trump) { }
+        public void UpdateState(Action action, PublicState newState, bool trump)
+        {
+        }
 
         private Card SelectCard(PlayerState playerState, Card[] availableCards)
         {
@@ -104,7 +108,7 @@ namespace ThousandSchnapsen.Common.Agents
                 .MinBy(card => card.GetValue(playerState.StockColor, playerState.Trump))
                 .First();
         }
-        
+
         public (int, byte)[] GetCardsToLet(PlayerState playerState)
         {
             var availableCardsToLet = (playerState.Cards | playerState.DealerCards);
@@ -117,7 +121,7 @@ namespace ThousandSchnapsen.Common.Agents
                 .Take(2)
                 .Select((cardId, index) => (opponentsIds[index], cardId))
                 .ToArray();
-            
+
             return cardsToLet;
         }
     }

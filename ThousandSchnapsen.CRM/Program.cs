@@ -15,11 +15,11 @@ namespace ThousandSchnapsen.CRM
             var trainer = new CfrTrainer();
             trainer.Train(10_000);
             trainer.Save("./nodeData.dat");
-            
-            Console.WriteLine(Pad("EVALUATION IN PROGRESS",'-'));
+
+            Console.WriteLine(Pad("EVALUATION IN PROGRESS", '-'));
             var agents = new IAgent[]
             {
-                new CfrAgent(0, new [] {1, 2}, "./nodeData.dat"), 
+                new CfrAgent(0, new[] {1, 2}, "./nodeData.dat"),
                 new RandomAgent(1),
                 new RandomAgent(2),
                 new RandomAgent(3)

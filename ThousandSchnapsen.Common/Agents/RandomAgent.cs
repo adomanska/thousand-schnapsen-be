@@ -10,10 +10,12 @@ namespace ThousandSchnapsen.Common.Agents
     {
         public RandomAgent(int id) =>
             PlayerId = id;
-        
+
         public int PlayerId { get; }
 
-        public void Init((int, byte)[] cardsToLet, int initializerId, PublicState gameState) { }
+        public void Init((int, byte)[] cardsToLet, int initializerId, PublicState gameState)
+        {
+        }
 
         public Action GetAction(PlayerState playerState, Card[] availableCards)
         {
@@ -27,7 +29,9 @@ namespace ThousandSchnapsen.Common.Agents
             };
         }
 
-        public void UpdateState(Action action, PublicState newState, bool trump) { }
+        public void UpdateState(Action action, PublicState newState, bool trump)
+        {
+        }
 
         public (int, byte)[] GetCardsToLet(PlayerState playerState)
         {
@@ -41,7 +45,7 @@ namespace ThousandSchnapsen.Common.Agents
                 .Take(2)
                 .Select((cardId, index) => (opponentsIds[index], cardId))
                 .ToArray();
-            
+
             return cardsToLet;
         }
     }
