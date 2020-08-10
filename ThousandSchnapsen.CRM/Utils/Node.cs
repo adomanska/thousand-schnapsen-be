@@ -49,6 +49,8 @@ namespace ThousandSchnapsen.CRM.Utils
 
         public int PlayerId => _gameState.NextPlayerId;
 
+        public PublicState PublicGameState => _gameState;
+
         public InfoSet InfoSet
         {
             get
@@ -71,7 +73,8 @@ namespace ThousandSchnapsen.CRM.Utils
             var updatedKnowledge = _knowledge.GetNext(
                 action,
                 _gameState,
-                trump
+                trump,
+                nextGameState.StockEmpty
             );
 
             return new Node(new NodeParams()

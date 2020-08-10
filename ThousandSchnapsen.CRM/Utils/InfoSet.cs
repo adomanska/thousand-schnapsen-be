@@ -12,7 +12,7 @@ namespace ThousandSchnapsen.CRM.Utils
         private readonly int _playerId;
 
         public InfoSet(CardsSet playerCardsSet, CardsSet availableCardsSet, int[] opponentsIds,
-            CardsSet[] possibleCardsSets, CardsSet[] certainCardsSets, byte[] cardsLeft, int playerId)
+            CardsSet[] possibleCardsSets, CardsSet[] certainCardsSets, byte[] cardsLeft, int playerId, int stockEmpty)
         {
             var opponentsPossibleCardsSet = (possibleCardsSets[opponentsIds[0]] & possibleCardsSets[opponentsIds[1]])
                                             - playerCardsSet;
@@ -45,26 +45,26 @@ namespace ThousandSchnapsen.CRM.Utils
             var data = CodeUnification.Unify(new[]
             {
                 availableCardsSet.Code,
-                opponentsPossibleCardsSet.Code,
                 opponentsCertainCardsSetsCodes[0],
                 opponentsCertainCardsSetsCodes[1]
             });
 
             RawData = (
                 data[0],
-                (data[1],
-                data[2],
-                data[3])
+                (stockEmpty,
+                data[1],
+                data[2])
             );
             _playerCardsSet = playerCardsSet;
             _opponentsIds = opponentsIds;
             _opponentsCardsSets = opponentsCertainCardsSets;
             _playerId = playerId;
+            IsCertain = opponentsPossibleCardsSet.IsEmpty;
         }
 
         public (int, (int, int, int)) RawData;
 
-        public bool IsCertain => RawData.Item2.Item1 == 0;
+        public bool IsCertain { get; }
 
         public CardsSet[] PlayersCards
         {

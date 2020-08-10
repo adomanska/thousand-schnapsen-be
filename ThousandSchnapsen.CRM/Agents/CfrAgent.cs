@@ -88,7 +88,7 @@ namespace ThousandSchnapsen.CRM.Agents
 
         public void UpdateState(Action action, PublicState newState, bool trump)
         {
-            _knowledge = _knowledge.GetNext(action, _gameState, trump);
+            _knowledge = _knowledge.GetNext(action, _gameState, trump, newState.StockEmpty);
             _gameState = newState;
         }
 

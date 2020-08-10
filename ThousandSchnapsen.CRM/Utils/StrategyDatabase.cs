@@ -36,7 +36,7 @@ namespace ThousandSchnapsen.CRM.Utils
             if (!Directory.Exists(dataDirectory))
                 Directory.CreateDirectory(dataDirectory);
 
-            Parallel.ForEach(_data, (key, value) =>
+            foreach(var (key, value) in _data)
             {
                 var path = $"{dataDirectory}/{key}.dat";
                 var fs = new FileStream(path, FileMode.Create);
@@ -55,7 +55,7 @@ namespace ThousandSchnapsen.CRM.Utils
                 {
                     fs.Close();
                 }
-            });
+            };
         }
     }
 }

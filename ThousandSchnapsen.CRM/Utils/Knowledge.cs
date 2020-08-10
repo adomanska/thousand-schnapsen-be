@@ -13,6 +13,7 @@ namespace ThousandSchnapsen.CRM.Utils
         public CardsSet[] PossibleCardsSets;
         public CardsSet[] CertainCardsSets;
         public byte[] CardsLeft;
+        public bool StockEmpty;
 
         private Knowledge()
         {
@@ -23,6 +24,7 @@ namespace ThousandSchnapsen.CRM.Utils
             PossibleCardsSets = new CardsSet[Constants.PlayersCount].Populate(_ => CardsSet.Deck());
             CertainCardsSets = new CardsSet[Constants.PlayersCount].Populate(_ => new CardsSet());
             CardsLeft = new byte[Constants.PlayersCount].Populate(_ => (byte) Constants.CardsPerPlayerCount);
+            StockEmpty = true;
 
             PossibleCardsSets[initializerId] -= dealerCards;
             CertainCardsSets[initializerId] |= dealerCards;
@@ -47,10 +49,10 @@ namespace ThousandSchnapsen.CRM.Utils
             var availableCardsSet = new CardsSet(availableActions);
 
             return new InfoSet(playerCardsSet, availableCardsSet, opponentsIds,
-                PossibleCardsSets, CertainCardsSets, CardsLeft, playerId);
+                PossibleCardsSets, CertainCardsSets, CardsLeft, playerId, StockEmpty ? 1 : 0);
         }
 
-        public Knowledge GetNext(Action action, PublicState gameState, bool trump)
+        public Knowledge GetNext(Action action, PublicState gameState, bool trump, bool stockEmpty)
         {
             var nextPossibleCardsSets = PossibleCardsSets.Select(cardsSet => cardsSet.Clone()).ToArray();
             var nextCertainCardsSets = CertainCardsSets.Select(cardsSet => cardsSet.Clone()).ToArray();
@@ -84,7 +86,8 @@ namespace ThousandSchnapsen.CRM.Utils
             {
                 PossibleCardsSets = nextPossibleCardsSets,
                 CertainCardsSets = nextCertainCardsSets,
-                CardsLeft = nextCardsLeft
+                CardsLeft = nextCardsLeft,
+                StockEmpty = stockEmpty
             };
         }
 

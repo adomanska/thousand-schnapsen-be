@@ -13,20 +13,22 @@ namespace ThousandSchnapsen.CRM
         {
             Console.WriteLine(Pad("TRAINING IN PROGRESS", '-'));
             var trainer = new CfrTrainer();
-            trainer.Train(50);
-            trainer.Save("./testData");
+            trainer.Train(1000);
+            trainer.Save("./testData2");
 
             Console.WriteLine(Pad("EVALUATION IN PROGRESS", '-'));
+            var cfrPlayer = new CfrAgent(1, new[] {1, 2},
+                "/home/andzelika/Documents/Projects/ThousandSchnapsen/testData");
             var agents = new IAgent[]
             {
-                new CfrAgent(0, new[] {1, 2}, "./testData"),
-                new RandomAgent(1),
+                new RandomAgent(0),
+                cfrPlayer,
                 new RandomAgent(2),
                 new RandomAgent(3)
             };
             var simulation = new Simulation(agents, 3);
-            var stats = simulation.Run(10_000);
-            Console.WriteLine(stats[0]);
+            var stats = simulation.Run(100);
+            Console.WriteLine($"[{stats[0]} | {stats[1]} | {stats[2]}]");
         }
 
         private static string Pad(string content, char paddingChar, int lineWidth = 102)
