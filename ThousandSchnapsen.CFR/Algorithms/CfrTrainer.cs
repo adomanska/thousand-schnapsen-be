@@ -75,14 +75,14 @@ namespace ThousandSchnapsen.CFR.Algorithms
             float nodeUtil = 0;
             var utils = new float[availableActions.Length];
 
-            byte[] actionsIndices;
+            int[] actionsIndices;
 
             if (node.PlayerId == playerId)
-                actionsIndices = Enumerable.Range(0, availableActions.Length).Select(i => (byte) i).ToArray();
+                actionsIndices = Enumerable.Range(0, availableActions.Length).ToArray();
             else
             {
                 var randVal = _random.NextDouble();
-                byte i = 0;
+                var i = 0;
                 double curVal = strategy[i];
                 while (curVal < randVal)
                     curVal += strategy[++i];

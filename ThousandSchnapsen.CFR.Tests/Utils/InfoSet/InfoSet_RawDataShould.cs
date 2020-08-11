@@ -95,7 +95,7 @@ namespace ThousandSchnapsen.CFR.Tests.Utils
 
             Assert.Equal(expected, result);
         }
-        
+
         [Fact]
         public void RawData_AllOpponentsCardsGiven_ReturnProperValue()
         {
@@ -113,7 +113,7 @@ namespace ThousandSchnapsen.CFR.Tests.Utils
             CardsSet[] certainCardsSets =
             {
                 new CardsSet(),
-                new CardsSet(new[] {new Card(Rank.Ten, Color.Hearts) }),
+                new CardsSet(new[] {new Card(Rank.Ten, Color.Hearts)}),
                 new CardsSet(new[] {new Card(Rank.Ace, Color.Hearts), new Card(Rank.Nine, Color.Hearts)}),
             };
             var infoSet = new InfoSet(

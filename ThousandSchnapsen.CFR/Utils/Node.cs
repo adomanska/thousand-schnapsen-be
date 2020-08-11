@@ -49,8 +49,6 @@ namespace ThousandSchnapsen.CFR.Utils
 
         public int PlayerId => _gameState.NextPlayerId;
 
-        public PublicState PublicGameState => _gameState;
-
         public InfoSet InfoSet
         {
             get
