@@ -3,7 +3,7 @@ using Xunit;
 
 namespace ThousandSchnapsen.Common.Tests.Commons
 {
-    public class Card_GetValue
+    public class Card_GetValueShould
     {
         [Fact]
         public void GetValue_ColorOfGivenTrump_ReturnValidValue()

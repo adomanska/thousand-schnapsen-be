@@ -98,15 +98,12 @@ namespace ThousandSchnapsen.Common.Commons
                                (Constants.CardsInColorCount * (int) color.Value))
                 : new CardsSet();
 
-        public static CardsSet Trump(Color color) =>
-            new CardsSet(new[] {new Card(Rank.Queen, color), new Card(Rank.King, color)});
-
         public IEnumerable<Color> GetTrumps() =>
             Constants.Colors.Where(color => (this & Trump(color)).Count == 2);
 
         public Card? GetHighestInColor(Color color)
         {
-            var colorCards = (this & Color(color)).GetCards();
+            var colorCards = (this & Color(color)).GetCards().ToArray();
             return colorCards.Any()
                 ? colorCards.MaxBy(card => card.Rank).First()
                 : (Card?) null;
@@ -153,10 +150,10 @@ namespace ThousandSchnapsen.Common.Commons
             var rightCode = code & ((1 << rightLength) - 1);
             var leftCode = code >> rightLength;
 
-            var binLeft = Convert.ToString(leftCode, 2);
-            var binRight = Convert.ToString(rightCode, 2);
-
             return CountSetBits(leftCode, leftLength) + CountSetBits(rightCode, rightLength);
         }
+        
+        private static CardsSet Trump(Color color) =>
+            new CardsSet(new[] {new Card(Rank.Queen, color), new Card(Rank.King, color)});
     }
 }

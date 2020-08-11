@@ -6,7 +6,7 @@ namespace ThousandSchnapsen.Common.Tests.Utils
     public class CodeUnification_UnifyShould
     {
         [Fact]
-        public void Unify_NoUnifyableSets_ReturnsUnchangedCodes()
+        public void Unify_NoUnifiableSets_ReturnsUnchangedCodes()
         {
             var data = new[]
             {

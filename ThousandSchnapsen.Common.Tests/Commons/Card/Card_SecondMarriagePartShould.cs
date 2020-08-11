@@ -3,7 +3,7 @@ using Xunit;
 
 namespace ThousandSchnapsen.Common.Tests.Commons
 {
-    public class Card_SecondMarriagePart
+    public class Card_SecondMarriagePartShould
     {
         [Fact]
         public void SecondMarriagePart_GivenKing_ReturnQueen()
