@@ -5,7 +5,7 @@ using ThousandSchnapsen.Common.Commons;
 using ThousandSchnapsen.Common.States;
 using Action = ThousandSchnapsen.Common.Commons.Action;
 
-namespace ThousandSchnapsen.CRM.Algorithms
+namespace ThousandSchnapsen.CFR.Algorithms
 {
     public static class MinMaxTrainer
     {

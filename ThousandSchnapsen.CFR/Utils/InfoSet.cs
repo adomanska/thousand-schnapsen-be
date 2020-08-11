@@ -2,7 +2,7 @@ using System.Linq;
 using ThousandSchnapsen.Common.Commons;
 using ThousandSchnapsen.Common.Utils;
 
-namespace ThousandSchnapsen.CRM.Utils
+namespace ThousandSchnapsen.CFR.Utils
 {
     public class InfoSet
     {

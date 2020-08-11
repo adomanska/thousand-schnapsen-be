@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading.Tasks;
 
-namespace ThousandSchnapsen.CRM.Utils
+namespace ThousandSchnapsen.CFR.Utils
 {
     public class StrategyDatabase<T, TK>
     {

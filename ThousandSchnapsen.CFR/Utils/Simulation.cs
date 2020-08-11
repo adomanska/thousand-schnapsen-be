@@ -5,7 +5,7 @@ using ThousandSchnapsen.Common.Commons;
 using ThousandSchnapsen.Common.Interfaces;
 using ThousandSchnapsen.Common.States;
 
-namespace ThousandSchnapsen.CRM.Utils
+namespace ThousandSchnapsen.CFR.Utils
 {
     public class Simulation
     {

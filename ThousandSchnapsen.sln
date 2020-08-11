@@ -9,7 +9,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThousandSchnapsen.Common.Te
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThousandSchnapsen.Simulator", "ThousandSchnapsen.Simulator\ThousandSchnapsen.Simulator.csproj", "{4FB2C232-F782-487E-B88B-7C028032E4CD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThousandSchnapsen.CRM", "ThousandSchnapsen.CRM\ThousandSchnapsen.CRM.csproj", "{D3F78513-8206-4A51-8726-C027032F5BF8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThousandSchnapsen.CFR", "ThousandSchnapsen.CFR\ThousandSchnapsen.CFR.csproj", "{D3F78513-8206-4A51-8726-C027032F5BF8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThousandSchnapsen.CFR.Tests", "ThousandSchnapsen.CFR.Tests\ThousandSchnapsen.CFR.Tests.csproj", "{7F67A616-9963-41BE-B53E-D0B38A109138}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -84,5 +86,17 @@ Global
 		{D3F78513-8206-4A51-8726-C027032F5BF8}.Release|x64.Build.0 = Release|Any CPU
 		{D3F78513-8206-4A51-8726-C027032F5BF8}.Release|x86.ActiveCfg = Release|Any CPU
 		{D3F78513-8206-4A51-8726-C027032F5BF8}.Release|x86.Build.0 = Release|Any CPU
+		{7F67A616-9963-41BE-B53E-D0B38A109138}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F67A616-9963-41BE-B53E-D0B38A109138}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F67A616-9963-41BE-B53E-D0B38A109138}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{7F67A616-9963-41BE-B53E-D0B38A109138}.Debug|x64.Build.0 = Debug|Any CPU
+		{7F67A616-9963-41BE-B53E-D0B38A109138}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{7F67A616-9963-41BE-B53E-D0B38A109138}.Debug|x86.Build.0 = Debug|Any CPU
+		{7F67A616-9963-41BE-B53E-D0B38A109138}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F67A616-9963-41BE-B53E-D0B38A109138}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7F67A616-9963-41BE-B53E-D0B38A109138}.Release|x64.ActiveCfg = Release|Any CPU
+		{7F67A616-9963-41BE-B53E-D0B38A109138}.Release|x64.Build.0 = Release|Any CPU
+		{7F67A616-9963-41BE-B53E-D0B38A109138}.Release|x86.ActiveCfg = Release|Any CPU
+		{7F67A616-9963-41BE-B53E-D0B38A109138}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

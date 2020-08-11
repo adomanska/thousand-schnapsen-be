@@ -1,20 +1,20 @@
 ﻿using System;
 using ThousandSchnapsen.Common.Agents;
 using ThousandSchnapsen.Common.Interfaces;
-using ThousandSchnapsen.CRM.Agents;
-using ThousandSchnapsen.CRM.Algorithms;
-using ThousandSchnapsen.CRM.Utils;
+using ThousandSchnapsen.CFR.Algorithms;
+using ThousandSchnapsen.CFR.Agents;
+using ThousandSchnapsen.CFR.Utils;
 
-namespace ThousandSchnapsen.CRM
+namespace ThousandSchnapsen.CFR
 {
     class Program
     {
         static void Main()
         {
-            // Console.WriteLine(Pad("TRAINING IN PROGRESS", '-'));
-            // var trainer = new CfrTrainer();
-            // trainer.Train(1000);
-            // trainer.Save("./testData2");
+            Console.WriteLine(Pad("TRAINING IN PROGRESS", '-'));
+            var trainer = new CfrTrainer();
+            trainer.Train(1000);
+            trainer.Save("./testData2");
 
             Console.WriteLine(Pad("EVALUATION IN PROGRESS", '-'));
             var cfrPlayer = new CfrAgent(1, new[] {0, 2},

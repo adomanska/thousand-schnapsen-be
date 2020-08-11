@@ -3,7 +3,7 @@ using MoreLinq;
 using ThousandSchnapsen.Common.Commons;
 using ThousandSchnapsen.Common.States;
 
-namespace ThousandSchnapsen.CRM.Utils
+namespace ThousandSchnapsen.CFR.Utils
 {
     public struct NodeParams
     {

@@ -5,14 +5,14 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using MoreLinq;
+using ThousandSchnapsen.CFR.Algorithms;
+using ThousandSchnapsen.CFR.Utils;
 using ThousandSchnapsen.Common.Commons;
 using ThousandSchnapsen.Common.Interfaces;
 using ThousandSchnapsen.Common.States;
-using ThousandSchnapsen.CRM.Algorithms;
-using ThousandSchnapsen.CRM.Utils;
 using Action = ThousandSchnapsen.Common.Commons.Action;
 
-namespace ThousandSchnapsen.CRM.Agents
+namespace ThousandSchnapsen.CFR.Agents
 {
     public class CfrAgent : IAgent
     {

@@ -6,7 +6,7 @@ using ThousandSchnapsen.Common.States;
 using ThousandSchnapsen.Common.Utils;
 using Action = ThousandSchnapsen.Common.Commons.Action;
 
-namespace ThousandSchnapsen.CRM.Utils
+namespace ThousandSchnapsen.CFR.Utils
 {
     public class Knowledge
     {

@@ -2,7 +2,7 @@ using System;
 using System.Text;
 using System.Threading;
 
-namespace ThousandSchnapsen.CRM.Utils
+namespace ThousandSchnapsen.CFR.Utils
 {
     public class ProgressBar : IDisposable, IProgress<(double, string)>
     {

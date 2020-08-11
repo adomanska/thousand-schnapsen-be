@@ -1,9 +1,9 @@
 using System;
 using System.Linq;
+using ThousandSchnapsen.CFR.Utils;
 using ThousandSchnapsen.Common.Utils;
-using ThousandSchnapsen.CRM.Utils;
 
-namespace ThousandSchnapsen.CRM.Algorithms
+namespace ThousandSchnapsen.CFR.Algorithms
 {
     public class CfrTrainer
     {

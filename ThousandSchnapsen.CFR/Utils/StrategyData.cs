@@ -3,7 +3,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using ThousandSchnapsen.Common.Utils;
 
-namespace ThousandSchnapsen.CRM.Utils
+namespace ThousandSchnapsen.CFR.Utils
 {
     [Serializable]
     public class StrategyData
