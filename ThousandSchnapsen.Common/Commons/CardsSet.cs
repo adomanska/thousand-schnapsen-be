@@ -152,7 +152,7 @@ namespace ThousandSchnapsen.Common.Commons
 
             return CountSetBits(leftCode, leftLength) + CountSetBits(rightCode, rightLength);
         }
-        
+
         private static CardsSet Trump(Color color) =>
             new CardsSet(new[] {new Card(Rank.Queen, color), new Card(Rank.King, color)});
     }

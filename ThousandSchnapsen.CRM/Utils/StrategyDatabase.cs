@@ -9,7 +9,8 @@ namespace ThousandSchnapsen.CRM.Utils
 {
     public class StrategyDatabase<T, TK>
     {
-        private readonly Dictionary<T, Dictionary<TK, StrategyData>> _data = new Dictionary<T, Dictionary<TK, StrategyData>>();
+        private readonly Dictionary<T, Dictionary<TK, StrategyData>> _data =
+            new Dictionary<T, Dictionary<TK, StrategyData>>();
 
         public bool TryGetValue((T, TK) key, out StrategyData value)
         {
@@ -36,7 +37,7 @@ namespace ThousandSchnapsen.CRM.Utils
             if (!Directory.Exists(dataDirectory))
                 Directory.CreateDirectory(dataDirectory);
 
-            foreach(var (key, value) in _data)
+            foreach (var (key, value) in _data)
             {
                 var path = $"{dataDirectory}/{key}.dat";
                 var fs = new FileStream(path, FileMode.Create);
@@ -55,7 +56,9 @@ namespace ThousandSchnapsen.CRM.Utils
                 {
                     fs.Close();
                 }
-            };
+            }
+
+            ;
         }
     }
 }

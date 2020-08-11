@@ -52,8 +52,8 @@ namespace ThousandSchnapsen.CRM.Utils
             RawData = (
                 data[0],
                 (stockEmpty,
-                data[1],
-                data[2])
+                    data[1],
+                    data[2])
             );
             _playerCardsSet = playerCardsSet;
             _opponentsIds = opponentsIds;

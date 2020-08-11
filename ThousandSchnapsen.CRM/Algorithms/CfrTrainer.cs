@@ -54,7 +54,7 @@ namespace ThousandSchnapsen.CRM.Algorithms
             var infoSet = node.InfoSet;
 
             float[] strategy;
-            
+
             if (_nodeMap.TryGetValue(infoSet.RawData, out var strategyData))
             {
                 strategy = strategyData.Strategy;
@@ -116,6 +116,5 @@ namespace ThousandSchnapsen.CRM.Algorithms
 
         public void Save(string dataDirectory) =>
             _nodeMap.Save(dataDirectory);
-
     }
 }

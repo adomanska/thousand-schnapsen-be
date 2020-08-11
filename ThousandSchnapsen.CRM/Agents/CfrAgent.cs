@@ -99,7 +99,7 @@ namespace ThousandSchnapsen.CRM.Agents
                 data = null;
                 return false;
             }
-            
+
             using (var fs = new FileStream(path, FileMode.Open))
             {
                 try

@@ -6,13 +6,11 @@ using ThousandSchnapsen.Common.States;
 
 namespace ThousandSchnapsen.Common.Loggers
 {
-    public class Logger
+    public static class Logger
     {
-        public Logger() =>
-            Console.OutputEncoding = Encoding.UTF8;
-
         public static void Log(GameState gameState)
         {
+            Console.OutputEncoding = Encoding.UTF8;
             Console.WriteLine(CreateTitle("GAME STATE", 42));
             LogStock(gameState);
             LogResults(gameState);
