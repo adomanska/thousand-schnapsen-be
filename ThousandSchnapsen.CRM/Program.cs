@@ -11,14 +11,14 @@ namespace ThousandSchnapsen.CRM
     {
         static void Main()
         {
-            Console.WriteLine(Pad("TRAINING IN PROGRESS", '-'));
-            var trainer = new CfrTrainer();
-            trainer.Train(1000);
-            trainer.Save("./testData2");
+            // Console.WriteLine(Pad("TRAINING IN PROGRESS", '-'));
+            // var trainer = new CfrTrainer();
+            // trainer.Train(1000);
+            // trainer.Save("./testData2");
 
             Console.WriteLine(Pad("EVALUATION IN PROGRESS", '-'));
-            var cfrPlayer = new CfrAgent(1, new[] {1, 2},
-                "/home/andzelika/Documents/Projects/ThousandSchnapsen/testData");
+            var cfrPlayer = new CfrAgent(1, new[] {0, 2},
+                "./testData2");
             var agents = new IAgent[]
             {
                 new RandomAgent(0),
@@ -27,7 +27,7 @@ namespace ThousandSchnapsen.CRM
                 new RandomAgent(3)
             };
             var simulation = new Simulation(agents, 3);
-            var stats = simulation.Run(100);
+            var stats = simulation.Run(1000);
             Console.WriteLine($"[{stats[0]} | {stats[1]} | {stats[2]}]");
         }
 
