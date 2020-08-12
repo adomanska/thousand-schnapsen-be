@@ -13,7 +13,6 @@ namespace ThousandSchnapsen.CFR.Utils
         public CardsSet[] PossibleCardsSets;
         public CardsSet[] CertainCardsSets;
         public byte[] CardsLeft;
-        public bool StockEmpty;
 
         private Knowledge()
         {
@@ -24,7 +23,6 @@ namespace ThousandSchnapsen.CFR.Utils
             PossibleCardsSets = new CardsSet[Constants.PlayersCount].Populate(_ => CardsSet.Deck());
             CertainCardsSets = new CardsSet[Constants.PlayersCount].Populate(_ => new CardsSet());
             CardsLeft = new byte[Constants.PlayersCount].Populate(_ => (byte) Constants.CardsPerPlayerCount);
-            StockEmpty = true;
 
             PossibleCardsSets[initializerId] -= dealerCards;
             CertainCardsSets[initializerId] |= dealerCards;
@@ -44,12 +42,12 @@ namespace ThousandSchnapsen.CFR.Utils
             });
         }
 
-        public InfoSet GetInfoSet(CardsSet playerCardsSet, Card[] availableActions, int playerId, int[] opponentsIds)
+        public InfoSet GetInfoSet(PlayerState playerState, Card[] availableActions, int[] opponentsIds)
         {
             var availableCardsSet = new CardsSet(availableActions);
 
-            return new InfoSet(playerCardsSet, availableCardsSet, opponentsIds,
-                PossibleCardsSets, CertainCardsSets, CardsLeft, playerId, StockEmpty ? 1 : 0);
+            return new InfoSet(playerState.Cards, availableCardsSet, opponentsIds,
+                PossibleCardsSets, CertainCardsSets, CardsLeft, playerState.PlayerId, playerState.StockEmpty ? 1 : 0);
         }
 
         public Knowledge GetNext(Action action, PublicState gameState, bool trump, bool stockEmpty)
@@ -86,8 +84,7 @@ namespace ThousandSchnapsen.CFR.Utils
             {
                 PossibleCardsSets = nextPossibleCardsSets,
                 CertainCardsSets = nextCertainCardsSets,
-                CardsLeft = nextCardsLeft,
-                StockEmpty = stockEmpty
+                CardsLeft = nextCardsLeft
             };
         }
 

@@ -36,7 +36,7 @@ namespace ThousandSchnapsen.CFR.Utils
             _knowledge = new Knowledge(dealerCards, PlayerId, cardsToLet);
         }
 
-        public Node(NodeParams nodeParams)
+        private Node(NodeParams nodeParams)
         {
             _gameState = nodeParams.GameState;
             _knowledge = nodeParams.Knowledge;
@@ -53,13 +53,11 @@ namespace ThousandSchnapsen.CFR.Utils
         {
             get
             {
-                var playerCardsSet = _gameState.PlayersCards[PlayerId];
-
                 var opponentsIds = Enumerable.Range(0, Constants.PlayersCount)
                     .Where(playerId => playerId != PlayerId && playerId != _gameState.DealerId)
                     .ToArray();
 
-                return _knowledge.GetInfoSet(playerCardsSet, AvailableActions, PlayerId, opponentsIds);
+                return _knowledge.GetInfoSet(_gameState.GetNextPlayerState(), AvailableActions, opponentsIds);
             }
         }
 

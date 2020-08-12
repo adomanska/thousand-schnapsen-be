@@ -52,7 +52,7 @@ namespace ThousandSchnapsen.CFR.Agents
 
         public Action GetAction(PlayerState playerState, Card[] availableCards)
         {
-            var infoSet = _knowledge.GetInfoSet(playerState.Cards, availableCards, PlayerId, _opponentsIds);
+            var infoSet = _knowledge.GetInfoSet(playerState, availableCards, _opponentsIds);
             Card card;
 
             if (infoSet.IsCertain)
