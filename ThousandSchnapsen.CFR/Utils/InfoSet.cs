@@ -1,5 +1,6 @@
 using System.Linq;
 using ThousandSchnapsen.Common.Commons;
+using ThousandSchnapsen.Common.States;
 using ThousandSchnapsen.Common.Utils;
 
 namespace ThousandSchnapsen.CFR.Utils
@@ -11,18 +12,18 @@ namespace ThousandSchnapsen.CFR.Utils
         private readonly int[] _opponentsIds;
         private readonly int _playerId;
 
-        public InfoSet(CardsSet playerCardsSet, CardsSet availableCardsSet, int[] opponentsIds,
-            CardsSet[] possibleCardsSets, CardsSet[] certainCardsSets, byte[] cardsLeft, int playerId, int stockEmpty)
+        public InfoSet(PlayerState playerState, CardsSet availableCardsSet, int[] opponentsIds,
+            CardsSet[] possibleCardsSets, CardsSet[] certainCardsSets, byte[] cardsLeft)
         {
             var opponentsPossibleCardsSet = (possibleCardsSets[opponentsIds[0]] & possibleCardsSets[opponentsIds[1]])
-                                            - playerCardsSet;
+                                            - playerState.Cards;
 
             var opponentsCertainCardsSets = new[]
             {
                 (certainCardsSets[opponentsIds[0]] |
-                 (possibleCardsSets[opponentsIds[0]] - playerCardsSet - opponentsPossibleCardsSet)),
+                 (possibleCardsSets[opponentsIds[0]] - playerState.Cards - opponentsPossibleCardsSet)),
                 (certainCardsSets[opponentsIds[1]] |
-                 (possibleCardsSets[opponentsIds[1]] - playerCardsSet - opponentsPossibleCardsSet))
+                 (possibleCardsSets[opponentsIds[1]] - playerState.Cards - opponentsPossibleCardsSet))
             };
 
             if (opponentsCertainCardsSets[0].Count == cardsLeft[opponentsIds[0]] && !opponentsPossibleCardsSet.IsEmpty)
@@ -51,14 +52,14 @@ namespace ThousandSchnapsen.CFR.Utils
 
             RawData = (
                 data[0],
-                (stockEmpty,
+                (playerState.StockEmpty ? 1 : 0,
                     data[1],
                     data[2])
             );
-            _playerCardsSet = playerCardsSet;
+            _playerCardsSet = playerState.Cards;
             _opponentsIds = opponentsIds;
             _opponentsCardsSets = opponentsCertainCardsSets;
-            _playerId = playerId;
+            _playerId = playerState.PlayerId;
             IsCertain = opponentsPossibleCardsSet.IsEmpty;
         }
 

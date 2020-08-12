@@ -46,8 +46,8 @@ namespace ThousandSchnapsen.CFR.Utils
         {
             var availableCardsSet = new CardsSet(availableActions);
 
-            return new InfoSet(playerState.Cards, availableCardsSet, opponentsIds,
-                PossibleCardsSets, CertainCardsSets, CardsLeft, playerState.PlayerId, playerState.StockEmpty ? 1 : 0);
+            return new InfoSet(playerState, availableCardsSet, opponentsIds,
+                PossibleCardsSets, CertainCardsSets, CardsLeft);
         }
 
         public Knowledge GetNext(Action action, PublicState gameState, bool trump, bool stockEmpty)

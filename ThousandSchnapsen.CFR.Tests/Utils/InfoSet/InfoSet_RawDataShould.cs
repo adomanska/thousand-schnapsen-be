@@ -1,6 +1,7 @@
 using Xunit;
 using ThousandSchnapsen.Common.Commons;
 using ThousandSchnapsen.CFR.Utils;
+using ThousandSchnapsen.Common.States;
 
 namespace ThousandSchnapsen.CFR.Tests.Utils
 {
@@ -9,11 +10,18 @@ namespace ThousandSchnapsen.CFR.Tests.Utils
         private readonly int[] _opponentsIds = {1, 2};
         private readonly byte[] _cardsLeft = {1, 2, 2};
 
-        private readonly CardsSet _playersCards = new CardsSet(new[]
+        private static readonly CardsSet PlayerCards = new CardsSet(new[]
         {
             new Card(Rank.Jack, Color.Clubs),
             new Card(Rank.Nine, Color.Diamonds),
         });
+        
+        private readonly PlayerState _playerState = new PlayerState()
+        {
+            Cards = PlayerCards,
+            PlayerId = 0,
+            Stock = new StockItem[] {}
+        };
 
         [Fact]
         public void RawData_EqualPossibleCardsSets_ReturnProperValue()
@@ -27,7 +35,7 @@ namespace ThousandSchnapsen.CFR.Tests.Utils
             });
             CardsSet[] possibleCardsSets =
             {
-                _playersCards,
+                PlayerCards,
                 commonPossibleCardsSet,
                 commonPossibleCardsSet.Clone()
             };
@@ -38,18 +46,16 @@ namespace ThousandSchnapsen.CFR.Tests.Utils
                 new CardsSet(new[] {new Card(Rank.Ace, Color.Hearts)}),
             };
             var infoSet = new InfoSet(
-                _playersCards,
-                _playersCards,
+                _playerState,
+                PlayerCards,
                 _opponentsIds,
                 possibleCardsSets,
                 certainCardsSets,
-                _cardsLeft,
-                0,
-                0
+                _cardsLeft
             );
             var expected = (
-                _playersCards.Code,
-                (0, certainCardsSets[1].Code, certainCardsSets[2].Code)
+                PlayerCards.Code,
+                (1, certainCardsSets[1].Code, certainCardsSets[2].Code)
             );
 
             var result = infoSet.RawData;
@@ -62,7 +68,7 @@ namespace ThousandSchnapsen.CFR.Tests.Utils
         {
             CardsSet[] possibleCardsSets =
             {
-                _playersCards,
+                PlayerCards,
                 new CardsSet(new[] {new Card(Rank.Ace, Color.Spades)}),
                 new CardsSet(new[] {new Card(Rank.Ace, Color.Diamonds)}),
             };
@@ -73,19 +79,17 @@ namespace ThousandSchnapsen.CFR.Tests.Utils
                 new CardsSet(new[] {new Card(Rank.Ace, Color.Hearts)}),
             };
             var infoSet = new InfoSet(
-                _playersCards,
-                _playersCards,
+                _playerState,
+                PlayerCards,
                 _opponentsIds,
                 possibleCardsSets,
                 certainCardsSets,
-                _cardsLeft,
-                0,
-                0
+                _cardsLeft
             );
             var expected = (
-                _playersCards.Code,
+                PlayerCards.Code,
                 (
-                    0,
+                    1,
                     (certainCardsSets[1] | new CardsSet(new[] {new Card(Rank.Ace, Color.Spades)})).Code,
                     (certainCardsSets[2] | new CardsSet(new[] {new Card(Rank.Ace, Color.Diamonds)})).Code
                 )
@@ -106,7 +110,7 @@ namespace ThousandSchnapsen.CFR.Tests.Utils
             });
             CardsSet[] possibleCardsSets =
             {
-                _playersCards,
+                PlayerCards,
                 commonPossibleCardsSet,
                 commonPossibleCardsSet.Clone(),
             };
@@ -117,19 +121,17 @@ namespace ThousandSchnapsen.CFR.Tests.Utils
                 new CardsSet(new[] {new Card(Rank.Ace, Color.Hearts), new Card(Rank.Nine, Color.Hearts)}),
             };
             var infoSet = new InfoSet(
-                _playersCards,
-                _playersCards,
+                _playerState,
+                PlayerCards,
                 _opponentsIds,
                 possibleCardsSets,
                 certainCardsSets,
-                _cardsLeft,
-                0,
-                0
+                _cardsLeft
             );
             var expected = (
-                _playersCards.Code,
+                PlayerCards.Code,
                 (
-                    0,
+                    1,
                     (certainCardsSets[1] | new CardsSet(new[] {new Card(Rank.Queen, Color.Diamonds)})).Code,
                     certainCardsSets[2].Code
                 )
