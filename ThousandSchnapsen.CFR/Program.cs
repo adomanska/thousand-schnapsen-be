@@ -13,7 +13,7 @@ namespace ThousandSchnapsen.CFR
         {
             Console.WriteLine(Pad("TRAINING IN PROGRESS", '-'));
             var trainer = new CfrTrainer();
-            trainer.Train(1000);
+            trainer.Train(30);
             trainer.Save("./testData2");
 
             Console.WriteLine(Pad("EVALUATION IN PROGRESS", '-'));
@@ -27,7 +27,7 @@ namespace ThousandSchnapsen.CFR
                 new RandomAgent(3)
             };
             var simulation = new Simulation(agents, 3);
-            var stats = simulation.Run(1000);
+            var stats = simulation.Run(10);
             Console.WriteLine($"[{stats[0]} | {stats[1]} | {stats[2]}]");
         }
 

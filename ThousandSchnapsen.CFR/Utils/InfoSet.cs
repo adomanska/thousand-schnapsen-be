@@ -1,3 +1,4 @@
+#nullable enable
 using ThousandSchnapsen.Common.Commons;
 using ThousandSchnapsen.Common.States;
 
