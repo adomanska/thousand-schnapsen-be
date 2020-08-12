@@ -9,7 +9,7 @@ namespace ThousandSchnapsen.CFR.Algorithms
     {
         private readonly int[] _players = {0, 1, 2};
 
-        private readonly StrategyDatabase<int, (int, int, int)> _nodeMap = new StrategyDatabase<int, (int, int, int)>();
+        private readonly StrategyDatabase<int, (int, int, int, int)> _nodeMap = new StrategyDatabase<int, (int, int, int, int)>();
 
         private int _nodesCount;
         private int _newInfoSetsCount;
@@ -54,8 +54,10 @@ namespace ThousandSchnapsen.CFR.Algorithms
             var infoSet = node.InfoSet;
 
             float[] strategy;
+            var (item1, item2, item3, item4, item5) = infoSet.RawData;
+            var dictKey = (item1, (item2, item3, item4, item5));
 
-            if (_nodeMap.TryGetValue(infoSet.RawData, out var strategyData))
+            if (_nodeMap.TryGetValue(dictKey, out var strategyData))
             {
                 strategy = strategyData.Strategy;
                 _existingInfoSetsCount++;
@@ -63,7 +65,7 @@ namespace ThousandSchnapsen.CFR.Algorithms
             else if (node.PlayerId == playerId)
             {
                 strategyData = new StrategyData(availableActions.Length);
-                _nodeMap.AddValue(infoSet.RawData, strategyData);
+                _nodeMap.AddValue(dictKey, strategyData);
                 _newInfoSetsCount++;
                 strategy = strategyData.Strategy;
             }

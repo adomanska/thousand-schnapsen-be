@@ -62,7 +62,9 @@ namespace ThousandSchnapsen.CFR.Agents
             }
             else
             {
-                var (primaryKey, secondaryKey) = infoSet.RawData;
+                var primaryKey = infoSet.RawData.Item1;
+                var secondaryKey = (infoSet.RawData.Item2, infoSet.RawData.Item3, infoSet.RawData.Item4,
+                    infoSet.RawData.Item5);
                 var dataPath = $"{_dataDirectory}/{primaryKey}.dat";
 
                 if (LoadData(dataPath, out var data) && data.TryGetValue(secondaryKey, out var strategyData))
@@ -92,7 +94,7 @@ namespace ThousandSchnapsen.CFR.Agents
             _gameState = newState;
         }
 
-        private bool LoadData(string path, out Dictionary<(int, int, int), StrategyData> data)
+        private bool LoadData(string path, out Dictionary<(int, int, int, int), StrategyData> data)
         {
             if (!File.Exists(path))
             {
@@ -105,7 +107,7 @@ namespace ThousandSchnapsen.CFR.Agents
                 try
                 {
                     var formatter = new BinaryFormatter();
-                    data = (Dictionary<(int, int, int), StrategyData>) formatter.Deserialize(fs);
+                    data = (Dictionary<(int, int, int, int), StrategyData>) formatter.Deserialize(fs);
                     return true;
                 }
                 catch (SerializationException e)

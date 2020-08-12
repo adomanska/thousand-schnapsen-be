@@ -55,7 +55,10 @@ namespace ThousandSchnapsen.CFR.Tests.Utils
             );
             var expected = (
                 PlayerCards.Code,
-                (1, certainCardsSets[1].Code, certainCardsSets[2].Code)
+                0,
+                commonPossibleCardsSet.Code,
+                certainCardsSets[1].Code,
+                certainCardsSets[2].Code
             );
 
             var result = infoSet.RawData;
@@ -88,11 +91,10 @@ namespace ThousandSchnapsen.CFR.Tests.Utils
             );
             var expected = (
                 PlayerCards.Code,
-                (
-                    1,
-                    (certainCardsSets[1] | new CardsSet(new[] {new Card(Rank.Ace, Color.Spades)})).Code,
-                    (certainCardsSets[2] | new CardsSet(new[] {new Card(Rank.Ace, Color.Diamonds)})).Code
-                )
+                0,
+                0,
+                (certainCardsSets[1] | new CardsSet(new[] {new Card(Rank.Ace, Color.Spades)})).Code,
+                (certainCardsSets[2] | new CardsSet(new[] {new Card(Rank.Ace, Color.Diamonds)})).Code
             );
 
             var result = infoSet.RawData;
@@ -130,11 +132,10 @@ namespace ThousandSchnapsen.CFR.Tests.Utils
             );
             var expected = (
                 PlayerCards.Code,
-                (
-                    1,
-                    (certainCardsSets[1] | new CardsSet(new[] {new Card(Rank.Queen, Color.Diamonds)})).Code,
-                    certainCardsSets[2].Code
-                )
+                0,
+                0,
+                (certainCardsSets[1] | new CardsSet(new[] {new Card(Rank.Queen, Color.Diamonds)})).Code,
+                certainCardsSets[2].Code
             );
 
             var result = infoSet.RawData;
